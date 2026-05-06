@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ReviewMind AI - Chat Intelligence</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-bright": "#363941",
+                        "tertiary": "#ffb786",
+                        "surface": "#10131a",
+                        "on-tertiary-container": "#461f00",
+                        "on-secondary-fixed": "#07006c",
+                        "primary-fixed": "#d8e2ff",
+                        "on-primary-container": "#00285d",
+                        "on-primary-fixed": "#001a42",
+                        "inverse-surface": "#e1e2ec",
+                        "primary-fixed-dim": "#adc6ff",
+                        "on-tertiary-fixed": "#311400",
+                        "surface-tint": "#adc6ff",
+                        "tertiary-container": "#df7412",
+                        "secondary-container": "#3131c0",
+                        "error": "#ffb4ab",
+                        "tertiary-fixed-dim": "#ffb786",
+                        "on-background": "#e1e2ec",
+                        "background": "#10131a",
+                        "on-secondary-container": "#b0b2ff",
+                        "surface-container-low": "#191b23",
+                        "inverse-primary": "#005ac2",
+                        "on-primary": "#002e6a",
+                        "secondary": "#c0c1ff",
+                        "surface-container-lowest": "#0b0e15",
+                        "on-surface-variant": "#c2c6d6",
+                        "error-container": "#93000a",
+                        "on-tertiary": "#502400",
+                        "primary-container": "#4d8eff",
+                        "on-surface": "#e1e2ec",
+                        "on-error-container": "#ffdad6",
+                        "secondary-fixed": "#e1e0ff",
+                        "surface-container-high": "#272a31",
+                        "primary": "#adc6ff",
+                        "on-secondary": "#1000a9",
+                        "on-error": "#690005",
+                        "outline": "#8c909f",
+                        "on-primary-fixed-variant": "#004395",
+                        "surface-container-highest": "#32353c",
+                        "on-secondary-fixed-variant": "#2f2ebe",
+                        "secondary-fixed-dim": "#c0c1ff",
+                        "on-tertiary-fixed-variant": "#723600",
+                        "surface-variant": "#32353c",
+                        "outline-variant": "#424754",
+                        "surface-container": "#1d2027",
+                        "inverse-on-surface": "#2e3038",
+                        "surface-dim": "#10131a",
+                        "tertiary-fixed": "#ffdcc6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "xs": "4px",
+                        "container-max": "1280px",
+                        "unit": "4px",
+                        "sm": "8px",
+                        "xl": "48px",
+                        "lg": "24px",
+                        "gutter": "24px",
+                        "md": "16px"
+                    },
+                    "fontFamily": {
+                        "display-lg": ["Manrope"],
+                        "body-lg": ["Manrope"],
+                        "headline-md": ["Manrope"],
+                        "headline-lg": ["Manrope"],
+                        "body-md": ["Manrope"],
+                        "label-md": ["Manrope"],
+                        "caption": ["Manrope"]
+                    },
+                    "fontSize": {
+                        "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                        "caption": ["12px", {"lineHeight": "16px", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        body { font-family: 'Manrope', sans-serif; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #32353c; border-radius: 10px; }
+        .chat-bubble-user { border-radius: 0.5rem 0.5rem 0.125rem 0.5rem; }
+        .chat-bubble-ai { border-radius: 0.5rem 0.5rem 0.5rem 0.125rem; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface flex min-h-screen overflow-hidden">
+<!-- SideNavBar Component -->
+<aside class="fixed left-0 top-0 h-full z-40 w-64 border-r border-outline-variant/10 bg-surface-container-low flex flex-col">
+<div class="p-6 flex items-center gap-3">
+<div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center text-on-primary shadow-lg">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">analytics</span>
+</div>
+<div>
+<div class="text-xl font-bold text-on-surface leading-tight">ReviewMind</div>
+<div class="text-[10px] uppercase tracking-widest text-on-surface-variant opacity-70">AI Intelligence</div>
+</div>
+</div>
+<nav class="flex-1 px-4 py-4 space-y-2">
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all rounded-lg scale-95 active:scale-100" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all rounded-lg scale-95 active:scale-100" href="#">
+<span class="material-symbols-outlined">cloud_upload</span>
+<span>Upload</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all rounded-lg scale-95 active:scale-100" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span>Analysis</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-primary bg-primary-container/20 rounded-lg scale-95 active:scale-100 transition-all" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">forum</span>
+<span>Chat</span>
+</a>
+</nav>
+<div class="p-4 mt-auto">
+<button class="w-full bg-primary text-on-primary py-3 rounded-xl font-bold flex items-center justify-center gap-2 shadow-sm hover:brightness-110 transition-all">
+<span class="material-symbols-outlined">add</span>
+<span>New Analysis</span>
+</button>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col ml-64 min-h-screen relative bg-surface">
+<!-- TopNavBar Component -->
+<header class="w-full h-16 sticky top-0 flex justify-between items-center px-8 z-30 bg-surface/80 backdrop-blur-md border-b border-outline-variant/10 font-manrope text-sm">
+<div class="flex items-center gap-6">
+<div class="relative flex items-center bg-surface-container rounded-full px-4 py-1.5 w-72">
+<span class="material-symbols-outlined text-on-surface-variant text-lg mr-2">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm w-full text-on-surface placeholder:text-on-surface-variant/50" placeholder="Search conversations..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined p-2 text-on-surface-variant hover:text-primary transition-colors">notifications</button>
+<button class="material-symbols-outlined p-2 text-on-surface-variant hover:text-primary transition-colors">help</button>
+<div class="h-8 w-[1px] bg-outline-variant/20 mx-2"></div>
+<div class="flex items-center gap-3 group cursor-pointer">
+<img alt="User Profile" class="w-8 h-8 rounded-full object-cover ring-2 ring-primary/20 group-hover:ring-primary transition-all" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBIcetE5TZt2D08hrV-8y2L6gMNBNnXfrjGaIhR5fgJUrTjTy8OFZCbFAhtERypYsXXYkQOiCK7TnXjgLIgG35ujAXw1d8Db5cuL-WXBRtuMUVr1PLAOeDgrDPWtNfIM_9sbMiAsNZqcAXFqghMjMsMqNeZgk2U_ckTpAyniiBbgFebRA0f2pddxMnlFyZdXexZEJExXNgTuLAZPdredMhcW1YKPLZWUWQT4pCWQk1c6F483DCVNF1CniaQ_huhzaBLLfBwg2cJALXN"/>
+<span class="font-semibold text-on-surface">Alex Chen</span>
+</div>
+</div>
+</header>
+<!-- Chat Area -->
+<section class="flex-1 overflow-y-auto custom-scrollbar flex flex-col p-8 space-y-8 pb-32 max-w-5xl mx-auto w-full">
+<!-- System/Welcome Message -->
+<div class="flex flex-col items-center justify-center py-12 text-center space-y-4">
+<div class="w-16 h-16 bg-surface-container-high rounded-3xl flex items-center justify-center text-primary mb-2 shadow-lg">
+<span class="material-symbols-outlined text-4xl" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+</div>
+<h2 class="text-3xl font-bold tracking-tight text-on-surface">Intelligence at your service</h2>
+<p class="text-on-surface-variant max-w-md">Ask me anything about your product reviews. I can summarize sentiments, identify pain points, or track feature requests.</p>
+</div>
+<!-- Chat Bubble: User -->
+<div class="flex flex-col items-end space-y-2">
+<div class="flex items-center gap-2 mb-1">
+<span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">You</span>
+</div>
+<div class="chat-bubble-user bg-primary text-on-primary px-6 py-4 max-w-[80%] shadow-md">
+<p class="leading-relaxed">Can you analyze the recent reviews for the UltraPhone 15? What are the top complaints users have mentioned this month?</p>
+</div>
+</div>
+<!-- Chat Bubble: AI -->
+<div class="flex flex-col items-start space-y-2">
+<div class="flex items-center gap-2 mb-1">
+<div class="w-6 h-6 bg-primary-container rounded flex items-center justify-center">
+<span class="material-symbols-outlined text-xs text-on-primary-container" style="font-variation-settings: 'FILL' 1;">smart_toy</span>
+</div>
+<span class="text-[10px] font-bold text-primary uppercase tracking-widest">ReviewMind AI</span>
+</div>
+<div class="chat-bubble-ai bg-surface-container-lowest text-on-surface px-6 py-4 max-w-[85%] shadow-sm border border-outline-variant/10">
+<p class="leading-relaxed mb-4">I've analyzed 428 reviews posted between October 1st and October 24th. Here are the primary findings:</p>
+<div class="space-y-3 mb-4">
+<div class="p-3 bg-surface-container-low rounded-lg border-l-4 border-error">
+<span class="font-bold text-on-surface flex items-center gap-2 mb-1">
+<span class="material-symbols-outlined text-error text-lg">battery_alert</span>
+                                Battery Depletion
+                            </span>
+<p class="text-sm text-on-surface-variant">ReviewMind AI: Based on the reviews, users are most frustrated with the battery life during heavy usage, specifically during video recording and gaming sessions.</p>
+</div>
+<div class="p-3 bg-surface-container-low rounded-lg border-l-4 border-tertiary">
+<span class="font-bold text-on-surface flex items-center gap-2 mb-1">
+<span class="material-symbols-outlined text-tertiary text-lg">heat</span>
+                                Thermal Issues
+                            </span>
+<p class="text-sm text-on-surface-variant">Approximately 15% of users mentioned the device getting "uncomfortably warm" when using 5G data in outdoor settings.</p>
+</div>
+</div>
+<p class="leading-relaxed text-sm italic opacity-70">Would you like me to generate a detailed comparison report for these specific issues against last month's data?</p>
+</div>
+</div>
+<!-- Chat Bubble: User -->
+<div class="flex flex-col items-end space-y-2">
+<div class="flex items-center gap-2 mb-1">
+<span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">You</span>
+</div>
+<div class="chat-bubble-user bg-primary text-on-primary px-6 py-4 max-w-[80%] shadow-md">
+<p class="leading-relaxed">Yes, please compare it with the previous model's launch month sentiment if possible.</p>
+</div>
+</div>
+</section>
+<!-- Floating Input Bar Container -->
+<div class="fixed bottom-0 left-64 right-0 p-6 bg-gradient-to-t from-surface via-surface to-transparent z-40">
+<div class="max-w-4xl mx-auto relative group">
+<div class="absolute -inset-1 bg-gradient-to-r from-primary/10 to-tertiary/10 rounded-2xl blur opacity-25 group-focus-within:opacity-50 transition duration-1000"></div>
+<div class="relative flex items-center bg-surface-container-highest rounded-xl shadow-2xl border border-outline-variant/10 p-2">
+<button class="p-3 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">attach_file</span>
+</button>
+<input class="flex-1 bg-transparent border-none focus:ring-0 text-on-surface py-3 px-2 font-body placeholder:text-on-surface-variant/40" placeholder="Ask anything about your reviews..." type="text"/>
+<div class="flex items-center gap-1 pr-2">
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors hidden md:block" title="Voice Input">
+<span class="material-symbols-outlined">mic</span>
+</button>
+<button class="bg-primary text-on-primary p-3 rounded-lg flex items-center justify-center shadow-md hover:brightness-110 active:scale-95 transition-all">
+<span class="material-symbols-outlined">send</span>
+</button>
+</div>
+</div>
+<!-- Prompt Shortcuts -->
+<div class="flex justify-center gap-3 mt-4 overflow-x-auto pb-2 scrollbar-hide">
+<button class="text-[11px] font-bold text-on-tertiary-container bg-tertiary-container px-4 py-1.5 rounded-full hover:brightness-110 transition-all whitespace-nowrap">Summarize Last 24h</button>
+<button class="text-[11px] font-bold text-on-tertiary-container bg-tertiary-container px-4 py-1.5 rounded-full hover:brightness-110 transition-all whitespace-nowrap">Sentiment Trend</button>
+<button class="text-[11px] font-bold text-on-tertiary-container bg-tertiary-container px-4 py-1.5 rounded-full hover:brightness-110 transition-all whitespace-nowrap">Competitor Benchmarking</button>
+<button class="text-[11px] font-bold text-on-tertiary-container bg-tertiary-container px-4 py-1.5 rounded-full hover:brightness-110 transition-all whitespace-nowrap">Filter Negative Feedback</button>
+</div>
+</div>
+</div>
+<!-- Right Side Insight Cloud -->
+<div class="fixed right-8 top-24 w-64 hidden xl:block">
+<div class="bg-surface-container-highest p-6 rounded-2xl shadow-lg border border-outline-variant/10">
+<h3 class="font-bold text-sm mb-4 flex items-center gap-2 text-on-surface">
+<span class="material-symbols-outlined text-primary text-lg">lightbulb</span>
+                    Quick Insights
+                </h3>
+<div class="space-y-4">
+<div class="space-y-1">
+<div class="flex justify-between text-[10px] font-bold uppercase text-on-surface-variant">
+<span>Sentiment</span>
+<span class="text-error">Declining</span>
+</div>
+<div class="w-full h-1.5 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-error rounded-full w-[45%]"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="text-[11px] text-on-surface-variant leading-relaxed p-2 bg-surface-container-low rounded border border-outline-variant/10">
+                            "Users are comparing the new camera software unfavorably to the v2.4 update."
+                        </div>
+<div class="text-[11px] text-on-surface-variant leading-relaxed p-2 bg-surface-container-low rounded border border-outline-variant/10">
+                            "Frequent mentions of 'shipping delay' in the Northeast region."
+                        </div>
+</div>
+<button class="w-full text-[11px] font-bold text-primary hover:underline flex items-center justify-center gap-1 pt-2">
+                        View Full Report
+                        <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+</body></html>

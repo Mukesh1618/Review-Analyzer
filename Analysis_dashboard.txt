@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ReviewMind Dashboard | AI Intelligence</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-bright": "#363941",
+                        "tertiary": "#ffb786",
+                        "surface": "#10131a",
+                        "on-tertiary-container": "#461f00",
+                        "on-secondary-fixed": "#07006c",
+                        "primary-fixed": "#d8e2ff",
+                        "on-primary-container": "#00285d",
+                        "on-primary-fixed": "#001a42",
+                        "inverse-surface": "#e1e2ec",
+                        "primary-fixed-dim": "#adc6ff",
+                        "on-tertiary-fixed": "#311400",
+                        "surface-tint": "#adc6ff",
+                        "tertiary-container": "#df7412",
+                        "secondary-container": "#3131c0",
+                        "error": "#ffb4ab",
+                        "tertiary-fixed-dim": "#ffb786",
+                        "on-background": "#e1e2ec",
+                        "background": "#10131a",
+                        "on-secondary-container": "#b0b2ff",
+                        "surface-container-low": "#191b23",
+                        "inverse-primary": "#005ac2",
+                        "on-primary": "#002e6a",
+                        "secondary": "#c0c1ff",
+                        "surface-container-lowest": "#0b0e15",
+                        "on-surface-variant": "#c2c6d6",
+                        "error-container": "#93000a",
+                        "on-tertiary": "#502400",
+                        "primary-container": "#4d8eff",
+                        "on-surface": "#e1e2ec",
+                        "on-error-container": "#ffdad6",
+                        "secondary-fixed": "#e1e0ff",
+                        "surface-container-high": "#272a31",
+                        "primary": "#adc6ff",
+                        "on-secondary": "#1000a9",
+                        "on-error": "#690005",
+                        "outline": "#8c909f",
+                        "on-primary-fixed-variant": "#004395",
+                        "surface-container-highest": "#32353c",
+                        "on-secondary-fixed-variant": "#2f2ebe",
+                        "secondary-fixed-dim": "#c0c1ff",
+                        "on-tertiary-fixed-variant": "#723600",
+                        "surface-variant": "#32353c",
+                        "outline-variant": "#424754",
+                        "surface-container": "#1d2027",
+                        "inverse-on-surface": "#2e3038",
+                        "surface-dim": "#10131a",
+                        "tertiary-fixed": "#ffdcc6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "xs": "4px",
+                        "container-max": "1280px",
+                        "unit": "4px",
+                        "sm": "8px",
+                        "xl": "48px",
+                        "lg": "24px",
+                        "gutter": "24px",
+                        "md": "16px"
+                    },
+                    "fontFamily": {
+                        "display-lg": ["Manrope"],
+                        "body-lg": ["Manrope"],
+                        "headline-md": ["Manrope"],
+                        "headline-lg": ["Manrope"],
+                        "body-md": ["Manrope"],
+                        "label-md": ["Manrope"],
+                        "caption": ["Manrope"]
+                    },
+                    "fontSize": {
+                        "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                        "caption": ["12px", {"lineHeight": "16px", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+        }
+        body {
+            font-family: 'Manrope', sans-serif;
+            background-color: #10131a;
+        }
+        .editorial-shadow {
+            box-shadow: 0 12px 40px -12px rgba(0, 0, 0, 0.4);
+        }
+        .primary-gradient {
+            background: linear-gradient(135deg, #adc6ff 0%, #4d8eff 100%);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface">
+<!-- SideNavBar Shell -->
+<aside class="fixed left-0 top-0 h-full z-40 bg-surface-container-lowest h-screen w-64 border-r border-outline-variant/10 flex flex-col hidden md:flex">
+<div class="p-8">
+<div class="flex items-center gap-3 mb-10">
+<div class="w-8 h-8 primary-gradient rounded-lg flex items-center justify-center text-on-primary-container">
+<span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">psychology</span>
+</div>
+<div>
+<h1 class="text-xl font-bold text-on-surface font-display-lg leading-none">ReviewMind</h1>
+<p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-semibold mt-1">AI Intelligence</p>
+</div>
+</div>
+<nav class="space-y-1">
+<!-- Dashboard Active State -->
+<a class="flex items-center gap-3 px-4 py-2 text-primary bg-primary-container/10 rounded-lg font-label-md transition-transform scale-95 active:scale-100" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+                    Dashboard
+                </a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors font-label-md transition-transform scale-95 active:scale-100" href="#">
+<span class="material-symbols-outlined">cloud_upload</span>
+                    Upload
+                </a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors font-label-md transition-transform scale-95 active:scale-100" href="#">
+<span class="material-symbols-outlined">analytics</span>
+                    Analysis
+                </a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors font-label-md transition-transform scale-95 active:scale-100" href="#">
+<span class="material-symbols-outlined">forum</span>
+                    Chat
+                </a>
+</nav>
+</div>
+<div class="mt-auto p-6">
+<a class="w-full primary-gradient text-on-primary-container py-3 rounded-lg font-bold text-sm editorial-shadow transition-transform hover:scale-[1.02] active:scale-100 flex items-center justify-center" href="#">
+                New Analysis
+            </a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="md:ml-64 min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<header class="w-full h-16 sticky top-0 flex justify-between items-center px-8 z-30 bg-surface/80 backdrop-blur-md border-b border-outline-variant/10 font-label-md">
+<div class="flex items-center gap-6 flex-1">
+<div class="relative w-full max-w-md">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-lg">search</span>
+<input class="w-full bg-surface-container-low border-none rounded-lg pl-10 pr-4 py-2 focus:ring-2 focus:ring-primary/20 text-sm placeholder:text-on-surface-variant/40 text-on-surface" placeholder="Search analysis, keywords..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">help</span>
+</button>
+<div class="h-8 w-[1px] bg-outline-variant/20 mx-2"></div>
+<div class="flex items-center gap-3 pl-2">
+<div class="text-right hidden sm:block">
+<p class="text-xs font-bold leading-none text-on-surface">Alex Rivera</p>
+<p class="text-[10px] text-on-surface-variant">Product Manager</p>
+</div>
+<img alt="User Profile" class="w-9 h-9 rounded-full object-cover ring-2 ring-primary/20" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCKtp3rgGFeP-AC-QBL_C89YK23-u7WIt6AHQiAm54jI4jRmDndtwCtQ63tBKW-7eG_K23IFleJeRP7m_Cer1gASEZ3bloocwwBO7eFJUZKJtCfQMJ1fJPUWFJUxNv5hFgJADYiWYlft90V23TGBaIlwZ7udHh-s3rKjdGki6xVnLr7haTFHeMqKZWH0IssdaCikFCwZ74vS6hHLOTawwmacBhwt4uw9d9aGvlVFDwWATR5TfVZH_CtdKMsudAiqJqq5QXlPfaT5fgV"/>
+</div>
+</div>
+</header>
+<!-- Dashboard Canvas -->
+<div class="p-8 md:p-12 max-w-7xl mx-auto w-full space-y-10">
+<!-- Welcome Header -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div>
+<h2 class="text-3xl font-extrabold font-display-lg tracking-tight text-on-surface">Analysis Dashboard</h2>
+<p class="text-on-surface-variant mt-2 text-lg">Customer Feedback Analysis: <span class="font-semibold text-primary">Q3 Product Launch.csv</span></p>
+</div>
+<div class="flex gap-3">
+<button class="px-4 py-2 bg-surface-container-high text-on-surface rounded-lg font-medium text-sm flex items-center gap-2 hover:bg-surface-container-highest transition-colors">
+<span class="material-symbols-outlined text-lg">download</span>
+                        Export Report
+                    </button>
+<button class="px-4 py-2 primary-gradient text-on-primary-container rounded-lg font-bold text-sm flex items-center gap-2 editorial-shadow hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">share</span>
+                        Share Insights
+                    </button>
+</div>
+</div>
+<!-- Bento Grid Stats -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+<!-- Total Reviews -->
+<div class="bg-surface-container-lowest p-6 rounded-xl editorial-shadow border border-outline-variant/10 flex flex-col justify-between h-32">
+<div class="flex justify-between items-start">
+<p class="text-on-surface-variant text-xs font-bold uppercase tracking-widest">Total Reviews</p>
+<span class="material-symbols-outlined text-primary/40">rate_review</span>
+</div>
+<div class="flex items-baseline gap-2">
+<p class="text-3xl font-extrabold font-headline-lg">12,482</p>
+<span class="text-emerald-400 text-xs font-bold flex items-center bg-emerald-900/30 px-1.5 py-0.5 rounded">+14%</span>
+</div>
+</div>
+<!-- Sentiment Score -->
+<div class="bg-surface-container-lowest p-6 rounded-xl editorial-shadow border border-outline-variant/10 flex flex-col justify-between h-32">
+<div class="flex justify-between items-start">
+<p class="text-on-surface-variant text-xs font-bold uppercase tracking-widest">Sentiment Score</p>
+<span class="material-symbols-outlined text-tertiary/40">stars</span>
+</div>
+<div class="flex items-baseline gap-2">
+<p class="text-3xl font-extrabold font-headline-lg">4.2<span class="text-lg text-on-surface-variant/40 font-medium">/5</span></p>
+<div class="flex text-primary">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm">star_half</span>
+</div>
+</div>
+</div>
+<!-- Active Insights -->
+<div class="md:col-span-2 bg-surface-container-lowest p-6 rounded-xl editorial-shadow border border-outline-variant/10 relative overflow-hidden h-32">
+<div class="absolute right-0 top-0 h-full w-1/3 opacity-10">
+<svg class="h-full w-full" viewbox="0 0 100 100">
+<path class="text-primary" d="M0,100 C20,80 40,90 60,40 C80,10 100,20 100,0 L100,100 Z" fill="currentColor"></path>
+</svg>
+</div>
+<div class="relative z-10 flex flex-col h-full justify-between">
+<p class="text-on-surface-variant text-xs font-bold uppercase tracking-widest">Top Keyword Trend</p>
+<div>
+<p class="text-xl font-bold font-headline-md">"Ease of use"</p>
+<p class="text-on-surface-variant text-xs mt-1">Found in 64% of positive reviews this month</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Visualization Section -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<!-- Sentiment Distribution Card -->
+<div class="bg-surface-container-lowest p-8 rounded-xl editorial-shadow border border-outline-variant/10 lg:col-span-1">
+<h3 class="text-lg font-bold font-headline-md mb-8 text-on-surface">Sentiment Distribution</h3>
+<div class="relative w-48 h-48 mx-auto mb-8">
+<div class="w-full h-full rounded-full border-[16px] border-surface-container-high relative" style="background: conic-gradient(#adc6ff 0% 68%, #32353c 68% 85%, #93000a 85% 100%);">
+<div class="absolute inset-0 bg-surface-container-lowest rounded-full m-1 flex items-center justify-center flex-col">
+<span class="text-3xl font-extrabold font-headline-lg">68%</span>
+<span class="text-[10px] text-on-surface-variant uppercase font-bold">Positive</span>
+</div>
+</div>
+</div>
+<div class="space-y-4">
+<div class="flex items-center justify-between text-sm">
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-primary"></div>
+<span class="text-on-surface font-medium">Positive</span>
+</div>
+<span class="text-on-surface-variant font-bold">8,487</span>
+</div>
+<div class="flex items-center justify-between text-sm">
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-surface-container-high"></div>
+<span class="text-on-surface font-medium">Neutral</span>
+</div>
+<span class="text-on-surface-variant font-bold">2,122</span>
+</div>
+<div class="flex items-center justify-between text-sm">
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-error-container"></div>
+<span class="text-on-surface font-medium">Negative</span>
+</div>
+<span class="text-on-surface-variant font-bold">1,873</span>
+</div>
+</div>
+</div>
+<!-- Sentiment Trend Card -->
+<div class="bg-surface-container-lowest p-8 rounded-xl editorial-shadow border border-outline-variant/10 lg:col-span-2">
+<div class="flex items-center justify-between mb-8">
+<div>
+<h3 class="text-lg font-bold font-headline-md text-on-surface">Sentiment Trend</h3>
+<p class="text-on-surface-variant text-xs">Analysis over the last 30 days</p>
+</div>
+<div class="flex bg-surface-container-low rounded-lg p-1 text-[10px] font-bold uppercase tracking-wider">
+<button class="px-3 py-1.5 bg-surface-container-highest rounded-md shadow-sm text-primary">30 Days</button>
+<button class="px-3 py-1.5 text-on-surface-variant opacity-60">90 Days</button>
+</div>
+</div>
+<div class="h-64 w-full relative group overflow-hidden">
+<div class="absolute inset-0 flex flex-col justify-between opacity-5">
+<div class="w-full h-[1px] bg-on-surface"></div>
+<div class="w-full h-[1px] bg-on-surface"></div>
+<div class="w-full h-[1px] bg-on-surface"></div>
+<div class="w-full h-[1px] bg-on-surface"></div>
+</div>
+<svg class="w-full h-full overflow-visible" preserveaspectratio="none" viewbox="0 0 1000 256"><defs><lineargradient id="chartGradient" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#adc6ff" stop-opacity="0.2"></stop><stop offset="100%" stop-color="#adc6ff" stop-opacity="0"></stop></lineargradient></defs><path d="M0,180 Q100,140 200,160 T400,120 T600,80 T800,100 T1000,40" fill="none" stroke="#adc6ff" stroke-linecap="round" stroke-width="3"></path><path d="M0,180 Q100,140 200,160 T400,120 T600,80 T800,100 T1000,40 V256 H0 Z" fill="url(#chartGradient)"></path><circle cx="200" cy="160" fill="#adc6ff" r="4" stroke="#10131a" stroke-width="2"></circle><circle cx="600" cy="80" fill="#adc6ff" r="4" stroke="#10131a" stroke-width="2"></circle><circle cx="994" cy="40" fill="#adc6ff" r="6" stroke="#10131a" stroke-width="3"></circle></svg>
+<div class="absolute top-4 right-[5%] bg-surface-container-highest text-on-surface text-[10px] px-3 py-2 rounded-lg editorial-shadow border border-outline-variant/10">
+<p class="font-bold">May 24 (Today)</p>
+<p class="opacity-70">Score: 4.8/5</p>
+</div>
+</div>
+<div class="flex justify-between mt-6 text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">
+<span>May 01</span>
+<span>May 10</span>
+<span>May 20</span>
+<span>Today</span>
+</div>
+</div>
+</div>
+<!-- Insight Cloud -->
+<div class="relative bg-surface-container-low rounded-xl p-1 overflow-hidden border border-outline-variant/10">
+<div class="bg-surface-container-lowest/80 backdrop-blur-xl rounded-lg p-10 flex flex-col md:flex-row items-center gap-10">
+<div class="w-full md:w-1/3 text-center md:text-left">
+<div class="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 text-primary rounded-full text-[10px] font-bold uppercase tracking-wider mb-4">
+<span class="material-symbols-outlined text-xs">bolt</span>
+                            AI Executive Summary
+                        </div>
+<h4 class="text-2xl font-bold font-headline-md mb-4 text-on-surface">Core Recommendation</h4>
+<p class="text-on-surface-variant leading-relaxed font-body-md">
+                            Based on 12k reviews, the primary friction point is the <strong>onboarding flow</strong> for enterprise users. Resolving this could increase overall sentiment by an estimated 0.8 points.
+                        </p>
+</div>
+<div class="flex-1 grid grid-cols-2 gap-4 w-full">
+<div class="bg-surface-container-low p-5 rounded-lg border-l-4 border-primary">
+<p class="text-xs font-bold text-primary uppercase mb-2">Key Strength</p>
+<p class="text-sm font-semibold text-on-surface">User Interface Design</p>
+<p class="text-xs text-on-surface-variant mt-1">92% satisfaction rate</p>
+</div>
+<div class="bg-surface-container-low p-5 rounded-lg border-l-4 border-error">
+<p class="text-xs font-bold text-error uppercase mb-2">Top Complaint</p>
+<p class="text-sm font-semibold text-on-surface">Load Times (Mobile)</p>
+<p class="text-xs text-on-surface-variant mt-1">450+ mentions this week</p>
+</div>
+<div class="bg-surface-container-low p-5 rounded-lg border-l-4 border-tertiary">
+<p class="text-xs font-bold text-tertiary uppercase mb-2">Emerging Request</p>
+<p class="text-sm font-semibold text-on-surface">Dark Mode API</p>
+<p class="text-xs text-on-surface-variant mt-1">+24% trend since Tuesday</p>
+</div>
+<div class="bg-surface-container-low p-5 rounded-lg border-l-4 border-emerald-500">
+<p class="text-xs font-bold text-emerald-400 uppercase mb-2">Customer Loyalty</p>
+<p class="text-sm font-semibold text-on-surface">Brand Trust</p>
+<p class="text-xs text-on-surface-variant mt-1">NPS Score: 78</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Recent Reviews Table -->
+<div class="bg-surface-container-lowest rounded-xl editorial-shadow overflow-hidden border border-outline-variant/10">
+<div class="px-8 py-6 border-b border-outline-variant/10 flex items-center justify-between">
+<h3 class="text-lg font-bold font-headline-md text-on-surface">Raw Review Samples</h3>
+<button class="text-primary text-sm font-semibold hover:underline">View All 12,482</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left text-sm">
+<thead>
+<tr class="bg-surface-container-low/30 text-on-surface-variant font-bold uppercase text-[10px] tracking-widest">
+<th class="px-8 py-4">User</th>
+<th class="px-8 py-4">Sentiment</th>
+<th class="px-8 py-4">Comment Snippet</th>
+<th class="px-8 py-4 text-right">Date</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/10">
+<tr class="hover:bg-surface-container-high/20 transition-colors">
+<td class="px-8 py-5">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center font-bold text-xs text-on-surface">JD</div>
+<span class="font-medium text-on-surface">James Dalton</span>
+</div>
+</td>
+<td class="px-8 py-5">
+<span class="px-3 py-1 bg-tertiary-container text-on-tertiary-container rounded-full text-[10px] font-bold">POSITIVE</span>
+</td>
+<td class="px-8 py-5 text-on-surface-variant">"The AI categorization is surprisingly accurate, saved us hours of manual tagging..."</td>
+<td class="px-8 py-5 text-right font-medium text-on-surface-variant">2m ago</td>
+</tr>
+<tr class="hover:bg-surface-container-high/20 transition-colors">
+<td class="px-8 py-5">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center font-bold text-xs text-on-surface">SK</div>
+<span class="font-medium text-on-surface">Sarah Kong</span>
+</div>
+</td>
+<td class="px-8 py-5">
+<span class="px-3 py-1 bg-error-container text-on-error-container rounded-full text-[10px] font-bold">NEGATIVE</span>
+</td>
+<td class="px-8 py-5 text-on-surface-variant">"Mobile app feels sluggish when loading larger CSV exports. Needs optimization."</td>
+<td class="px-8 py-5 text-right font-medium text-on-surface-variant">15m ago</td>
+</tr>
+<tr class="hover:bg-surface-container-high/20 transition-colors">
+<td class="px-8 py-5">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center font-bold text-xs text-on-surface">MT</div>
+<span class="font-medium text-on-surface">Mark Thompson</span>
+</div>
+</td>
+<td class="px-8 py-5">
+<span class="px-3 py-1 bg-surface-container-high text-on-surface-variant rounded-full text-[10px] font-bold">NEUTRAL</span>
+</td>
+<td class="px-8 py-5 text-on-surface-variant">"Good overall tool, though pricing structure is a bit confusing for mid-sized teams."</td>
+<td class="px-8 py-5 text-right font-medium text-on-surface-variant">1h ago</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<!-- Mobile Navigation Shell -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full bg-surface-container-lowest border-t border-outline-variant/10 shadow-[0_-4px_10px_rgba(0,0,0,0.3)] px-6 py-4 flex justify-between items-center z-50">
+<a class="flex flex-col items-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="text-[10px] font-bold uppercase">Home</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-on-surface-variant opacity-60" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="text-[10px] font-bold uppercase">Stats</span>
+</a>
+<div class="-mt-12 primary-gradient w-14 h-14 rounded-full flex items-center justify-center text-on-primary-container shadow-lg ring-4 ring-background">
+<span class="material-symbols-outlined text-3xl">add</span>
+</div>
+<a class="flex flex-col items-center gap-1 text-on-surface-variant opacity-60" href="#">
+<span class="material-symbols-outlined">forum</span>
+<span class="text-[10px] font-bold uppercase">Chat</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-on-surface-variant opacity-60" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-[10px] font-bold uppercase">Admin</span>
+</a>
+</nav>
+</main>
+</body></html>

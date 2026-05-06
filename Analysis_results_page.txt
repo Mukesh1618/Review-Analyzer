@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=800, initial-scale=1.0" name="viewport"/>
+<title>ReviewMind | Analysis Results</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                "surface-bright": "#363941",
+                "tertiary": "#ffb786",
+                "surface": "#10131a",
+                "on-tertiary-container": "#461f00",
+                "on-secondary-fixed": "#07006c",
+                "primary-fixed": "#d8e2ff",
+                "on-primary-container": "#00285d",
+                "on-primary-fixed": "#001a42",
+                "inverse-surface": "#e1e2ec",
+                "primary-fixed-dim": "#adc6ff",
+                "on-tertiary-fixed": "#311400",
+                "surface-tint": "#adc6ff",
+                "tertiary-container": "#df7412",
+                "secondary-container": "#3131c0",
+                "error": "#ffb4ab",
+                "tertiary-fixed-dim": "#ffb786",
+                "on-background": "#e1e2ec",
+                "background": "#10131a",
+                "on-secondary-container": "#b0b2ff",
+                "surface-container-low": "#191b23",
+                "inverse-primary": "#005ac2",
+                "on-primary": "#002e6a",
+                "secondary": "#c0c1ff",
+                "surface-container-lowest": "#0b0e15",
+                "on-surface-variant": "#c2c6d6",
+                "error-container": "#93000a",
+                "on-tertiary": "#502400",
+                "primary-container": "#4d8eff",
+                "on-surface": "#e1e2ec",
+                "on-error-container": "#ffdad6",
+                "secondary-fixed": "#e1e0ff",
+                "surface-container-high": "#272a31",
+                "primary": "#adc6ff",
+                "on-secondary": "#1000a9",
+                "on-error": "#690005",
+                "outline": "#8c909f",
+                "on-primary-fixed-variant": "#004395",
+                "surface-container-highest": "#32353c",
+                "on-secondary-fixed-variant": "#2f2ebe",
+                "secondary-fixed-dim": "#c0c1ff",
+                "on-tertiary-fixed-variant": "#723600",
+                "surface-variant": "#32353c",
+                "outline-variant": "#424754",
+                "surface-container": "#1d2027",
+                "inverse-on-surface": "#2e3038",
+                "surface-dim": "#10131a",
+                "tertiary-fixed": "#ffdcc6"
+            },
+            "borderRadius": {
+                "DEFAULT": "0.125rem",
+                "lg": "0.25rem",
+                "xl": "0.5rem",
+                "full": "0.75rem"
+            },
+            "spacing": {
+                "xs": "4px",
+                "container-max": "1280px",
+                "unit": "4px",
+                "sm": "8px",
+                "xl": "48px",
+                "lg": "24px",
+                "gutter": "24px",
+                "md": "16px"
+            },
+            "fontFamily": {
+                "display-lg": ["Manrope"],
+                "body-lg": ["Manrope"],
+                "headline-md": ["Manrope"],
+                "headline-lg": ["Manrope"],
+                "body-md": ["Manrope"],
+                "label-md": ["Manrope"],
+                "caption": ["Manrope"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        body { font-family: 'Manrope', sans-serif; }
+    </style>
+</head>
+<body class="bg-background text-on-background antialiased">
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-full z-40 bg-surface-container-lowest w-64 border-r border-outline-variant/10 font-manrope text-sm font-medium">
+<div class="flex flex-col h-full p-6">
+<div class="mb-10 flex items-center gap-3">
+<div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">psychology</span>
+</div>
+<div>
+<div class="text-xl font-bold text-on-surface">ReviewMind</div>
+<div class="text-xs text-on-surface-variant">AI Intelligence</div>
+</div>
+</div>
+<nav class="flex-1 space-y-2">
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-primary hover:bg-surface-container-high rounded transition-colors scale-95 active:scale-100 transition-transform" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+                    Dashboard
+                </a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-primary hover:bg-surface-container-high rounded transition-colors scale-95 active:scale-100 transition-transform" href="#">
+<span class="material-symbols-outlined">cloud_upload</span>
+                    Upload
+                </a>
+<a class="flex items-center gap-3 px-4 py-2 text-primary bg-primary-container/20 rounded scale-95 active:scale-100 transition-transform" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">analytics</span>
+                    Analysis
+                </a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-primary hover:bg-surface-container-high rounded transition-colors scale-95 active:scale-100 transition-transform" href="#">
+<span class="material-symbols-outlined">forum</span>
+                    Chat
+                </a>
+</nav>
+<button class="mt-auto w-full bg-primary text-on-primary py-3 rounded font-bold shadow-lg shadow-primary/10 scale-95 active:scale-100 transition-transform">
+                New Analysis
+            </button>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-64 min-h-screen">
+<!-- TopNavBar -->
+<header class="w-full h-16 sticky top-0 flex justify-between items-center px-8 z-30 bg-background/80 backdrop-blur-md border-b border-outline-variant/10">
+<div class="flex items-center gap-6">
+<div class="relative group">
+<span class="absolute inset-y-0 left-3 flex items-center text-on-surface-variant">
+<span class="material-symbols-outlined text-lg">search</span>
+</span>
+<input class="bg-surface-container-low border border-outline-variant/20 rounded-full py-2 pl-10 pr-4 text-sm w-64 focus:ring-1 focus:ring-primary focus:border-primary transition-all text-on-surface" placeholder="Search analysis..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">help</span>
+</button>
+<div class="h-8 w-[1px] bg-outline-variant/30 mx-2"></div>
+<div class="flex items-center gap-3">
+<img alt="User Profile" class="w-8 h-8 rounded-full object-cover border border-outline-variant/20" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB3Rnwrnp6kFy4jjOP1OfxVrsK-hwBQn0u1ePHgsU7CTTC_H814iO2Ba2mld0BHmb4YBBrrmpXAZ3UVN3xUzlSuyEmbinyi-s0aM6FFASA2xLHXKABOM8TXrr_zRCWSkCLWoEQIXp2czu-HkuJQK1YUwU31uK0O1CttU5xgpP_tDi1kQNsjYcxYH2LYATUa_qaU5ThrI62ugajUQWltong0EMCxD_QmmkuO7xI1IOfwxaNie1hMRaPE4nOqHXMlTG4QYZL-yazYdLvW"/>
+</div>
+</div>
+</header>
+<!-- Canvas -->
+<div class="p-10 space-y-10">
+<!-- Page Header -->
+<div class="flex justify-between items-end">
+<div>
+<h1 class="text-4xl font-extrabold text-on-surface tracking-tight">Smartphone X Pro <span class="text-primary">Analysis</span></h1>
+<p class="text-on-surface-variant mt-2 max-w-2xl">A comprehensive breakdown of 1,240 verified customer reviews processed with neural sentiment mapping.</p>
+</div>
+<div class="flex gap-3">
+<button class="px-5 py-2 bg-surface-container-high text-on-surface font-semibold rounded hover:bg-surface-container-highest transition-colors">Export PDF</button>
+<button class="px-5 py-2 bg-primary text-on-primary font-semibold rounded shadow-md">Share Report</button>
+</div>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-12 gap-6">
+<!-- AI Summary (Insight Cloud) -->
+<div class="col-span-12 lg:col-span-8 bg-surface-container-lowest border border-outline-variant/10 rounded-xl p-8 relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
+<span class="material-symbols-outlined text-9xl text-primary">auto_awesome</span>
+</div>
+<div class="flex items-center gap-2 mb-6">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">magic_button</span>
+<h2 class="text-xl font-bold">Executive AI Summary</h2>
+</div>
+<p class="text-lg leading-relaxed text-on-surface-variant">
+                        The <span class="text-on-surface font-semibold">Smartphone X Pro</span> is consistently praised for its exceptional <span class="bg-tertiary-container px-1 rounded text-on-tertiary-container">camera optics</span> and raw processing power. However, users frequently cite <span class="bg-error-container px-1 rounded text-on-error-container">thermal issues</span> during intensive gaming and a slightly underwhelming battery lifespan compared to its predecessor. The overall consensus remains highly positive, especially for creative professionals.
+                    </p>
+<div class="mt-8 flex flex-wrap gap-2">
+<span class="px-3 py-1 bg-surface-container-low rounded-full text-xs font-medium text-on-surface-variant border border-outline-variant/20">#ProfessionalPhotography</span>
+<span class="px-3 py-1 bg-surface-container-low rounded-full text-xs font-medium text-on-surface-variant border border-outline-variant/20">#PowerUser</span>
+<span class="px-3 py-1 bg-surface-container-low rounded-full text-xs font-medium text-on-surface-variant border border-outline-variant/20">#ValuePremium</span>
+</div>
+</div>
+<!-- Fake Review Detection -->
+<div class="col-span-12 lg:col-span-4 bg-surface-container-lowest rounded-xl p-8 border-l-4 border-primary shadow-sm border-y border-r border-outline-variant/10">
+<div class="flex items-center justify-between mb-8">
+<h2 class="text-xl font-bold">Trust Score</h2>
+<span class="material-symbols-outlined text-primary">verified_user</span>
+</div>
+<div class="flex items-center justify-center py-4">
+<div class="relative flex items-center justify-center">
+<svg class="w-32 h-32 transform -rotate-90">
+<circle class="text-surface-container-high" cx="64" cy="64" fill="transparent" r="58" stroke="currentColor" stroke-width="8"></circle>
+<circle class="text-primary" cx="64" cy="64" fill="transparent" r="58" stroke="currentColor" stroke-dasharray="364.4" stroke-dashoffset="29" stroke-width="8"></circle>
+</svg>
+<span class="absolute text-3xl font-extrabold text-on-surface">92%</span>
+</div>
+</div>
+<div class="mt-6 text-center">
+<p class="text-sm font-semibold text-on-surface">Highly Authentic</p>
+<p class="text-xs text-on-surface-variant mt-1 px-4 leading-tight">Detected only 42 suspicious patterns out of 1.2k entries.</p>
+</div>
+</div>
+<!-- Aspect-Based Sentiment -->
+<div class="col-span-12 lg:col-span-7 bg-surface-container-lowest border border-outline-variant/10 rounded-xl p-8">
+<h2 class="text-xl font-bold mb-8">Sentiment by Aspect</h2>
+<div class="space-y-6">
+<!-- Battery Life -->
+<div class="space-y-2">
+<div class="flex justify-between text-sm">
+<span class="font-medium">Battery Life</span>
+<span class="text-on-surface-variant">64% Positive</span>
+</div>
+<div class="h-2 w-full bg-surface-container-low rounded-full overflow-hidden flex">
+<div class="h-full bg-primary" style="width: 64%"></div>
+<div class="h-full bg-error-container" style="width: 36%"></div>
+</div>
+</div>
+<!-- Camera Quality -->
+<div class="space-y-2">
+<div class="flex justify-between text-sm">
+<span class="font-medium">Camera Quality</span>
+<span class="text-on-surface-variant">94% Positive</span>
+</div>
+<div class="h-2 w-full bg-surface-container-low rounded-full overflow-hidden flex">
+<div class="h-full bg-primary" style="width: 94%"></div>
+<div class="h-full bg-error-container" style="width: 6%"></div>
+</div>
+</div>
+<!-- Performance -->
+<div class="space-y-2">
+<div class="flex justify-between text-sm">
+<span class="font-medium">Performance</span>
+<span class="text-on-surface-variant">88% Positive</span>
+</div>
+<div class="h-2 w-full bg-surface-container-low rounded-full overflow-hidden flex">
+<div class="h-full bg-primary" style="width: 88%"></div>
+<div class="h-full bg-error-container" style="width: 12%"></div>
+</div>
+</div>
+<!-- Price -->
+<div class="space-y-2">
+<div class="flex justify-between text-sm">
+<span class="font-medium">Price</span>
+<span class="text-on-surface-variant">72% Positive</span>
+</div>
+<div class="h-2 w-full bg-surface-container-low rounded-full overflow-hidden flex">
+<div class="h-full bg-primary" style="width: 72%"></div>
+<div class="h-full bg-error-container" style="width: 28%"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Pros & Cons -->
+<div class="col-span-12 lg:col-span-5 grid grid-rows-2 gap-6">
+<div class="bg-surface-container-low border border-outline-variant/10 rounded-xl p-6">
+<div class="flex items-center gap-2 mb-4 text-primary">
+<span class="material-symbols-outlined">add_circle</span>
+<h3 class="font-bold">Key Pros</h3>
+</div>
+<ul class="space-y-2">
+<li class="flex items-start gap-2 text-sm text-on-surface-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 shrink-0"></span>
+                                Exceptional low-light photography capabilities.
+                            </li>
+<li class="flex items-start gap-2 text-sm text-on-surface-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 shrink-0"></span>
+                                Industry-leading refresh rate and display brightness.
+                            </li>
+<li class="flex items-start gap-2 text-sm text-on-surface-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 shrink-0"></span>
+                                Sleek, minimalist titanium chassis design.
+                            </li>
+</ul>
+</div>
+<div class="bg-error-container/10 border border-error-container/20 rounded-xl p-6">
+<div class="flex items-center gap-2 mb-4 text-error">
+<span class="material-symbols-outlined">remove_circle</span>
+<h3 class="font-bold text-on-error-container">Key Cons</h3>
+</div>
+<ul class="space-y-2">
+<li class="flex items-start gap-2 text-sm text-on-surface-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-error mt-1.5 shrink-0"></span>
+                                Significant thermal throttling during gaming.
+                            </li>
+<li class="flex items-start gap-2 text-sm text-on-surface-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-error mt-1.5 shrink-0"></span>
+                                Slow wired charging speeds compared to rivals.
+                            </li>
+</ul>
+</div>
+</div>
+<!-- Tag Cloud (Keywords) -->
+<div class="col-span-12 bg-surface-container-lowest border border-outline-variant/10 rounded-xl p-8">
+<h2 class="text-xl font-bold mb-6">Trending Keywords</h2>
+<div class="flex flex-wrap gap-4 items-center justify-center">
+<span class="text-3xl font-extrabold text-primary hover:scale-110 transition-transform cursor-default">OLED Display</span>
+<span class="text-lg font-medium text-on-surface-variant hover:text-on-surface transition-colors cursor-default">Fingerprint</span>
+<span class="text-2xl font-bold text-secondary hover:scale-110 transition-transform cursor-default">Night Mode</span>
+<span class="text-base font-medium text-outline hover:text-on-surface transition-colors cursor-default">Software Update</span>
+<span class="text-4xl font-extrabold text-on-surface hover:scale-110 transition-transform cursor-default">Processing Power</span>
+<span class="text-xl font-semibold text-tertiary hover:scale-110 transition-transform cursor-default">Titanium</span>
+<span class="text-sm font-medium text-on-surface-variant hover:text-on-surface transition-colors cursor-default">Eco-friendly</span>
+<span class="text-2xl font-bold text-primary-fixed-dim hover:scale-110 transition-transform cursor-default">4K Video</span>
+<span class="text-lg font-medium text-secondary-fixed-dim hover:text-on-surface transition-colors cursor-default">Face ID</span>
+<span class="text-3xl font-bold text-tertiary-fixed-dim hover:scale-110 transition-transform cursor-default">Battery Drain</span>
+<span class="text-xl font-semibold text-on-surface-variant hover:scale-110 transition-transform cursor-default">Haptics</span>
+</div>
+</div>
+<!-- Detailed Analysis Data Table -->
+<div class="col-span-12 bg-surface-container-lowest border border-outline-variant/10 rounded-xl overflow-hidden">
+<div class="p-8 pb-4">
+<h2 class="text-xl font-bold">Latest Sentiment Samples</h2>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low text-on-surface-variant text-xs uppercase tracking-wider">
+<th class="px-8 py-4 font-bold">Review Snippet</th>
+<th class="px-8 py-4 font-bold">Sentiment</th>
+<th class="px-8 py-4 font-bold">Reliability</th>
+<th class="px-8 py-4 font-bold">Source</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/10">
+<tr class="hover:bg-surface-container-high transition-colors">
+<td class="px-8 py-5 text-sm">"The camera system is literally magic. Best phone I've ever owned for hiking photos."</td>
+<td class="px-8 py-5">
+<span class="px-2 py-1 bg-tertiary-container text-on-tertiary-container text-xs font-bold rounded">POSITIVE</span>
+</td>
+<td class="px-8 py-5 text-sm font-medium">98%</td>
+<td class="px-8 py-5 text-sm text-on-surface-variant italic">Amazon Verified</td>
+</tr>
+<tr class="hover:bg-surface-container-high transition-colors">
+<td class="px-8 py-5 text-sm">"Battery dies before dinner time. Very disappointed for the price they charge."</td>
+<td class="px-8 py-5">
+<span class="px-2 py-1 bg-error-container text-on-error-container text-xs font-bold rounded">NEGATIVE</span>
+</td>
+<td class="px-8 py-5 text-sm font-medium">94%</td>
+<td class="px-8 py-5 text-sm text-on-surface-variant italic">BestBuy User</td>
+</tr>
+<tr class="hover:bg-surface-container-high transition-colors">
+<td class="px-8 py-5 text-sm">"Fastest phone ever, but gets really warm while playing Genshin Impact."</td>
+<td class="px-8 py-5">
+<span class="px-2 py-1 bg-secondary-container text-on-secondary-container text-xs font-bold rounded">MIXED</span>
+</td>
+<td class="px-8 py-5 text-sm font-medium">89%</td>
+<td class="px-8 py-5 text-sm text-on-surface-variant italic">Reddit Tech</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="p-4 bg-surface-container-low flex justify-center border-t border-outline-variant/10">
+<button class="text-primary text-sm font-bold flex items-center gap-1 hover:underline">
+                            View All Raw Data <span class="material-symbols-outlined text-sm">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer Decoration -->
+<footer class="p-10 text-center opacity-30">
+<div class="flex justify-center gap-4 items-center">
+<div class="h-[1px] w-20 bg-on-surface"></div>
+<p class="text-xs font-bold uppercase tracking-widest">ReviewMind Cognitive Analysis v2.4</p>
+<div class="h-[1px] w-20 bg-on-surface"></div>
+</div>
+</footer>
+</main>
+</body></html>

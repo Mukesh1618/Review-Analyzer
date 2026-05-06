@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ReviewMind | AI-Powered Customer Intelligence</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                "surface-bright": "#363941",
+                "tertiary": "#ffb786",
+                "surface": "#10131a",
+                "on-tertiary-container": "#461f00",
+                "on-secondary-fixed": "#07006c",
+                "primary-fixed": "#d8e2ff",
+                "on-primary-container": "#00285d",
+                "on-primary-fixed": "#001a42",
+                "inverse-surface": "#e1e2ec",
+                "primary-fixed-dim": "#adc6ff",
+                "on-tertiary-fixed": "#311400",
+                "surface-tint": "#adc6ff",
+                "tertiary-container": "#df7412",
+                "secondary-container": "#3131c0",
+                "error": "#ffb4ab",
+                "tertiary-fixed-dim": "#ffb786",
+                "on-background": "#e1e2ec",
+                "background": "#10131a",
+                "on-secondary-container": "#b0b2ff",
+                "surface-container-low": "#191b23",
+                "inverse-primary": "#005ac2",
+                "on-primary": "#002e6a",
+                "secondary": "#c0c1ff",
+                "surface-container-lowest": "#0b0e15",
+                "on-surface-variant": "#c2c6d6",
+                "error-container": "#93000a",
+                "on-tertiary": "#502400",
+                "primary-container": "#4d8eff",
+                "on-surface": "#e1e2ec",
+                "on-error-container": "#ffdad6",
+                "secondary-fixed": "#e1e0ff",
+                "surface-container-high": "#272a31",
+                "primary": "#adc6ff",
+                "on-secondary": "#1000a9",
+                "on-error": "#690005",
+                "outline": "#8c909f",
+                "on-primary-fixed-variant": "#004395",
+                "surface-container-highest": "#32353c",
+                "on-secondary-fixed-variant": "#2f2ebe",
+                "secondary-fixed-dim": "#c0c1ff",
+                "on-tertiary-fixed-variant": "#723600",
+                "surface-variant": "#32353c",
+                "outline-variant": "#424754",
+                "surface-container": "#1d2027",
+                "inverse-on-surface": "#2e3038",
+                "surface-dim": "#10131a",
+                "tertiary-fixed": "#ffdcc6"
+            },
+            "borderRadius": {
+                "DEFAULT": "0.125rem",
+                "lg": "0.25rem",
+                "xl": "0.5rem",
+                "full": "0.75rem"
+            },
+            "spacing": {
+                "xs": "4px",
+                "container-max": "1280px",
+                "unit": "4px",
+                "sm": "8px",
+                "xl": "48px",
+                "lg": "24px",
+                "gutter": "24px",
+                "md": "16px"
+            },
+            "fontFamily": {
+                "display-lg": ["Manrope"],
+                "body-lg": ["Manrope"],
+                "headline-md": ["Manrope"],
+                "headline-lg": ["Manrope"],
+                "body-md": ["Manrope"],
+                "label-md": ["Manrope"],
+                "caption": ["Manrope"]
+            },
+            "fontSize": {
+                "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                "caption": ["12px", {"lineHeight": "16px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+    <style>
+      body { font-family: 'Manrope', sans-serif; }
+      .glass-effect {
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+      }
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      .editorial-shadow {
+        box-shadow: 0 12px 40px -12px rgba(0, 0, 0, 0.4);
+      }
+      .primary-gradient {
+        background: linear-gradient(135deg, #adc6ff 0%, #4d8eff 100%);
+      }
+    </style>
+  </head>
+  <body class="bg-background text-on-background selection:bg-primary-container selection:text-on-primary-container dark">
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
