@@ -56,21 +56,42 @@ async def select_product(product_id: str):
 @app.post("/upload")
 async def upload_file(file: UploadFile = File(...)):
     content = await file.read()
+    reviews = []
     
+    # Try to parse as JSON
     try:
-        df = pd.read_csv(io.BytesIO(content))
-        col = next((c for c in df.columns if 'review' in c.lower() or 'text' in c.lower()), df.columns[0])
-        reviews = df[col].dropna().astype(str).tolist()
+        import json
+        data = json.loads(content)
+        if isinstance(data, dict) and "reviews" in data:
+            reviews = [r["text"] if isinstance(r, dict) and "text" in r else str(r) for r in data["reviews"]]
+        elif isinstance(data, list):
+            reviews = [r["text"] if isinstance(r, dict) and "text" in r else str(r) for r in data]
     except Exception:
-        text = content.decode('utf-8', errors='ignore')
-        reviews = [line.strip() for line in text.split('\n') if line.strip()]
+        pass
+
+    # If JSON failed, try to parse as CSV
+    if not reviews:
+        try:
+            df = pd.read_csv(io.BytesIO(content))
+            col = next((c for c in df.columns if 'review' in c.lower() or 'text' in c.lower()), df.columns[0])
+            reviews = df[col].dropna().astype(str).tolist()
+        except Exception:
+            pass
+
+    # If both JSON and CSV failed, treat as plain text (one review per line)
+    if not reviews:
+        try:
+            text = content.decode('utf-8', errors='ignore')
+            reviews = [line.strip() for line in text.split('\n') if line.strip()]
+        except Exception:
+            pass
 
     docs = [Document(page_content=r) for r in reviews[:100]]
     
     if docs:
         db = FAISS.from_documents(docs, embeddings)
         save_vector_db(db)
-        return {"message": f"Successfully loaded {len(docs)} reviews and saved to disk."}
+        return {"message": f"Successfully loaded {len(reviews)} reviews (indexed {len(docs)}) and saved to disk."}
     return {"message": "No reviews found."}
 
 @app.get("/analyze")

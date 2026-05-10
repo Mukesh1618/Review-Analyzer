@@ -1,10 +1,14 @@
 import os
 import time
 from typing import Any, List, Optional
+from dotenv import load_dotenv
 from langchain_groq import ChatGroq
 from langchain_core.messages import BaseMessage
 from langchain_core.outputs import ChatResult
 import groq
+
+# Load environment variables from .env file
+load_dotenv()
 
 class RetryingChatGroq(ChatGroq):
     """Custom ChatGroq wrapper with exponential backoff for rate limits."""
