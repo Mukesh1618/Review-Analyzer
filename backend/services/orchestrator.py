@@ -6,7 +6,7 @@ from backend.agents.dashboard import (
     ingest_node, run_product_name_agent, run_summary_agent,
     run_sentiment_agent, run_pros_cons_agent, run_keyword_agent,
     run_aspect_agent, run_rating_agent, run_timeline_agent,
-    run_fake_review_agent, compile_dashboard
+    run_fake_review_agent, run_metrics_agent, compile_dashboard
 )
 from backend.agents.chat import retrieve_chat_context, generate_chat_answer
 
@@ -22,6 +22,7 @@ def get_dashboard_orchestrator():
     workflow.add_node("rating", run_rating_agent)
     workflow.add_node("timeline", run_timeline_agent)
     workflow.add_node("fake", run_fake_review_agent)
+    workflow.add_node("metrics", run_metrics_agent)
     workflow.add_node("compile", compile_dashboard)
 
     workflow.add_edge(START, "ingest")
@@ -34,6 +35,7 @@ def get_dashboard_orchestrator():
     workflow.add_edge("ingest", "rating")
     workflow.add_edge("ingest", "timeline")
     workflow.add_edge("ingest", "fake")
+    workflow.add_edge("ingest", "metrics")
 
     workflow.add_edge("product_name", "compile")
     workflow.add_edge("summary", "compile")
@@ -44,6 +46,7 @@ def get_dashboard_orchestrator():
     workflow.add_edge("rating", "compile")
     workflow.add_edge("timeline", "compile")
     workflow.add_edge("fake", "compile")
+    workflow.add_edge("metrics", "compile")
     workflow.add_edge("compile", END)
 
     return workflow.compile()

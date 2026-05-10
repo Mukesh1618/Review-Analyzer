@@ -7,7 +7,7 @@ class ChatState(TypedDict):
 
 class DashboardState(TypedDict):
     query: str
-    retrieved_reviews: List[str]
+    retrieved_reviews: List[Any]
     total_reviews: int
     product_name: str
     short_summary: str
@@ -20,3 +20,7 @@ class DashboardState(TypedDict):
     predicted_rating: str
     timeline_analysis: str
     fake_review_analysis: str
+    # New fields for structured data from preferred logic
+    sentiment_distribution: dict  # {"positive": X, "neutral": Y, "negative": Z}
+    sentiment_trend: List[dict]    # [{"date": "...", "score": ...}]
+    key_metrics: dict             # {"key_strength": "...", "top_complaint": "...", "emerging_request": "...", "customer_loyalty": "..."}
