@@ -260,50 +260,69 @@ const Dashboard_Dark = () => {
                                     <div className="flex items-center justify-between mb-8 text-left">
                                         <div>
                                             <h3 className="text-lg font-bold font-headline-md text-on-surface">Sentiment Trend</h3>
-                                            <p className="text-on-surface-variant text-xs">AI chronological analysis</p>
+                                            <p className="text-on-surface-variant text-xs">AI chronological analysis of user feedback</p>
                                         </div>
                                     </div>
                                     <div className="h-64 w-full relative group overflow-hidden">
-                                        <svg className="w-full h-full overflow-visible" preserveAspectRatio="none" viewBox="0 0 1000 256">
-                                            <defs>
-                                                <linearGradient id="chartGradient" x1="0" x2="0" y1="0" y2="1">
-                                                    <stop offset="0%" stopColor="#adc6ff" stopOpacity="0.2"></stop>
-                                                    <stop offset="100%" stopColor="#adc6ff" stopOpacity="0"></stop>
-                                                </linearGradient>
-                                            </defs>
-                                            <path
-                                                d={(data?.sentiment_trend?.length || 0) > 1 ?
-                                                    `M ${data.sentiment_trend.map((t, i) => `${(i / (data.sentiment_trend.length-1)) * 1000},${256 - ((t.score || 0) * 25.6)}`).join(' L ')}` :
-                                                    "M 0,128 L 1000,128"}
-                                                fill="none" stroke="#adc6ff" strokeLinecap="round" strokeWidth="3"
-                                            ></path>
-                                            {data?.sentiment_trend?.map((t, i) => (
-                                                <g key={i} className="group/point">
-                                                    <circle
-                                                        cx={(i / (data.sentiment_trend.length-1)) * 1000}
-                                                        cy={256 - ((t.score || 0) * 25.6)}
-                                                        fill="#adc6ff" r="6" stroke="#10131a" strokeWidth="2"
-                                                        className="cursor-pointer"
-                                                    ></circle>
-                                                    <foreignObject
-                                                        x={(i / (data.sentiment_trend.length-1)) * 1000 - 50}
-                                                        y={256 - ((t.score || 0) * 25.6) - 50}
-                                                        width="100" height="40"
-                                                        className="opacity-0 group-hover/point:opacity-100 transition-opacity pointer-events-none"
-                                                    >
-                                                        <div className="bg-surface-container-highest border border-primary/20 rounded px-2 py-1 text-center shadow-xl">
-                                                            <p className="text-[10px] font-bold text-on-surface leading-tight">{t.date}</p>
-                                                            <p className="text-[10px] font-black text-primary leading-tight">Score: {t.score}/10</p>
-                                                        </div>
-                                                    </foreignObject>
-                                                </g>
-                                            ))}
-                                        </svg>
+                                        {data?.sentiment_trend && data.sentiment_trend.length > 0 ? (
+                                            <>
+                                                <svg className="w-full h-full overflow-visible" preserveAspectRatio="none" viewBox="0 0 1000 256">
+                                                    <defs>
+                                                        <linearGradient id="chartGradient" x1="0" x2="0" y1="0" y2="1">
+                                                            <stop offset="0%" stopColor="#adc6ff" stopOpacity="0.2"></stop>
+                                                            <stop offset="100%" stopColor="#adc6ff" stopOpacity="0"></stop>
+                                                        </linearGradient>
+                                                    </defs>
+                                                    <path
+                                                        d={data.sentiment_trend.length > 1 ?
+                                                            `M ${data.sentiment_trend.map((t, i) => `${(i / (data.sentiment_trend.length-1)) * 1000},${256 - ((t.score || 0) * 25.6)}`).join(' L ')}` :
+                                                            "M 0,128 L 1000,128"}
+                                                        fill="none" stroke="#adc6ff" strokeLinecap="round" strokeWidth="3"
+                                                    ></path>
+                                                    {data.sentiment_trend.map((t, i) => (
+                                                        <g key={i} className="group/point">
+                                                            <circle
+                                                                cx={(i / (data.sentiment_trend.length-1)) * 1000}
+                                                                cy={256 - ((t.score || 0) * 25.6)}
+                                                                fill="#adc6ff" r="6" stroke="#10131a" strokeWidth="2"
+                                                                className="cursor-pointer transition-all hover:r-8"
+                                                            ></circle>
+                                                            <foreignObject
+                                                                x={(i / (data.sentiment_trend.length-1)) * 1000 - 60}
+                                                                y={256 - ((t.score || 0) * 25.6) - 60}
+                                                                width="120" height="50"
+                                                                className="opacity-0 group-hover/point:opacity-100 transition-opacity pointer-events-none"
+                                                            >
+                                                                <div className="bg-surface-container-highest border border-primary/30 rounded-lg px-3 py-2 text-center shadow-2xl backdrop-blur-md">
+                                                                    <p className="text-[10px] font-bold text-on-surface leading-tight">Date : {t.date}</p>
+                                                                    <p className="text-[10px] font-black text-primary leading-tight mt-1">Score : {t.score}</p>
+                                                                </div>
+                                                            </foreignObject>
+                                                        </g>
+                                                    ))}
+                                                </svg>
+                                            </>
+                                        ) : (
+                                            <div className="h-full flex items-center justify-center text-on-surface-variant/50 italic">No trend data available</div>
+                                        )}
                                     </div>
-                                    <div className="flex justify-between mt-6 text-[10px] font-bold text-on-surface-variant uppercase tracking-widest px-4 border-t border-outline-variant/10 pt-4">
-                                        <span>Start of Data</span>
-                                        <span>Product Lifecycle Trend</span>
-                                        <span>End of Data</span>
+                                    <div className="flex justify-between mt-8 px-2 border-t border-outline-variant/10 pt-4">
+                                        {(() => {
+                                            const trend = data?.sentiment_trend || [];
+                                            if (trend.length === 0) return null;
+                                            // Select max 5 evenly spaced labels
+                                            const labelCount = Math.min(trend.length, 5);
+                                            const labels = [];
+                                            for (let i = 0; i < labelCount; i++) {
+                                                const index = Math.floor(i * (trend.length - 1) / (labelCount - 1));
+                                                labels.push(
+                                                    <span key={i} className="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">
+                                                        {trend[index].date}
+                                                    </span>
+                                                );
+                                            }
+                                            return labels;
+                                        })()}
                                     </div>
                                 </div>
                             </div>
