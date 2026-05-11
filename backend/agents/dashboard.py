@@ -14,133 +14,198 @@ def ingest_node(state: DashboardState):
     if not db:
         return {"retrieved_reviews": [], "total_reviews": 0}
 
-    # Retrieve up to 50 reviews for a good balance of accuracy and token limits
-    docs = db.similarity_search(state["query"], k=50)
+    # Retrieve up to 100 reviews to ensure comprehensive analysis
+    docs = db.similarity_search(state["query"], k=100)
     reviews = [doc.page_content for doc in docs]
 
     total = db.index.ntotal if hasattr(db, 'index') else len(reviews)
     return {"retrieved_reviews": reviews, "total_reviews": total}
 
-def run_product_name_agent(state: DashboardState):
-    if state.get("product_name") and state["product_name"] not in ["", "Unknown Product", "default"]:
-        return {"product_name": state["product_name"]}
 
-    reviews = "\n- ".join(state["retrieved_reviews"][:10])
-    if not reviews: return {"product_name": "Unknown Product"}
+def run_identity_agent(state: DashboardState):
+    """Group A: Product Identity and Final Rating"""
+    reviews_list = state.get("retrieved_reviews", [])
+    if not reviews_list: 
+        return {"product_name": "Unknown Product", "predicted_rating": "N/A"}
+
+    reviews_text = "\n- ".join(reviews_list[:20]) # Small sample is enough for identity
+    existing_name = state.get("product_name")
+    name_instruction = f"The product name is already known as '{existing_name}'. Use it." if existing_name and existing_name not in ["", "Unknown Product", "default"] else "Extract the specific product name from the reviews."
+
     prompt = ChatPromptTemplate.from_messages([
-        ("system", "Extract the specific product name. Return ONLY the product name, no other text."),
-        ("user", "Reviews:\n- {reviews}")
-    ])
-    out = clean_llm_output((prompt | llm_0).invoke({"reviews": reviews}).content)
-    if not out or out.strip().lower() == "none":
-        out = "Unknown Product"
-    set_product_name(out)
-    return {"product_name": out}
+        ("system", f"""You are a product researcher.
+1. NAME: {name_instruction}
+2. RATING: Predict a 1-5 star rating based on the overall sentiment.
 
-def run_summary_agent(state: DashboardState):
-    reviews = "\n- ".join(state["retrieved_reviews"][:30])
-    if not reviews: return {"short_summary": "No data", "detailed_summary": "No data"}
+Format EXACTLY as:
+NAME: [Value]
+RATING: [X]/5 Stars
+REASONING: [Reason]""" + SYSTEM_RESTRICTION),
+        ("user", "Reviews:\n{reviews}")
+    ])
+    
+    out = clean_llm_output((prompt | llm_0).invoke({"reviews": reviews_text}).content)
+    
+    name_match = re.search(r"NAME:\s*(.*)", out)
+    name = name_match.group(1).strip() if name_match else (existing_name or "Unknown Product")
+    if not name or name.lower() == "none": name = "Unknown Product"
+    
+    rating_match = re.search(r"RATING:\s*(.*)", out)
+    rating = f"⭐ PREDICTED RATING: {rating_match.group(1).strip()}" if rating_match else "N/A"
 
-    short_prompt = ChatPromptTemplate.from_messages([
-        ("system", "Provide a 3 sentence concise summary. No bolding/symbols."),
-        ("user", "Reviews:\n- {reviews}")
-    ])
-    detailed_prompt = ChatPromptTemplate.from_messages([
-        ("system", "Provide a detailed summary under 400 words. Use bullet points. No bolding."),
-        ("user", "Reviews:\n- {reviews}")
-    ])
+    if not existing_name or existing_name in ["", "Unknown Product", "default"]:
+        set_product_name(name)
 
     return {
-        "short_summary": clean_llm_output((short_prompt | llm_1).invoke({"reviews": reviews}).content),
-        "detailed_summary": clean_llm_output((detailed_prompt | llm_1).invoke({"reviews": reviews}).content)
+        "product_name": name,
+        "predicted_rating": rating
     }
 
-def run_sentiment_agent(state: DashboardState):
+
+def run_descriptive_agent(state: DashboardState):
+    """Group B: Summaries, Pros, Cons, and Keywords"""
     reviews_list = state.get("retrieved_reviews", [])
-    if not reviews_list:
-        print("❌ Sentiment Agent: No reviews in state!")
-        return {"sentiment_analysis": "No reviews found to analyze.", "sentiment_distribution": {"positive": 0, "neutral": 0, "negative": 0}}
-    
-    # Process reviews in a structured way (cap at 50 for token limits)
-    reviews_text = ""
-    for i, r in enumerate(reviews_list[:50]):
-        reviews_text += f"Review {i+1}: {r}\n"
+    if not reviews_list: 
+        return {"short_summary": "No data", "detailed_summary": "No data", "pros": "No data", "cons": "No data", "keyword_analysis": ""}
+
+    reviews_text = "\n- ".join(reviews_list[:30]) # Good sample for qualitative data
 
     prompt = ChatPromptTemplate.from_messages([
-        ("system", """You are a precise data extraction tool. 
-Task: Count sentiments.
-Example Output: {{"positive": 10, "neutral": 2, "negative": 3, "explanation": "Most users liked the screen but hated the hinge."}}
+        ("system", """You are a professional product analyst.
+Read the reviews and provide:
+1. SHORT SUMMARY: 3 concise sentences. No bolding.
+2. DETAILED SUMMARY: Structured breakdown under 400 words. Bullet points allowed. No bolding.
+3. PROS: Simple bulleted list of key advantages. No bolding.
+4. CONS: Simple bulleted list of key disadvantages. No bolding.
+5. KEYWORDS: Exactly 5 UNIQUE product features (e.g., 'OLED Display', 'Battery Life'). Do not use generic words like 'laptop'. Comma-separated only.
 
-Return ONLY the JSON object. No other text. No thinking.""" + SYSTEM_RESTRICTION),
-        ("user", "Analyze these reviews:\n{reviews}")
+Format EXACTLY using these markers:
+[[SHORT]]
+[Text]
+[[DETAILED]]
+[Text]
+[[PROS]]
+- [Item]
+[[CONS]]
+- [Item]
+[[KEYWORDS]]
+[Key1, Key2, Key3...]""" + SYSTEM_RESTRICTION),
+        ("user", "Reviews:\n{reviews}")
     ])
+
+    out = clean_llm_output((prompt | llm_1).invoke({"reviews": reviews_text}).content)
+
+    # Robust parsing using markers
+    try:
+        short = out.split("[[SHORT]]")[1].split("[[DETAILED]]")[0].strip()
+    except: short = "Analysis failed."
     
     try:
-        response = (prompt | llm_0).invoke({"reviews": reviews_text})
-        raw_out = clean_llm_output(response.content)
-        
-        pos, neu, neg = 0, 0, 0
-        expl = ""
+        detailed = out.split("[[DETAILED]]")[1].split("[[PROS]]")[0].strip()
+    except: detailed = "Analysis failed."
+    
+    try:
+        pros = out.split("[[PROS]]")[1].split("[[CONS]]")[0].strip()
+    except: pros = "Analysis failed."
+    
+    try:
+        cons = out.split("[[CONS]]")[1].split("[[KEYWORDS]]")[0].strip()
+    except: cons = "Analysis failed."
+    
+    try:
+        kw_str = out.split("[[KEYWORDS]]")[1].strip()
+        keywords = [k.strip().replace("*", "").replace("-", "") for k in kw_str.split(",")]
+        kw_final = ", ".join(keywords[:5])
+    except: kw_final = ""
 
-        # 1. Try JSON parsing
-        try:
-            json_match = re.search(r"\{.*\}", raw_out, re.DOTALL)
-            if json_match:
-                json_data = json.loads(json_match.group(0))
-                pos = int(json_data.get("positive", 0))
-                neu = int(json_data.get("neutral", 0))
-                neg = int(json_data.get("negative", 0))
-                expl = json_data.get("explanation", "")
-        except Exception:
-            pass
-
-        # 2. Fallback to robust Regex if JSON parsing failed to get valid counts
-        if pos == 0 and neu == 0 and neg == 0:
-            p_m = re.search(r"positive.:\s*(\d+)", raw_out, re.I)
-            nu_m = re.search(r"neutral.:\s*(\d+)", raw_out, re.I)
-            ne_m = re.search(r"negative.:\s*(\d+)", raw_out, re.I)
-            pos = int(p_m.group(1)) if p_m else 0
-            neu = int(nu_m.group(1)) if nu_m else 0
-            neg = int(ne_m.group(1)) if ne_m else 0
-            expl = raw_out
-
-        total = (pos + neu + neg) or 1
-        score = ((pos + 0.5 * neu) / total) * 10
-        
-        final_text = f"OVERALL SCORE: {score:.1f}/10\n\nDISTRIBUTION:\n- Positive: {pos}\n- Neutral: {neu}\n- Negative: {neg}\n\nREASONING: {expl}"
-        
-        print(f"✅ Sentiment Agent: Score {score:.1f} (P:{pos} N:{neu} Neg:{neg})")
-        return {
-            "sentiment_analysis": final_text,
-            "sentiment_distribution": {"positive": pos, "neutral": neu, "negative": neg}
-        }
-    except Exception as e:
-        print(f"❌ Sentiment Agent Error: {e}")
-        return {"sentiment_analysis": "Error analyzing sentiment.", "sentiment_distribution": {"positive": 0, "neutral": 0, "negative": 0}}
-
-def run_pros_cons_agent(state: DashboardState):
-    reviews = "\n- ".join(state["retrieved_reviews"])
-    if not reviews: return {"pros": "", "cons": ""}
-    prompt_pros = ChatPromptTemplate.from_messages([("system", "Extract key advantages. Bulleted list. No bolding."), ("user", "{reviews}")])
-    prompt_cons = ChatPromptTemplate.from_messages([("system", "Extract key disadvantages. Bulleted list. No bolding."), ("user", "{reviews}")])
     return {
-        "pros": clean_llm_output((prompt_pros | llm_1).invoke({"reviews": reviews}).content),
-        "cons": clean_llm_output((prompt_cons | llm_1).invoke({"reviews": reviews}).content)
+        "short_summary": short,
+        "detailed_summary": detailed,
+        "pros": pros,
+        "cons": cons,
+        "keyword_analysis": kw_final
     }
 
-def run_keyword_agent(state: DashboardState):
-    reviews = "\n- ".join(state["retrieved_reviews"])
-    if not reviews: return {"keyword_analysis": ""}
+
+def run_scoring_agent(state: DashboardState):
+    """Group C: Sentiment Distribution, Key Metrics, and Aspects"""
+    reviews_list = state.get("retrieved_reviews", [])
+    if not reviews_list: 
+        return {"sentiment_analysis": "No data", "sentiment_distribution": {"positive": 0, "neutral": 0, "negative": 0}, "key_metrics": {}, "aspect_analysis": "No data"}
+
+    reviews_text = "\n".join(reviews_list[:50]) # Use a larger set for accurate counting
+
     prompt = ChatPromptTemplate.from_messages([
-        ("system", "Extract top 5 UNIQUE product features. Return ONLY a comma-separated list."),
-        ("user", "Reviews:\n- {reviews}")
+        ("system", """You are a quantitative data analyst.
+Analyze the reviews and return ONLY a valid JSON object. Do not include any formatting blocks like ```json.
+{{
+  "positive_count": [int],
+  "neutral_count": [int],
+  "negative_count": [int],
+  "explanation": "[1 sentence reason]",
+  "strength": "[Brief phrase]",
+  "complaint": "[Brief phrase]",
+  "request": "[Brief phrase]",
+  "loyalty": "[Brief phrase]",
+  "aspects": "[Markdown list. e.g., \\n- **Battery**: 8/10\\n- **Screen**: 9/10]"
+}}""" + SYSTEM_RESTRICTION),
+        ("user", "Reviews:\n{reviews}")
     ])
-    out = clean_llm_output((prompt | llm_0).invoke({"reviews": reviews}).content)
-    keywords = [k.strip().replace("*", "").replace("-", "") for k in out.split(",")]
-    return {"keyword_analysis": ", ".join(keywords[:5])}
+
+    out = clean_llm_output((prompt | llm_0).invoke({"reviews": reviews_text}).content)
+    
+    # Defaults
+    pos, neu, neg = 0, 0, 0
+    expl = "Sentiment analysis failed."
+    metrics = {"key_strength": "N/A", "top_complaint": "N/A", "emerging_request": "N/A", "customer_loyalty": "N/A"}
+    aspects = "Aspect analysis unavailable."
+
+    # Try JSON parsing
+    try:
+        # Strip potential markdown blocks just in case
+        json_str = out.replace("```json", "").replace("```", "").strip()
+        json_match = re.search(r"\{.*\}", json_str, re.DOTALL)
+        if json_match:
+            data = json.loads(json_match.group(0))
+            pos = int(data.get("positive_count", 0))
+            neu = int(data.get("neutral_count", 0))
+            neg = int(data.get("negative_count", 0))
+            expl = str(data.get("explanation", expl))
+            metrics["key_strength"] = str(data.get("strength", "N/A"))
+            metrics["top_complaint"] = str(data.get("complaint", "N/A"))
+            metrics["emerging_request"] = str(data.get("request", "N/A"))
+            metrics["customer_loyalty"] = str(data.get("loyalty", "N/A"))
+            aspects = str(data.get("aspects", aspects))
+    except Exception as e:
+        print(f"❌ Scoring Agent JSON Parsing Error: {e}")
+        # Regex fallback for counts if JSON fails completely
+        p_m = re.search(r'"positive_count":\s*(\d+)', out, re.I)
+        nu_m = re.search(r'"neutral_count":\s*(\d+)', out, re.I)
+        ne_m = re.search(r'"negative_count":\s*(\d+)', out, re.I)
+        if p_m: pos = int(p_m.group(1))
+        if nu_m: neu = int(nu_m.group(1))
+        if ne_m: neg = int(ne_m.group(1))
+
+    # Strict Python calculation to guarantee score accuracy
+    total = (pos + neu + neg) or 1
+    score = ((pos + 0.5 * neu) / total) * 10
+    
+    final_text = f"OVERALL SCORE: {score:.1f}/10\n\nDISTRIBUTION:\n- Positive: {pos}\n- Neutral: {neu}\n- Negative: {neg}\n\nREASONING: {expl}"
+
+    return {
+        "sentiment_analysis": final_text,
+        "sentiment_distribution": {"positive": pos, "neutral": neu, "negative": neg},
+        "key_metrics": metrics,
+        "aspect_analysis": aspects
+    }
+
+
 def run_timeline_agent(state: DashboardState):
-    reviews = "\n- ".join(state["retrieved_reviews"])
-    if not reviews: return {"timeline_analysis": "No data", "sentiment_trend": []}
+    reviews_list = state.get("retrieved_reviews", [])
+    if not reviews_list: 
+        return {"timeline_analysis": "No data", "sentiment_trend": []}
+
+    reviews_text = "\n- ".join(reviews_list[:100]) # Need full set for timeline
 
     prompt = ChatPromptTemplate.from_messages([
         ("system", """You are a time-series analyst. 
@@ -155,10 +220,10 @@ CRITICAL:
 1. Use ONLY the date in the format YYYY-MM-DD. 
 2. Do NOT include descriptions like 'hinge issues' or 'peak positivity'. 
 3. Return ONLY the list of points, one per line.""" + SYSTEM_RESTRICTION),
-        ("user", "{reviews}")
+        ("user", "Reviews:\n{reviews}")
     ])
 
-    out = clean_llm_output((prompt | llm_0).invoke({"reviews": reviews}).content)
+    out = clean_llm_output((prompt | llm_0).invoke({"reviews": reviews_text}).content)
 
     trend = []
     # Regex to catch YYYY-MM-DD or Month Day, Year formats (bullet optional)
@@ -175,48 +240,20 @@ CRITICAL:
     return {"timeline_analysis": out, "sentiment_trend": trend}
 
 
-def run_metrics_agent(state: DashboardState):
-    reviews = "\n- ".join(state["retrieved_reviews"])
-    if not reviews: return {"key_metrics": {"key_strength": "N/A", "top_complaint": "N/A", "emerging_request": "N/A", "customer_loyalty": "N/A"}}
-    prompt = ChatPromptTemplate.from_messages([
-        ("system", "Extract metrics (phrase each): STRENGTH: [X] COMPLAINT: [X] REQUEST: [X] LOYALTY: [X]"),
-        ("user", "{reviews}")
-    ])
-    out = clean_llm_output((prompt | llm_0).invoke({"reviews": reviews}).content)
-    metrics = {
-        "key_strength": re.search(r"STRENGTH:\s*(.*)", out, re.I).group(1) if re.search(r"STRENGTH:\s*(.*)", out, re.I) else "N/A",
-        "top_complaint": re.search(r"COMPLAINT:\s*(.*)", out, re.I).group(1) if re.search(r"COMPLAINT:\s*(.*)", out, re.I) else "N/A",
-        "emerging_request": re.search(r"REQUEST:\s*(.*)", out, re.I).group(1) if re.search(r"REQUEST:\s*(.*)", out, re.I) else "N/A",
-        "customer_loyalty": re.search(r"LOYALTY:\s*(.*)", out, re.I).group(1) if re.search(r"LOYALTY:\s*(.*)", out, re.I) else "N/A"
-    }
-    return {"key_metrics": metrics}
+def run_security_agent(state: DashboardState):
+    reviews_list = state.get("retrieved_reviews", [])
+    if not reviews_list: 
+        return {"fake_review_analysis": "No data"}
+    
+    reviews_text = "\n- ".join(reviews_list[:30])
 
-def run_fake_review_agent(state: DashboardState):
-    reviews = "\n- ".join(state["retrieved_reviews"])
-    if not reviews: return {"fake_review_analysis": "No data"}
     prompt = ChatPromptTemplate.from_messages([
-        ("system", "Identify suspicious/spam reviews."),
-        ("user", "{reviews}")
+        ("system", "Identify suspicious/spam reviews. Output EXACTLY as:\n🛡️ AUTHENTICITY ANALYSIS:\n\nTrust Score: [X]%\n- [Num] suspicious reviews detected\n\nSUSPICIOUS REVIEWS:\n- [Review]: [Reason]\n\nRELIABILITY INDICATORS:\n- [Indicator]\n\nRED FLAGS:\n- [Flag]" + SYSTEM_RESTRICTION),
+        ("user", "Reviews:\n{reviews}")
     ])
-    return {"fake_review_analysis": clean_llm_output((prompt | llm_0).invoke({"reviews": reviews}).content)}
+    
+    return {"fake_review_analysis": clean_llm_output((prompt | llm_0).invoke({"reviews": reviews_text}).content)}
 
-def run_aspect_agent(state: DashboardState):
-    reviews = "\n- ".join(state["retrieved_reviews"])
-    if not reviews: return {"aspect_analysis": ""}
-    prompt = ChatPromptTemplate.from_messages([
-        ("system", "Extract aspects and scores (0-10). Format: [Aspect]: [Score]"),
-        ("user", "{reviews}")
-    ])
-    return {"aspect_analysis": clean_llm_output((prompt | llm_0).invoke({"reviews": reviews}).content)}
-
-def run_rating_agent(state: DashboardState):
-    reviews = "\n- ".join(state["retrieved_reviews"])
-    if not reviews: return {"predicted_rating": "N/A"}
-    prompt = ChatPromptTemplate.from_messages([
-        ("system", "Predict star rating 1-5."),
-        ("user", "{reviews}")
-    ])
-    return {"predicted_rating": clean_llm_output((prompt | llm_0).invoke({"reviews": reviews}).content)}
 
 def compile_dashboard(state: DashboardState):
     return state

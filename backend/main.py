@@ -16,7 +16,7 @@ load_dotenv()
 from backend.db.vectorstore import load_vector_db, get_db, save_vector_db, get_product_name, get_all_products, embeddings, FAISS_BASE_PATH
 from backend.services.orchestrator import dashboard_orchestrator, chat_orchestrator
 from backend.utils.helpers import clean_llm_output
-from backend.agents.dashboard import run_product_name_agent
+from backend.agents.dashboard import run_identity_agent
 
 app = FastAPI(title="ReviewMind API")
 
@@ -100,7 +100,7 @@ async def upload_file(file: UploadFile = File(...)):
     # Identify the product name (fallback to agent if not in metadata)
     if not detected_name:
         temp_docs = [Document(page_content=r) for r in reviews[:10]]
-        product_result = run_product_name_agent({"retrieved_reviews": [d.page_content for d in temp_docs]})
+        product_result = run_identity_agent({"retrieved_reviews": [d.page_content for d in temp_docs], "product_name": "Unknown Product"})
         product_name = product_result.get("product_name", "Unknown_Product")
     else:
         product_name = detected_name

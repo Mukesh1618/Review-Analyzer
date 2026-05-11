@@ -47,7 +47,7 @@ class RetryingChatGroq(ChatGroq):
 
 def get_llm(temperature=0.1):
     return RetryingChatGroq(
-        model_name="llama-3.3-70b-versatile", 
+        model_name="llama-3.1-8b-instant", 
         temperature=temperature,
         max_retries=5
     )
