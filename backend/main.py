@@ -13,7 +13,7 @@ from dotenv import load_dotenv
 # Load environment variables from .env file
 load_dotenv()
 
-from backend.db.vectorstore import load_vector_db, get_db, save_vector_db, get_product_name, get_all_products, embeddings, FAISS_BASE_PATH
+from backend.db.vectorstore import load_vector_db, get_db, save_vector_db, get_product_name, get_all_products, embeddings, FAISS_BASE_PATH, save_analysis_data, load_analysis_data
 from backend.services.orchestrator import dashboard_orchestrator, chat_orchestrator
 from backend.utils.helpers import clean_llm_output
 from backend.agents.dashboard import run_identity_agent
@@ -108,7 +108,7 @@ async def upload_file(file: UploadFile = File(...)):
     # Create and save a specific index for this product
     docs = [Document(page_content=r) for r in reviews]
     db = FAISS.from_documents(docs, embeddings)
-    save_vector_db(db, product_name)
+    product_id = save_vector_db(db, product_name)
 
     return {"message": f"Successfully loaded {len(docs)} reviews for '{product_name}'."}
 
@@ -117,6 +117,11 @@ async def analyze_dashboard():
     if not get_db():
         return {"error": "No data uploaded yet. Please upload a file first."}
     
+    # Check if analysis already exists
+    saved_data = load_analysis_data()
+    if saved_data:
+        return saved_data
+        
     initial_state = {
         "query": "general product feedback",
         "retrieved_reviews": [],
@@ -138,6 +143,11 @@ async def analyze_dashboard():
     }
     
     result = dashboard_orchestrator.invoke(initial_state)
+    
+    # Ensure raw documents are not saved to JSON to save space, but UI needs them for samples
+    # We will just leave them in the result for now, but save the rest
+    save_analysis_data(result)
+    
     return result
 
 if __name__ == "__main__":

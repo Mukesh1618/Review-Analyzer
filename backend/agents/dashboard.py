@@ -137,12 +137,13 @@ def run_scoring_agent(state: DashboardState):
 
     prompt = ChatPromptTemplate.from_messages([
         ("system", """You are a quantitative data analyst.
-Analyze the reviews and return ONLY a valid JSON object. Do not include any formatting blocks like ```json.
+Analyze EVERY SINGLE review provided. DO NOT guess the counts. Tally them mentally line by line.
+Return ONLY a valid JSON object. Do not include any formatting blocks like ```json.
 {{
-  "positive_count": [int],
-  "neutral_count": [int],
-  "negative_count": [int],
-  "explanation": "[1 sentence reason]",
+  "positive_count": [Exact integer tally],
+  "neutral_count": [Exact integer tally],
+  "negative_count": [Exact integer tally],
+  "explanation": "[1 sentence explaining the math or main sentiment drivers]",
   "strength": "[Brief phrase]",
   "complaint": "[Brief phrase]",
   "request": "[Brief phrase]",
