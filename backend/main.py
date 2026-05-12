@@ -1,6 +1,8 @@
 import os
 import io
 import pandas as pd
+import hashlib
+import json
 from fastapi import FastAPI, UploadFile, File, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -35,34 +37,8 @@ class ChatRequest(BaseModel):
     message: str
     thread_id: str
 
-@app.post("/chat")
-async def chat_endpoint(req: ChatRequest):
-    if not get_db():
-        return {"error": "No product selected or uploaded."}
-    
-    config = {"configurable": {"thread_id": req.thread_id}}
-    input_state = {"messages": [HumanMessage(content=req.message)]}
-    result = chat_orchestrator.invoke(input_state, config=config)
-    reply = result["messages"][-1].content
-    return {"reply": clean_llm_output(reply)}
-
-@app.get("/products")
-async def get_products():
-    return get_all_products()
-
-@app.post("/select_product")
-async def select_product(product_id: str = Query(...)):
-    db = load_vector_db(product_id)
-    if db:
-        return {"message": f"Product {product_id} selected."}
-    return {"error": "Product not found."}
-
-@app.post("/upload")
-async def upload_file(file: UploadFile = File(...)):
-    content = await file.read()
-    
+async def process_content(content: bytes):
     # 0. CALCULATE UNIQUE FINGERPRINT (HASH)
-    import hashlib
     content_hash = hashlib.sha256(content).hexdigest()
     
     text = content.decode('utf-8', errors='ignore').strip()
@@ -72,7 +48,6 @@ async def upload_file(file: UploadFile = File(...)):
     # 1. CONTENT-BASED DETECTION
     if text.startswith('{') or text.startswith('['):
         try:
-            import json
             data = json.loads(text)
             if isinstance(data, dict):
                 # Look for product name in metadata
@@ -100,7 +75,7 @@ async def upload_file(file: UploadFile = File(...)):
         reviews = [line.strip() for line in text.split('\n') if line.strip()]
 
     if not reviews:
-        return {"message": "No reviews found in the provided content."}
+        return {"error": "No reviews found in the provided content."}
 
     # Identify the product name (fallback to agent if not in metadata)
     if not detected_name:
@@ -120,7 +95,7 @@ async def upload_file(file: UploadFile = File(...)):
     if existing_hash == content_hash:
         # Re-load the database to ensure it's the current one
         load_vector_db(product_id)
-        return {"message": f"Same data detected for '{product_name}'. Analysis preserved."}
+        return {"message": f"Same data detected for '{product_name}'. Analysis preserved.", "product_id": product_id}
 
     # Create and save a new specific index for this product
     docs = [Document(page_content=r) for r in reviews]
@@ -135,7 +110,48 @@ async def upload_file(file: UploadFile = File(...)):
     if os.path.exists(analysis_path):
         os.remove(analysis_path)
 
-    return {"message": f"Successfully loaded {len(docs)} reviews for '{product_name}'. Generating fresh analysis."}
+    return {"message": f"Successfully loaded {len(docs)} reviews for '{product_name}'. Generating fresh analysis.", "product_id": product_id}
+
+@app.post("/chat")
+async def chat_endpoint(req: ChatRequest):
+    if not get_db():
+        return {"error": "No product selected or uploaded."}
+    
+    config = {"configurable": {"thread_id": req.thread_id}}
+    input_state = {"messages": [HumanMessage(content=req.message)]}
+    result = chat_orchestrator.invoke(input_state, config=config)
+    reply = result["messages"][-1].content
+    return {"reply": clean_llm_output(reply)}
+
+@app.get("/products")
+async def get_products():
+    return get_all_products()
+
+@app.post("/select_product")
+async def select_product(product_id: str = Query(...)):
+    db = load_vector_db(product_id)
+    if db:
+        return {"message": f"Product {product_id} selected."}
+    return {"error": "Product not found."}
+
+@app.post("/upload")
+async def upload_file(file: UploadFile = File(...)):
+    content = await file.read()
+    result = await process_content(content)
+    return result
+
+@app.post("/upload_sample")
+async def upload_sample(sample_name: str = Query(...)):
+    # Look for files in Sample_Files directory
+    sample_path = os.path.join("Sample_Files", sample_name)
+    if not os.path.exists(sample_path):
+        return {"error": f"Sample file {sample_name} not found."}
+    
+    with open(sample_path, "rb") as f:
+        content = f.read()
+    
+    result = await process_content(content)
+    return result
 
 @app.get("/analyze")
 async def analyze_dashboard():

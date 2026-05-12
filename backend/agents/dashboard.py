@@ -181,10 +181,15 @@ def run_scoring_agent(state: DashboardState):
     prompt = ChatPromptTemplate.from_messages([
         ("system", """You are an expert NLP data analyst.
 Classify sentiment as 'POSITIVE', 'NEGATIVE', or 'NEUTRAL'.
+
 STRICT CLASSIFICATION RULES:
-1. TEXT OVERRIDES RATING.
-2. IDENTIFY SPAM AS NEUTRAL.
-3. MIXED/AVERAGE = NEUTRAL.
+1. DECISIVE ACTION: Avoid NEUTRAL unless the review is truly indifferent (e.g., "It's fine", "Okay") or irrelevant spam.
+2. POSITIVE SIGNALS: "Solid", "Good", "Great", "Amazing", "Satisfied", or "Works well" are POSITIVE.
+3. NEGATIVE SIGNALS: "Buggy", "Crashes", "Overpriced", "Disappointed", "Annoying", "Broken", or "Slow" are NEGATIVE.
+4. DOMINANT TONE: If a review has both praise and complaints, classify by the dominant tone. 
+   - If they praise hardware but say an update "ruined" it, it is NEGATIVE.
+   - If they complain about a minor detail but "love the phone overall", it is POSITIVE.
+5. TEXT OVERRIDES RATING: Use the "text" as the source of truth.
 
 STRICT OUTPUT FORMAT:
 - Review [ID]: [CLASSIFICATION]

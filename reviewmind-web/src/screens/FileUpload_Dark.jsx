@@ -36,15 +36,40 @@ const FileUpload_Dark = () => {
                 body: formData,
             });
             const data = await response.json();
-            setMessage(data.message || "Upload successful!");
-            localStorage.removeItem('reviewMindData');
-
-            setTimeout(() => {
-                navigate('/dashboard');
-            }, 1500);
+            if (data.error) {
+                setMessage(data.error);
+            } else {
+                setMessage(data.message || "Upload successful!");
+                localStorage.removeItem('reviewMindData');
+                setTimeout(() => navigate('/dashboard'), 1500);
+            }
         } catch (error) {
             console.error('Error uploading file:', error);
             setMessage("Error uploading file. Make sure backend is running.");
+        } finally {
+            setUploading(false);
+        }
+    };
+
+    const handleSampleUpload = async (sampleName) => {
+        setUploading(true);
+        setMessage(`Loading sample: ${sampleName}...`);
+
+        try {
+            const response = await fetch(`http://127.0.0.1:8000/upload_sample?sample_name=${sampleName}`, {
+                method: 'POST'
+            });
+            const data = await response.json();
+            if (data.error) {
+                setMessage(data.error);
+            } else {
+                setMessage(data.message || "Sample loaded!");
+                localStorage.removeItem('reviewMindData');
+                setTimeout(() => navigate('/dashboard'), 1500);
+            }
+        } catch (error) {
+            console.error('Error loading sample:', error);
+            setMessage("Error loading sample. Make sure backend is running.");
         } finally {
             setUploading(false);
         }
@@ -88,12 +113,8 @@ const FileUpload_Dark = () => {
             {/* Main Content */}
             <main className="md:ml-64 flex-1 min-h-screen">
                 <header className="w-full h-16 sticky top-0 bg-background/80 backdrop-blur-md flex justify-between items-center px-8 z-30 border-b border-outline-variant/10 font-manrope text-sm">
-                    <div className="flex items-center gap-4 flex-1 text-left">
-                        <div className="relative w-full max-w-md group text-left">
-                            <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant group-focus-within:text-primary transition-colors">search</span>
-                            <input className="w-full pl-10 pr-4 py-2 bg-surface-container-low border-none rounded-full text-xs focus:ring-2 focus:ring-primary/20 focus:bg-surface-container-lowest transition-all text-on-surface placeholder:text-on-surface-variant/50" placeholder="Search analysis, files, or reports..." type="text" />
-                        </div>
-                    </div>
+                    {/* Search bar removed as per requirement */}
+                    <div className="flex-1"></div>
                 </header>
 
                 <section className="p-12 max-w-6xl mx-auto text-left">
@@ -147,12 +168,27 @@ const FileUpload_Dark = () => {
                                 </div>
                                 <p className="text-on-surface-variant text-sm mb-6 leading-relaxed">Don't have a dataset ready? Use our curated samples to see the AI analysis in action.</p>
                                 <div className="space-y-3">
-                                    <div className="p-4 bg-surface-container-lowest rounded-lg group hover:ring-2 ring-primary/30 cursor-pointer transition-all flex items-center justify-between">
+                                    <div 
+                                        onClick={() => handleSampleUpload('smartphone_reviews.txt')}
+                                        className="p-4 bg-surface-container-lowest rounded-lg group hover:ring-2 ring-primary/30 cursor-pointer transition-all flex items-center justify-between"
+                                    >
                                         <div className="flex items-center gap-3">
-                                            <span className="material-symbols-outlined text-secondary">description</span>
+                                            <span className="material-symbols-outlined text-secondary">smartphone</span>
                                             <div>
-                                                <div className="text-sm font-bold text-on-surface">E-commerce Reviews</div>
+                                                <div className="text-sm font-bold text-on-surface">Smartphone Reviews</div>
                                                 <div className="text-[10px] text-on-surface-variant">50 reviews • JSON</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div 
+                                        onClick={() => handleSampleUpload('laptop_reviews.txt')}
+                                        className="p-4 bg-surface-container-lowest rounded-lg group hover:ring-2 ring-primary/30 cursor-pointer transition-all flex items-center justify-between"
+                                    >
+                                        <div className="flex items-center gap-3">
+                                            <span className="material-symbols-outlined text-tertiary">laptop_mac</span>
+                                            <div>
+                                                <div className="text-sm font-bold text-on-surface">Laptop Reviews</div>
+                                                <div className="text-[10px] text-on-surface-variant">50 reviews • TXT</div>
                                             </div>
                                         </div>
                                     </div>

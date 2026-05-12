@@ -559,7 +559,7 @@ const Dashboard_Dark = () => {
                                                                 {review.sentiment || 'NEUTRAL'}
                                                             </span>
                                                         </td>
-                                                        <td className="px-8 py-5 text-on-surface-variant italic">"{review.text}"</td>
+                                                        <td className="px-8 py-5 text-on-surface-variant italic">{review.text}</td>
                                                         <td className="px-8 py-5 text-right font-medium text-on-surface-variant">{review.date}</td>
                                                     </tr>
                                                 );

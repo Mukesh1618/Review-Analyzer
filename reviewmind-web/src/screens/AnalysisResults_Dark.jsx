@@ -243,7 +243,7 @@ const AnalysisResults_Dark = () => {
                                             const r = parseReview(raw);
                                             return (
                                                 <tr key={i} className="hover:bg-surface-container-high transition-colors text-left">
-                                                    <td className="px-8 py-5 text-sm text-left">"{r.text}"</td>
+                                                    <td className="px-8 py-5 text-sm text-left">{r.text}</td>
                                                     <td className="px-8 py-5 text-left">
                                                         <span className={`px-2 py-1 text-xs font-bold rounded ${getSentimentColor(r.sentiment)}`}>
                                                             {r.sentiment}
