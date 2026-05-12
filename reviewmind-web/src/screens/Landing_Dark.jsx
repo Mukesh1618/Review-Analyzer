@@ -1,7 +1,45 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 const Landing_Dark = () => {
+  const [activeStep, setActiveStep] = useState(0);
+
+  const steps = [
+    {
+      title: "1. Upload Your Data",
+      description: "Start by uploading your customer reviews in CSV or JSON format. Our system securely ingests and prepares your data for deep analysis.",
+      icon: "cloud_upload",
+      color: "primary",
+      detail: "8,402 reviews processed",
+      progress: 85,
+      buttonText: "Go to Upload",
+      link: "/upload"
+    },
+    {
+      title: "2. AI Analysis & Insights",
+      description: "Our advanced LLMs categorize sentiment, detect key themes, and identify churn risks automatically, turning raw text into actionable intelligence.",
+      icon: "analytics",
+      color: "tertiary",
+      detail: "92% Sentiment Accuracy",
+      progress: 92,
+      buttonText: "View Dashboard",
+      link: "/dashboard"
+    },
+    {
+      title: "3. Chat with your Data",
+      description: "Ask natural language questions about your feedback. Get instant answers on top feature requests, UI friction, or competitive advantages.",
+      icon: "forum",
+      color: "primary",
+      detail: "AI-Powered Q&A",
+      progress: 100,
+      buttonText: "Start Chatting",
+      link: "/chat"
+    }
+  ];
+
+  const nextStep = () => setActiveStep((prev) => (prev + 1) % steps.length);
+  const prevStep = () => setActiveStep((prev) => (prev - 1 + steps.length) % steps.length);
+
   return (
     <div className="bg-background text-on-background selection:bg-primary-container selection:text-on-primary-container min-h-screen">
 
@@ -51,127 +89,114 @@ const Landing_Dark = () => {
           <div className="mt-20 relative mx-auto max-w-5xl">
             <div className="absolute inset-0 bg-primary/10 rounded-[2rem] blur-3xl -z-10 transform translate-y-12"></div>
             <div className="bg-surface-container-lowest rounded-[2rem] shadow-2xl overflow-hidden border border-outline-variant/20">
-              <img alt="ReviewMind Dashboard Preview" className="w-full h-auto object-cover opacity-80" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCMUChw1VHgdG6KtP2JGZ0mmYgA9Vxc0z372lqXMXiQTjei6otANcoNB7dOw_5hRcPUQLW6sAIkDquRBqzy7X3rN4HNoKLcvee_VpdPoPlQEMPoxH7cYZP-Jqt6BwTbG-ctfh_u27LWPa4IvXQXFdulZwMSDfwLDCAOnzUixcTXjbKcgvsiW38xtNtBtqyvtuMk6d3ag13TB0awaS_H82ASMQ76El8c0y4Gn6Xg_8VkGdgmbJynd1X2t8kfujlgrU0ODVlAEO1taw7O" />
-              <div className="absolute bottom-8 left-8 right-8 glass-effect bg-surface-container-highest/60 p-6 rounded-xl border border-outline-variant/20 flex items-center justify-between">
-                <div className="flex gap-4 items-center">
-                  <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
-                    <span className="material-symbols-outlined text-primary">analytics</span>
-                  </div>
-                  <div className="text-left">
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Live Analysis</p>
-                    <p className="font-bold text-on-surface">"Sentiment is up 14% this quarter"</p>
-                  </div>
-                </div>
-                <div className="hidden sm:block">
-                  <div className="flex -space-x-3">
-                    <div className="w-10 h-10 rounded-full border-2 border-surface-container-highest bg-surface-container-low"></div>
-                    <div className="w-10 h-10 rounded-full border-2 border-surface-container-highest bg-surface-container-high"></div>
-                    <div className="w-10 h-10 rounded-full border-2 border-surface-container-highest bg-primary/40 flex items-center justify-center text-[10px] font-bold text-on-primary-container">+24</div>
-                  </div>
-                </div>
-              </div>
+              <img alt="ReviewMind Dashboard Preview" className="w-full h-auto object-cover" src="/dashboard-preview.png" />
             </div>
           </div>
         </section>
 
-        {/* Bento Grid Features */}
+        {/* Sliding Feature Showcase */}
         <section className="py-24 px-6 lg:px-12 max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
             <div className="max-w-xl text-left">
-              <h2 className="text-3xl lg:text-4xl font-bold mb-4 tracking-tight text-on-surface">Curation at the core of your growth</h2>
-              <p className="text-on-surface-variant">We built ReviewMind to be more than a tool—it's your dedicated analyst that never sleeps.</p>
+              <h2 className="text-3xl lg:text-4xl font-bold mb-4 tracking-tight text-on-surface">Experience the Workflow</h2>
+              <p className="text-on-surface-variant">ReviewMind guides you from raw data to deep insights in three simple steps.</p>
             </div>
-            <div className="flex gap-2">
-              <button className="p-2 rounded-full bg-surface-container-high text-on-surface hover:bg-surface-container-highest transition-colors">
+            <div className="flex gap-4">
+              <button 
+                onClick={prevStep}
+                className="p-3 rounded-full bg-surface-container-high text-on-surface hover:bg-surface-container-highest transition-all hover:scale-110 active:scale-95 border border-outline-variant/10"
+              >
                 <span className="material-symbols-outlined">arrow_back</span>
               </button>
-              <button className="p-2 rounded-full bg-surface-container-high text-on-surface hover:bg-surface-container-highest transition-colors">
+              <button 
+                onClick={nextStep}
+                className="p-3 rounded-full bg-primary text-on-primary hover:bg-primary-fixed-dim transition-all hover:scale-110 active:scale-95 shadow-lg shadow-primary/20"
+              >
                 <span className="material-symbols-outlined">arrow_forward</span>
               </button>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* Large Feature */}
-            <div className="md:col-span-2 bg-surface-container-low rounded-[2rem] p-10 flex flex-col justify-between min-h-[400px] border border-outline-variant/10 text-left">
-              <div>
-                <div className="w-14 h-14 bg-surface-container-highest rounded-2xl shadow-sm flex items-center justify-center mb-6 border border-outline-variant/20">
-                  <span className="material-symbols-outlined text-primary text-3xl">cloud_upload</span>
-                </div>
-                <h3 className="text-2xl font-bold mb-3 text-on-surface">File Upload (CSV, JSON)</h3>
-                <p className="text-on-surface-variant max-w-sm mb-8">Bring your data from anywhere. We support seamless ingestion from App Store, Play Store, Trustpilot, and custom datasets.</p>
-              </div>
-              <div className="bg-surface-container-highest rounded-xl p-4 border border-outline-variant/20 shadow-sm flex items-center gap-4">
-                <span className="material-symbols-outlined text-tertiary">check_circle</span>
-                <div className="flex-1 h-2 bg-surface-container-low rounded-full overflow-hidden">
-                  <div className="bg-primary h-full w-[85%]"></div>
-                </div>
-                <span className="text-xs font-bold text-on-surface-variant">8,402 reviews processed</span>
-              </div>
-            </div>
-
-            {/* Small Feature 1 */}
-            <div className="bg-primary-container text-on-primary-container rounded-[2rem] p-10 flex flex-col justify-between border border-primary/20 text-left">
-              <div>
-                <h3 className="text-2xl font-bold mb-4">Sentiment Analysis</h3>
-                <p className="text-on-primary-container/80 mb-8">Beyond positive/negative. Our AI detects frustration, delight, and indifference with 98% accuracy.</p>
-              </div>
-              <div className="flex justify-center items-center py-6">
-                <div className="relative w-32 h-32 flex items-center justify-center">
-                  <div className="absolute inset-0 border-8 border-on-primary-container/20 rounded-full"></div>
-                  <div className="absolute inset-0 border-8 border-on-primary-container border-t-transparent rounded-full rotate-45"></div>
-                  <span className="text-2xl font-bold">92%</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Small Feature 2 */}
-            <div className="bg-surface-container-highest rounded-[2rem] p-10 flex flex-col justify-between border border-outline-variant/20 text-left">
-              <div>
-                <div className="w-14 h-14 bg-surface-container-low rounded-2xl shadow-sm flex items-center justify-center mb-6 border border-outline-variant/20">
-                  <span className="material-symbols-outlined text-tertiary text-3xl">forum</span>
-                </div>
-                <h3 className="text-2xl font-bold mb-3 text-on-surface">Chat with your Data</h3>
-                <p className="text-on-surface-variant mb-6">Ask natural language questions like "What are people saying about the new UI update?"</p>
-              </div>
-              <div className="space-y-3">
-                <div className="bg-surface-container-low p-3 rounded-lg text-xs italic text-on-surface-variant ml-4 border border-outline-variant/20">
-                  "What is the top feature request?"
-                </div>
-                <div className="bg-primary-container p-3 rounded-lg text-xs font-medium text-on-primary-container mr-4 border border-primary/20">
-                  "Users are requesting Dark Mode most frequently."
-                </div>
-              </div>
-            </div>
-
-            {/* Medium Feature */}
-            <div className="md:col-span-2 bg-surface-container-lowest rounded-[2rem] border border-outline-variant/20 p-10 flex flex-col md:flex-row gap-10 items-center overflow-hidden text-left">
-              <div className="flex-1">
-                <h3 className="text-2xl font-bold mb-4 text-on-surface">AI-generated Insights</h3>
-                <p className="text-on-surface-variant">Automated executive summaries that distill thousands of reviews into actionable bullet points for your product roadmap.</p>
-                <ul className="mt-6 space-y-4">
-                  <li className="flex gap-3 text-sm text-on-surface">
-                    <span className="material-symbols-outlined text-primary text-xl">auto_awesome</span>
-                    <span>Identify churn risks before they happen</span>
-                  </li>
-                  <li className="flex gap-3 text-sm text-on-surface">
-                    <span className="material-symbols-outlined text-primary text-xl">trending_up</span>
-                    <span>Track competitive advantage over time</span>
-                  </li>
-                </ul>
-              </div>
-              <div className="flex-1 relative">
-                <div className="w-full aspect-video bg-surface-container-low rounded-xl flex items-center justify-center p-4 border border-outline-variant/10">
-                  <img alt="Insight Visualization" className="w-full h-full object-cover rounded-lg opacity-30" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDcnGvi1P1mUKZqcMDwSXaxO8nLHXI_FyCN0PEi3W3B5v0DbPGR4fjpjnU7nZoiT-Ky7PLD_bcqCpnhqgSHpbDVLxHhQ-5xqu-3g_Q8Cl-EL8Ihaz9JHjohwW-ncoJuqEHR56D7hlodyEVtvU01lugvP7rBwC7itRXF5O9WF2ULQOCJRTTYN3oh7q_XN_FDi06AcZTVJ28hat8cqdfeaBeuyslxH6JQF-Nr6v411d_mh2rOHEBzjEfg5cEafbMZ6WQdzFleQ32jhem1" />
-                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-surface-container-highest p-4 rounded-xl shadow-xl flex gap-3 items-center border border-outline-variant/20">
-                    <div className="w-2 h-10 bg-primary rounded-full"></div>
+          <div className="relative min-h-[500px] overflow-hidden rounded-[3rem] border border-outline-variant/20 bg-surface-container-low p-2 md:p-8">
+            <div 
+              className="flex transition-transform duration-700 ease-in-out h-full"
+              style={{ transform: `translateX(-${activeStep * 100}%)` }}
+            >
+              {steps.map((step, index) => (
+                <div key={index} className="w-full shrink-0 px-4 flex flex-col md:flex-row items-center gap-12 text-left">
+                  <div className="flex-1 space-y-8 py-8">
+                    <div className={`w-16 h-16 bg-${step.color}-container/30 rounded-2xl flex items-center justify-center border border-${step.color}-container/50`}>
+                      <span className={`material-symbols-outlined text-${step.color} text-4xl`}>{step.icon}</span>
+                    </div>
                     <div>
-                      <p className="text-[10px] text-on-surface-variant font-bold uppercase">Trend Alert</p>
-                      <p className="text-sm font-bold text-on-surface">New integration requests +22%</p>
+                      <h3 className="text-3xl font-bold mb-4 text-on-surface">{step.title}</h3>
+                      <p className="text-on-surface-variant text-lg leading-relaxed">{step.description}</p>
+                    </div>
+                    <Link 
+                      to={step.link}
+                      className={`inline-flex items-center gap-2 bg-primary text-on-primary px-8 py-4 rounded-xl font-bold hover:bg-primary-fixed-dim transition-all shadow-lg shadow-primary/10`}
+                    >
+                      {step.buttonText}
+                      <span className="material-symbols-outlined text-sm">open_in_new</span>
+                    </Link>
+                  </div>
+                  
+                  <div className="flex-1 w-full relative">
+                    <div className="aspect-[4/3] bg-surface-container-highest rounded-3xl border border-outline-variant/20 shadow-inner overflow-hidden flex flex-col p-8">
+                      {index === 0 && (
+                        <div className="flex-1 flex flex-col justify-center items-center gap-6 border-2 border-dashed border-outline-variant/30 rounded-2xl bg-surface-container-low/50">
+                          <span className="material-symbols-outlined text-6xl text-outline-variant">cloud_upload</span>
+                          <div className="text-center">
+                            <p className="font-bold text-on-surface">Drop files here</p>
+                            <p className="text-xs text-on-surface-variant">CSV, JSON (Max 10MB)</p>
+                          </div>
+                          <div className="w-48 h-2 bg-surface-container-high rounded-full overflow-hidden">
+                            <div className="bg-primary h-full w-[85%] transition-all duration-1000"></div>
+                          </div>
+                        </div>
+                      )}
+                      {index === 1 && (
+                        <div className="flex-1 space-y-6 flex flex-col justify-center">
+                          <div className="flex items-center gap-4 p-4 bg-surface-container-low rounded-xl border border-outline-variant/10">
+                            <div className="w-10 h-10 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-500 font-bold">92%</div>
+                            <div>
+                              <p className="text-xs font-bold text-on-surface">Sentiment Accuracy</p>
+                              <p className="text-[10px] text-on-surface-variant">Systems performing optimally</p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-4 p-4 bg-surface-container-low rounded-xl border border-outline-variant/10">
+                            <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center text-primary">
+                              <span className="material-symbols-outlined text-sm">trending_up</span>
+                            </div>
+                            <div className="flex-1 h-2 bg-surface-container-high rounded-full overflow-hidden">
+                              <div className="bg-primary h-full w-[75%] transition-all duration-1000 delay-300"></div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                      {index === 2 && (
+                        <div className="flex-1 space-y-4 flex flex-col justify-end">
+                          <div className="bg-surface-container-low p-4 rounded-xl rounded-bl-none border border-outline-variant/10 self-start max-w-[80%]">
+                            <p className="text-xs text-on-surface italic">"What are the top complaints?"</p>
+                          </div>
+                          <div className="bg-primary-container p-4 rounded-xl rounded-br-none border border-primary/20 self-end max-w-[80%]">
+                            <p className="text-xs text-on-primary-container">"Users mention the loading time on the checkout page is too slow."</p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                    {/* Step Indicators */}
+                    <div className="absolute -bottom-12 left-1/2 -translate-x-1/2 flex gap-3">
+                      {steps.map((_, i) => (
+                        <div 
+                          key={i}
+                          className={`h-2 rounded-full transition-all duration-300 ${activeStep === i ? 'w-8 bg-primary' : 'w-2 bg-outline-variant/30'}`}
+                        />
+                      ))}
                     </div>
                   </div>
                 </div>
-              </div>
+              ))}
             </div>
           </div>
         </section>
