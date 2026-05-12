@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import ReactMarkdown from 'react-markdown';
 
 const ChatInterface_Dark = () => {
     const [messages, setMessages] = useState([
@@ -17,6 +18,7 @@ const ChatInterface_Dark = () => {
     const [showProductList, setShowProductList] = useState(false);
     
     const messagesEndRef = useRef(null);
+    const inputRef = useRef(null);
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -25,6 +27,12 @@ const ChatInterface_Dark = () => {
     useEffect(() => {
         scrollToBottom();
     }, [messages]);
+
+    useEffect(() => {
+        if (!loading && selectedProduct) {
+            inputRef.current?.focus();
+        }
+    }, [loading, selectedProduct]);
 
     useEffect(() => {
         fetchProducts();
@@ -188,9 +196,11 @@ const ChatInterface_Dark = () => {
                                 ? 'bg-primary text-on-primary rounded-tr-none editorial-shadow' 
                                 : 'bg-surface-container-high text-on-surface rounded-tl-none border border-outline-variant/10'
                             }`}>
-                                <p className="text-sm leading-relaxed whitespace-pre-line text-left">
-                                    {msg.content}
-                                </p>
+                                <div className={`text-sm leading-relaxed text-left prose prose-invert max-w-none ${msg.role === 'user' ? 'prose-p:text-on-primary' : 'prose-p:text-on-surface'}`}>
+                                    <ReactMarkdown>
+                                        {msg.content}
+                                    </ReactMarkdown>
+                                </div>
                             </div>
                         </div>
                     ))}
@@ -215,6 +225,7 @@ const ChatInterface_Dark = () => {
                         className="relative max-w-4xl mx-auto group"
                     >
                         <textarea 
+                            ref={inputRef}
                             rows="1"
                             value={input}
                             onChange={(e) => setInput(e.target.value)}

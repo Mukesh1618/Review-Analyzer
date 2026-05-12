@@ -4,12 +4,46 @@ import ReactMarkdown from 'react-markdown';
 
 const AnalysisResults_Dark = () => {
     const [data, setData] = useState(null);
+    const [allProducts, setAllProducts] = useState([]);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [showResults, setShowResults] = useState(false);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+
+    const fetchAllProducts = async () => {
+        try {
+            const response = await fetch('http://127.0.0.1:8000/products');
+            const products = await response.json();
+            setAllProducts(products);
+        } catch (err) {
+            console.error("Failed to fetch products:", err);
+        }
+    };
+
+    const handleSelectProduct = async (productId) => {
+        try {
+            setLoading(true);
+            setShowResults(false);
+            setSearchQuery("");
+            const response = await fetch(`http://127.0.0.1:8000/select_product?product_id=${productId}`, {
+                method: 'POST'
+            });
+            const result = await response.json();
+            if (result.message) {
+                // Clear cache and re-fetch analysis
+                localStorage.removeItem('reviewMindData');
+                window.location.reload();
+            }
+        } catch (err) {
+            setError("Failed to switch product.");
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
         const fetchData = async () => {
             try {
+                fetchAllProducts();
                 const cachedData = localStorage.getItem('reviewMindData');
                 if (cachedData) {
                     const parsed = JSON.parse(cachedData);
@@ -128,12 +162,44 @@ const AnalysisResults_Dark = () => {
             <main className="ml-64 min-h-screen flex-1 text-left">
                 {/* TopNavBar */}
                 <header className="w-full h-16 sticky top-0 flex justify-between items-center px-8 z-30 bg-background/80 backdrop-blur-md border-b border-outline-variant/10 text-left">
-                    <div className="flex items-center gap-6 text-left">
-                        <div className="relative group text-left">
-                            <span className="absolute inset-y-0 left-3 flex items-center text-on-surface-variant">
-                                <span className="material-symbols-outlined text-lg">search</span>
-                            </span>
-                            <input className="bg-surface-container-low border border-outline-variant/20 rounded-full py-2 pl-10 pr-4 text-sm w-64 focus:ring-1 focus:ring-primary focus:border-primary transition-all text-on-surface" placeholder="Search analysis..." type="text" />
+                    <div className="flex-1 max-w-xl mx-auto px-8">
+                        <div className="relative group">
+                            <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-lg">search</span>
+                            <input 
+                                className="w-full bg-surface-container-low border-none rounded-lg pl-10 pr-4 py-2 focus:ring-2 focus:ring-primary/20 text-sm placeholder:text-on-surface-variant/40 text-on-surface" 
+                                placeholder="Search previously analyzed products..." 
+                                type="text"
+                                value={searchQuery}
+                                onChange={(e) => {
+                                    setSearchQuery(e.target.value);
+                                    setShowResults(true);
+                                }}
+                                onFocus={() => setShowResults(true)}
+                            />
+                            
+                            {/* Autocomplete Dropdown */}
+                            {showResults && searchQuery.length > 0 && (
+                                <div className="absolute top-full left-0 w-full mt-2 bg-surface-container-high border border-outline-variant/20 rounded-xl shadow-2xl z-[100] max-h-64 overflow-y-auto overflow-x-hidden text-left">
+                                    {allProducts.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase())).length > 0 ? (
+                                        allProducts
+                                            .filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase()))
+                                            .map((product) => (
+                                                <button
+                                                    key={product.id}
+                                                    onClick={() => handleSelectProduct(product.id)}
+                                                    className="w-full px-5 py-3 text-left hover:bg-primary/10 flex items-center gap-3 transition-colors border-b border-outline-variant/5 last:border-none"
+                                                >
+                                                    <span className="material-symbols-outlined text-primary text-sm">history</span>
+                                                    <span className="text-on-surface font-medium text-sm">{product.name}</span>
+                                                </button>
+                                            ))
+                                    ) : (
+                                        <div className="px-5 py-4 text-on-surface-variant text-xs italic">No matching products found</div>
+                                    )}
+                                </div>
+                            )}
+                            {/* Click outside to close */}
+                            {showResults && <div className="fixed inset-0 z-[90]" onClick={() => setShowResults(false)}></div>}
                         </div>
                     </div>
                 </header>
@@ -165,7 +231,7 @@ const AnalysisResults_Dark = () => {
                         </div>
 
                         {/* Trust Score */}
-                        <div className="col-span-12 lg:col-span-4 bg-surface-container-lowest rounded-xl p-8 border-l-4 border-primary border-y border-r border-outline-variant/10 text-left">
+                        <div className="col-span-12 lg:col-span-4 bg-surface-container-lowest rounded-xl p-8 border-l-4 border-primary border-y border-r border-outline-variant/10 text-left h-fit">
                             <h2 className="text-xl font-bold mb-8">Trust Score</h2>
                             <div className="flex items-center justify-center py-4">
                                 <div className="relative flex items-center justify-center">
@@ -203,7 +269,7 @@ const AnalysisResults_Dark = () => {
                         </div>
 
                         {/* Pros & Cons */}
-                        <div className="col-span-12 lg:col-span-5 grid grid-rows-2 gap-6 text-left">
+                        <div className="col-span-12 lg:col-span-5 grid grid-rows-2 gap-6 text-left h-fit">
                             <div className="bg-surface-container-low border border-outline-variant/10 rounded-xl p-6 text-left">
                                 <div className="flex items-center gap-2 mb-4 text-primary text-left">
                                     <span className="material-symbols-outlined">add_circle</span>

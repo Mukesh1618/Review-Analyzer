@@ -179,22 +179,35 @@ def run_scoring_agent(state: DashboardState):
     all_aspect_summaries = []
 
     prompt = ChatPromptTemplate.from_messages([
-        ("system", """You are an expert NLP data analyst.
-Classify sentiment as 'POSITIVE', 'NEGATIVE', or 'NEUTRAL'.
+        ("system", """You are a strictly logical NLP data analyst specializing in e-commerce product reviews. 
+Your only task is to classify the true sentiment of the provided reviews into exactly one of three categories: 'Positive', 'Negative', or 'Neutral'.
 
-STRICT CLASSIFICATION RULES:
-1. DECISIVE ACTION: Avoid NEUTRAL unless the review is truly indifferent (e.g., "It's fine", "Okay") or irrelevant spam.
-2. POSITIVE SIGNALS: "Solid", "Good", "Great", "Amazing", "Satisfied", or "Works well" are POSITIVE.
-3. NEGATIVE SIGNALS: "Buggy", "Crashes", "Overpriced", "Disappointed", "Annoying", "Broken", or "Slow" are NEGATIVE.
-4. DOMINANT TONE: If a review has both praise and complaints, classify by the dominant tone. 
-   - If they praise hardware but say an update "ruined" it, it is NEGATIVE.
-   - If they complain about a minor detail but "love the phone overall", it is POSITIVE.
-5. TEXT OVERRIDES RATING: Use the "text" as the source of truth.
+You will receive the user's text and their star rating (1-5). 
+CRITICAL DIRECTIVE: The written text is the ultimate source of truth. You must ignore the star rating if it contradicts the text.
+
+=== CATEGORY DEFINITIONS & RUBRIC ===
+
+1. WHAT CLASSIFIES AS POSITIVE:
+   - Explicit Praise: The user explicitly praises core features (performance, display, battery, value).
+   - Recommendation: The user states they would recommend it, or expresses high satisfaction (e.g., "Best laptop I've owned").
+   - Forgiven Flaws: The user mentions a minor flaw but explicitly states the product is still great or worth it (e.g., "Fans are loud, but the performance makes it worth it").
+   - Accessory Complaints: The user loves the main device but complains about a secondary item (e.g., "Laptop is amazing, but the charger is too bulky").
+
+2. WHAT CLASSIFIES AS NEGATIVE:
+   - Hardware/Software Failure: Mentions of broken parts, critical bugs, crashing, or defects (e.g., "The hinge broke", "Sleep mode drains the battery").
+   - Unusable/Dealbreakers: A flaw that ruins the user experience, even if they liked other parts (e.g., "Screen is nice, but it randomly restarts 5 times a day").
+   - Regret/Returns: The user states they are returning it, regret buying it, or call it a waste of money.
+   - Poor Support: The review focuses on a terrible customer service experience regarding a broken device.
+
+3. WHAT CLASSIFIES AS NEUTRAL:
+   - Apathy/Average: The user expresses no strong emotion. Key phrases: "It's fine", "Gets the job done", "Nothing special", "It's okay", "As expected".
+   - Perfectly Balanced Mixed: The user lists an equal weight of pros and cons without a clear final verdict (e.g., "The screen is amazing but the battery is terrible. Undecided on this one.").
+   - Spam/Irrelevant: Promotional content, bot links, crypto scams, or text that has nothing to do with using the product.
+   - Purely Factual: Statements with zero qualitative judgment (e.g., "I bought this on Tuesday. It is silver.")
 
 STRICT OUTPUT FORMAT:
 - Review [ID]: [CLASSIFICATION]
-
-After the list, provide a brief 2-sentence aspect summary under 'ASPECTS_SUMMARY:'.""" + SYSTEM_RESTRICTION),
+""" + SYSTEM_RESTRICTION),
         ("user", "Analyze these reviews:\n\n{reviews}")
     ])
 
@@ -209,16 +222,13 @@ After the list, provide a brief 2-sentence aspect summary under 'ASPECTS_SUMMARY
             out = clean_llm_output((prompt | llm_0).invoke({"reviews": batch_text}).content)
             
             # Count sentiments in this batch
-            tally_matches = re.findall(r"Review[_\s]\d+:\s*(POSITIVE|NEGATIVE|NEUTRAL)", out, re.I)
-            for code in tally_matches:
-                code = code.upper()
-                if code == 'POSITIVE': pos += 1
-                elif code == 'NEGATIVE': neg += 1
-                elif code == 'NEUTRAL': neu += 1
-            
-            # Collect aspect insights
-            if "ASPECTS_SUMMARY:" in out:
-                all_aspect_summaries.append(out.split("ASPECTS_SUMMARY:")[1].strip())
+            lines = out.split('\n')
+            for line in lines:
+                if "POSITIVE" in line.upper(): pos += 1
+                elif "NEGATIVE" in line.upper(): neg += 1
+                elif "Review" in line and ":" in line: 
+                    # If it has a review ID but isn't Pos/Neg, it's Neutral (handles SPAM, etc.)
+                    neu += 1
         except Exception as e:
             print(f"Error processing batch {i//batch_size}: {e}")
 
@@ -226,15 +236,27 @@ After the list, provide a brief 2-sentence aspect summary under 'ASPECTS_SUMMARY
     total_for_score = total_counted or 1
     score = ((pos + 0.5 * neu) / total_for_score) * 10
     
-    # Final aggregation for aspects
-    aspect_text = "Aspect analysis based on total data:\n" + "\n".join(all_aspect_summaries[:5]) # Show first few key insights
+    # NEW TASK: Aspect-Based Analysis (Independent of classification batching)
+    aspect_prompt = ChatPromptTemplate.from_messages([
+        ("system", """You are an expert product analyst.
+Identify the main aspects of the product (e.g., Performance, Display Quality, Battery, Price, Build Quality) 
+and determine the sentiment score for each aspect on a scale of 1-10 (where 10 is perfect).
 
+STRICT OUTPUT FORMAT:
+**[Aspect Name]**: [Score]/10
+...""" + SYSTEM_RESTRICTION),
+        ("user", "Extract aspects and scores from these reviews:\n\n{reviews}")
+    ])
+    
+    aspect_sample = unique_reviews[:100]
+    aspect_out = clean_llm_output((aspect_prompt | llm_0).invoke({"reviews": "\n- ".join(aspect_sample)}).content)
+    
     final_text = f"OVERALL SCORE: {score:.1f}/10\n\nDISTRIBUTION (Based on {total_counted} analyzed reviews):\n- Positive: {pos}\n- Neutral: {neu}\n- Negative: {neg}"
 
     return {
         "sentiment_analysis": final_text,
         "sentiment_distribution": {"positive": pos, "neutral": neu, "negative": neg},
-        "aspect_analysis": aspect_text
+        "aspect_analysis": aspect_out
     }
 
 

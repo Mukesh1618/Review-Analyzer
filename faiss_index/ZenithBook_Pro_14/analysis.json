@@ -54,20 +54,20 @@
     ],
     "total_reviews": 50,
     "product_name": "ZenithBook Pro 14",
-    "short_summary": "The laptop has received praise for its premium build quality, OLED screen, and performance. However, some users have experienced issues with the hinge design, fan noise, and sleep mode. The laptop's value for the price is also a common theme.\nThe laptop's build quality and performance have been praised by many users. However, some have experienced issues with the hinge design, fan noise, and sleep mode. The OLED screen has been a standout feature, with many users praising its color accuracy and vibrancy.\n[[PROS]]\n- Premium build quality\n- OLED screen with good color accuracy\n- Fast performance\n- Good value for the price\n- Long battery life\n[[CONS]]\n- Hinge design issues\n- Loud fan noise\n- Sleep mode problems\n- Poor webcam quality\n- Design flaws\n[[KEYWORDS]]\nOLED screen, premium build quality, fast performance, good value, long battery life\n[[STRENGTH]]\nExceptional display quality\n[[COMPLAINT]]\nPoor reliability\n[[REQUEST]]\nImproved hinge design",
-    "detailed_summary": "Analysis failed.",
-    "sentiment_analysis": "OVERALL SCORE: 5.1/10\n\nDISTRIBUTION (Based on 50 analyzed reviews):\n- Positive: 25\n- Neutral: 1\n- Negative: 24",
-    "pros": "- Premium build quality\n- OLED screen with good color accuracy\n- Fast performance\n- Good value for the price\n- Long battery life",
-    "cons": "- Hinge design issues\n- Loud fan noise\n- Sleep mode problems\n- Poor webcam quality\n- Design flaws",
-    "aspect_analysis": "Aspect analysis based on total data:\nThe laptop has received praise for its build quality, premium feel, and performance, but has been criticized for its hinge design, sleep mode issues, and battery life. Overall, the laptop's strengths outweigh its weaknesses, but it requires improvement in certain areas.",
-    "keyword_analysis": "OLED screen, premium build quality, fast performance, good value, long battery life",
+    "short_summary": "The laptop has received praise for its premium build quality, OLED screen, and powerful processor. However, some users have experienced issues with the hinge design, fan noise, and sleep mode. The laptop's value for the price is a major selling point.\nThe laptop's battery life is decent, but drops significantly when gaming. Some users have also reported issues with the webcam, speakers, and keyboard.",
+    "detailed_summary": "Key Features:\n- Premium build quality with a full aluminum chassis\n- OLED screen with vibrant colors and deep blacks\n- Powerful processor for fast compile times and heavy loads\n- Trackpad is massive and super responsive\n- Fingerprint reader on the power button\n\nDesign and Build:\n- The laptop's build quality feels premium, with a full aluminum chassis that is surprisingly light for a 14-inch laptop.\n- However, some users have experienced issues with the hinge design, including a cracked plastic cover and a snapped left hinge.\n- The laptop's speakers are downward-firing, which can make them sound muffled when used on a lap.\n\nPerformance:\n- The laptop's processor is a beast, with extremely fast compile times and the ability to handle heavy loads.\n- However, the fans can get pretty loud under heavy load, and some users have reported issues with the fan curve being too aggressive.\n\nDisplay:\n- The OLED screen is the star of the show, with vibrant colors and deep blacks that are perfect for photo editing.\n- However, some users have reported issues with OLED burn-in, which can be mitigated by keeping the taskbar hidden.\n\nBattery Life:\n- The laptop's battery life is decent, with about 8 hours of light web browsing.\n- However, it drops significantly when gaming, with some users reporting as little as 3 hours of battery life.",
+    "sentiment_analysis": "OVERALL SCORE: 5.1/10\n\nDISTRIBUTION (Based on 50 analyzed reviews):\n- Positive: 22\n- Neutral: 7\n- Negative: 21",
+    "pros": "- Premium build quality\n- OLED screen with vibrant colors and deep blacks\n- Powerful processor for fast compile times and heavy loads\n- Trackpad is massive and super responsive\n- Fingerprint reader on the power button",
+    "cons": "- Issues with hinge design\n- Fan noise under heavy load\n- Sleep mode issues\n- Webcam is only 720p\n- Speakers are downward-firing",
+    "aspect_analysis": "**Build Quality**: 8/10\n**Display Quality**: 9/10\n**Battery**: 6/10\n**Price**: 9/10\n**Performance**: 9/10\n**Portability**: 9/10\n**Design**: 7/10\n**Customer Service**: 4/10\n**Value for Money**: 8/10\n**Keyboard**: 9/10\n**Trackpad**: 8/10\n**Speakers**: 4/10\n**Hinge**: 3/10\n**OLED Burn-in**: 2/10\n**Thermal Management**: 6/10\n**Charger**: 4/10",
+    "keyword_analysis": "OLED screen, powerful processor, fingerprint reader, trackpad, aluminum chassis",
     "predicted_rating": "\u2b50 PREDICTED RATING: 4/5 Stars",
     "timeline_analysis": "2024-02-05: 6\n2024-02-10: 8\n2024-02-12: 9\n2024-02-15: 8\n2024-02-18: 4\n2024-02-22: 7\n2024-02-25: 2\n2024-02-28: 9\n2024-03-02: 9\n2024-03-05: 7\n2024-03-10: 1\n2024-03-12: 1\n2024-03-15: 1\n2024-03-20: 7\n2024-03-22: 1\n2024-03-28: 7\n2024-04-05: 1\n2024-04-12: 1\n2024-04-20: 7\n2024-04-28: 7\n2024-05-05: 9\n2024-05-10: 5\n2024-05-15: 3\n2024-05-22: 4\n2024-06-02: 2\n2024-06-10: 1\n2024-06-18: 1\n2024-06-25: 1\n2024-07-05: 1\n2024-07-12: 3\n2024-07-20: 9\n2024-07-28: 2\n2024-08-05: 7\n2024-08-15: 7\n2024-08-22: 7\n2024-09-05: 9\n2024-09-12: 3\n2024-09-20: 9\n2024-09-28: 3\n2024-10-02: 5\n2024-10-10: 7\n2024-10-18: 2\n2024-10-25: 9\n2024-11-05: 7\n2024-11-15: 9\n2024-11-22: 3\n2024-11-28: 2\n2024-12-05: 2\n2024-12-12: 9\n2024-12-18: 3\n2024-12-22: 7\n2024-12-28: 7\n2024-12-31: 7",
     "fake_review_analysis": "\ud83d\udee1\ufe0f AUTHENTICITY ANALYSIS:\n\nTrust Score: 85%\n- 3 suspicious reviews detected\n\nSUSPICIOUS REVIEWS:\n- \"WORK FROM HOME EARN $500 A DAY CLICK HERE TO LEARN MORE\": This review contains a clear spam link and is likely a fake review.\n- \"DO NOT INSTALL BIOS UPDATE 1.4! It completely broke the sleep mode.\": This review is written in an all-caps format and contains a strong warning, which may be an attempt to manipulate the reader.\n- \"Sent it in for warranty repair because of the broken hinge. They claimed 'physical damage' and charged me $300. Outrageous.\": This review contains a negative experience with the company's warranty process, but the tone is overly dramatic and may be an attempt to sway public opinion.\n\nRELIABILITY INDICATORS:\n- The majority of reviews are written in a neutral or positive tone, indicating a genuine interest in the product.\n- Many reviewers mention specific features and experiences, such as the OLED screen and the hinge design, which suggests that they have actually used the product.\n\nRED FLAGS:\n- The presence of spam links and all-caps warnings in two reviews.\n- The dramatic tone and language used in the review about the warranty process.",
     "sentiment_distribution": {
-        "positive": 25,
-        "neutral": 1,
-        "negative": 24
+        "positive": 22,
+        "neutral": 7,
+        "negative": 21
     },
     "sentiment_trend": [
         {
@@ -284,8 +284,8 @@
         }
     ],
     "key_metrics": {
-        "key_strength": "Exceptional display quality",
-        "top_complaint": "Poor reliability",
-        "emerging_request": "Improved hinge design"
+        "key_strength": "Incredible value for the price.",
+        "top_complaint": "Sleep mode issues and fan noise under heavy load.",
+        "emerging_request": "Fix the sleep mode issue and improve the fan curve."
     }
 }
