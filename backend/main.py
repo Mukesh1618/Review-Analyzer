@@ -18,7 +18,7 @@ load_dotenv()
 from backend.db.vectorstore import load_vector_db, get_db, save_vector_db, get_product_name, get_all_products, embeddings, FAISS_BASE_PATH, save_analysis_data, load_analysis_data
 from backend.services.orchestrator import dashboard_orchestrator, chat_orchestrator
 from backend.utils.helpers import clean_llm_output
-from backend.agents.dashboard import run_identity_agent
+from backend.agents.dashboard import run_identity_agent, validate_node
 
 app = FastAPI(title="ReviewMind API")
 
@@ -93,6 +93,13 @@ async def process_content(content: bytes, user_id: str):
     if not reviews:
         # If we filtered everything out, it might really be a code file
         return {"error": "No valid review text found. The file may be empty or contain non-review content (like code)."}
+
+    # --- LLM VALIDATION GATE (PRE-UPLOAD) ---
+    # Validate parsed reviews BEFORE saving to the DB
+    val_result = validate_node({"retrieved_reviews": reviews})
+    if not val_result.get("is_valid"):
+        return {"error": f"Validation Failed: {val_result.get('validation_error', 'The content does not appear to be product reviews.')}"}
+    # ----------------------------------------
 
     # Identify the product name (fallback to agent if not in metadata)
     if not detected_name:

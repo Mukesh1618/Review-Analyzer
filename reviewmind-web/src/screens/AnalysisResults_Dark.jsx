@@ -279,14 +279,38 @@ const AnalysisResults_Dark = () => {
                                 {/* Aspect Mapping & Security */}
                                 <div className="space-y-8 text-left">
                                     <div className="bg-surface-container-lowest rounded-[2rem] p-8 border border-outline-variant/10 editorial-shadow text-left">
-                                        <div className="flex items-center gap-3 mb-6">
+                                        <div className="flex items-center gap-3 mb-8">
                                             <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary border border-primary/20">
                                                 <span className="material-symbols-outlined">monitoring</span>
                                             </div>
                                             <h4 className="text-xl font-bold text-on-surface">Aspect Mapping</h4>
                                         </div>
-                                        <div className="prose prose-invert prose-p:text-on-surface-variant text-left">
-                                            <ReactMarkdown>{data?.aspect_analysis || "No aspect analysis available."}</ReactMarkdown>
+                                        <div className="space-y-6">
+                                            {data?.aspect_analysis?.split('\n').filter(line => line.includes(':')).map((line, idx) => {
+                                                const match = line.match(/\*\*(.*)\*\*:\s*([\d.]+)\/10/);
+                                                if (!match) return null;
+                                                const [_, aspect, score] = match;
+                                                const scoreVal = parseFloat(score);
+                                                return (
+                                                    <div key={idx} className="space-y-2">
+                                                        <div className="flex justify-between items-center text-sm">
+                                                            <span className="font-bold text-on-surface">{aspect}</span>
+                                                            <span className={`px-2 py-0.5 rounded text-[10px] font-black ${scoreVal >= 8 ? 'bg-emerald-500/20 text-emerald-400' : scoreVal >= 6 ? 'bg-amber-500/20 text-amber-400' : 'bg-red-500/20 text-red-400'}`}>
+                                                                {score}/10
+                                                            </span>
+                                                        </div>
+                                                        <div className="h-1.5 w-full bg-surface-container-high rounded-full overflow-hidden">
+                                                            <div 
+                                                                className={`h-full transition-all duration-1000 ${scoreVal >= 8 ? 'bg-emerald-500' : scoreVal >= 6 ? 'bg-amber-500' : 'bg-red-500'}`}
+                                                                style={{ width: `${scoreVal * 10}%` }}
+                                                            ></div>
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
+                                            {!data?.aspect_analysis?.includes(':') && (
+                                                <p className="text-on-surface-variant text-sm italic opacity-60">Aspect data being synthesized...</p>
+                                            )}
                                         </div>
                                     </div>
 
@@ -297,8 +321,52 @@ const AnalysisResults_Dark = () => {
                                             </div>
                                             <h4 className="text-xl font-bold text-on-surface">Authenticity Report</h4>
                                         </div>
-                                        <div className="prose prose-invert prose-p:text-on-surface-variant text-left">
-                                            <ReactMarkdown>{data?.fake_review_analysis || "No security analysis available."}</ReactMarkdown>
+                                        <div className="space-y-6 text-left">
+                                            {(() => {
+                                                const authText = data?.fake_review_analysis || "";
+                                                const trustMatch = authText.match(/Trust Score:\s*(\d+)%/);
+                                                const trustScore = trustMatch ? trustMatch[1] : "N/A";
+                                                
+                                                const suspiciousSection = authText.split("SUSPICIOUS REVIEWS:")[1]?.split("RELIABILITY INDICATORS:")[0]?.trim();
+                                                const suspiciousItems = suspiciousSection?.split('\n').filter(l => l.trim().startsWith('-')).map(l => l.replace(/^-/, '').trim());
+
+                                                return (
+                                                    <>
+                                                        <div className="flex items-center gap-4 p-4 bg-surface-container rounded-2xl border border-outline-variant/10">
+                                                            <div className="relative w-16 h-16 flex-shrink-0">
+                                                                <svg className="w-full h-full" viewBox="0 0 36 36">
+                                                                    <path className="text-outline-variant/20" stroke="currentColor" strokeWidth="3" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                                                    <path className="text-tertiary" stroke="currentColor" strokeWidth="3" strokeDasharray={`${trustScore}, 100`} strokeLinecap="round" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                                                </svg>
+                                                                <div className="absolute inset-0 flex items-center justify-center text-[10px] font-black text-on-surface">{trustScore}%</div>
+                                                            </div>
+                                                            <div>
+                                                                <div className="text-sm font-bold text-on-surface">Data Integrity Score</div>
+                                                                <div className="text-[10px] text-on-surface-variant uppercase font-bold tracking-wider">Review Authenticity</div>
+                                                            </div>
+                                                        </div>
+
+                                                        {suspiciousItems && suspiciousItems.length > 0 ? (
+                                                            <div className="space-y-4">
+                                                                <h5 className="text-[10px] font-black uppercase text-error tracking-widest">Detected Scam/Bot Patterns</h5>
+                                                                <div className="space-y-3">
+                                                                    {suspiciousItems.map((item, idx) => (
+                                                                        <div key={idx} className="flex gap-3 text-sm p-3 bg-error-container/5 border border-error/10 rounded-xl">
+                                                                            <span className="material-symbols-outlined text-error text-lg">warning</span>
+                                                                            <span className="text-on-surface-variant italic leading-relaxed">{item}</span>
+                                                                        </div>
+                                                                    ))}
+                                                                </div>
+                                                            </div>
+                                                        ) : (
+                                                            <div className="p-4 bg-emerald-500/5 border border-emerald-500/10 rounded-xl flex items-center gap-3">
+                                                                <span className="material-symbols-outlined text-emerald-500 text-lg">verified_user</span>
+                                                                <span className="text-xs font-bold text-on-surface">No high-risk bot patterns detected in recent sample.</span>
+                                                            </div>
+                                                        )}
+                                                    </>
+                                                );
+                                            })()}
                                         </div>
                                     </div>
                                 </div>
