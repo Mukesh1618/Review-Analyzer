@@ -41,26 +41,21 @@ def save_vector_db(db, product_name):
     global_vector_db = db
     db.save_local(path)
 
-    # Save the actual display name inside the folder
-    with open(os.path.join(path, "product_name.txt"), "w") as f:
-        f.write(product_name)
     return product_id
 
 def set_product_name(name, product_id=None):
-    pid = product_id or current_product_id
-    path = os.path.join(FAISS_BASE_PATH, pid)
-    if not os.path.exists(path):
-        os.makedirs(path)
-    with open(os.path.join(path, "product_name.txt"), "w") as f:
-        f.write(name)
+    # No longer saving to a separate file, logic removed to reduce clutter
+    pass
 
 def get_product_name(product_id=None):
     pid = product_id or current_product_id
-    path = os.path.join(FAISS_BASE_PATH, pid, "product_name.txt")
-    if os.path.exists(path):
-        with open(path, "r") as f:
-            return f.read().strip()
-    return pid
+    # First try to get it from the analysis.json if it exists
+    analysis = load_analysis_data(pid)
+    if analysis and analysis.get("product_name"):
+        return analysis["product_name"]
+    
+    # Fallback: Clean up the folder name (replace underscores with spaces)
+    return pid.replace("_", " ")
 
 def get_all_products():
     if not os.path.exists(FAISS_BASE_PATH):

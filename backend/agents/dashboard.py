@@ -14,11 +14,15 @@ def ingest_node(state: DashboardState):
     if not db:
         return {"retrieved_reviews": [], "total_reviews": 0}
 
-    # Retrieve up to 100 reviews to ensure comprehensive analysis
-    docs = db.similarity_search(state["query"], k=100)
+    # Retrieve ALL reviews for comprehensive analysis
+    # ntotal gives the total number of documents in the FAISS index
+    total = db.index.ntotal if hasattr(db, 'index') else 0
+    
+    # We use a large k to get everything, or fetch by ID if possible. 
+    # For FAISS, similarity_search with k=total is effective.
+    docs = db.similarity_search(state["query"], k=max(total, 1))
     reviews = [doc.page_content for doc in docs]
 
-    total = db.index.ntotal if hasattr(db, 'index') else len(reviews)
     return {"retrieved_reviews": reviews, "total_reviews": total}
 
 
@@ -63,12 +67,20 @@ REASONING: [Reason]""" + SYSTEM_RESTRICTION),
 
 
 def run_descriptive_agent(state: DashboardState):
-    """Group B: Summaries, Pros, Cons, Keywords, and Key Metrics"""
+    """Group B: Summaries, Pros, Cons, Keywords, and Key Metrics using a wider sample"""
     reviews_list = state.get("retrieved_reviews", [])
     if not reviews_list: 
         return {"short_summary": "No data", "detailed_summary": "No data", "pros": "No data", "cons": "No data", "keyword_analysis": "", "key_metrics": {"key_strength": "N/A", "top_complaint": "N/A", "emerging_request": "N/A"}}
 
-    reviews_text = "\n- ".join(reviews_list[:30]) # Good sample for qualitative data
+    # Pick a representative sample (beginning, middle, and end)
+    total = len(reviews_list)
+    if total <= 30:
+        sample = reviews_list
+    else:
+        # Take 10 from start, 10 from middle, 10 from end
+        sample = reviews_list[:10] + reviews_list[total//2 - 5 : total//2 + 5] + reviews_list[-10:]
+        
+    reviews_text = "\n- ".join(sample)
 
     prompt = ChatPromptTemplate.from_messages([
         ("system", """You are a professional product analyst.
@@ -154,107 +166,121 @@ Format EXACTLY using these markers:
 
 
 def run_scoring_agent(state: DashboardState):
-    """Group C: Sentiment Distribution and Aspects"""
+    """Group C: Sentiment Distribution and Aspects with 100% Review Batching"""
     reviews_list = state.get("retrieved_reviews", [])
     if not reviews_list: 
         return {"sentiment_analysis": "No data", "sentiment_distribution": {"positive": 0, "neutral": 0, "negative": 0}, "aspect_analysis": "No data"}
 
-    # Use a set to track unique reviews to avoid duplicates in counting
     unique_reviews = list(dict.fromkeys(reviews_list))
-    sample_reviews = unique_reviews[:50]
     
-    reviews_text = ""
-    for i, r in enumerate(sample_reviews):
-        # The input is now a JSON string containing text, rating, and date
-        reviews_text += f"Review_{i}: {r}\n"
+    # Batch processing logic
+    batch_size = 50
+    pos, neu, neg = 0, 0, 0
+    all_aspect_summaries = []
 
     prompt = ChatPromptTemplate.from_messages([
         ("system", """You are an expert NLP data analyst.
-Each input is a structured JSON string containing "text", "rating", and "date".
-Your task is to parse these fields precisely and classify the true sentiment strictly as 'POSITIVE', 'NEGATIVE', or 'NEUTRAL'.
-
+Classify sentiment as 'POSITIVE', 'NEGATIVE', or 'NEUTRAL'.
 STRICT CLASSIFICATION RULES:
-1. TEXT OVERRIDES RATING: Use the "text" as the ultimate source of truth. If "rating" is 4 or 5 but "text" is a complaint, classify as NEGATIVE.
-2. IDENTIFY SPAM AS NEUTRAL: Promotional spam/irrelevant text = NEUTRAL regardless of rating.
-3. THE "MIXED" RULE: Balanced praise and complaints = NEUTRAL. Severe complaints = NEGATIVE.
-4. THE "AVERAGE" RULE: "It's okay", "Nothing special" = NEUTRAL.
-5. ACCESSORY VS CORE: Praise OUR product but hate a minor accessory = POSITIVE. Hate an accessory with NO praise for our product = NEGATIVE.
-6. THIRD-PARTY SOLUTIONS: If things are only "all right" because they bought another brand's product, it is NEGATIVE for our product.
+1. TEXT OVERRIDES RATING.
+2. IDENTIFY SPAM AS NEUTRAL.
+3. MIXED/AVERAGE = NEUTRAL.
 
 STRICT OUTPUT FORMAT:
 - Review [ID]: [CLASSIFICATION]
 
-After the list, provide an aspect analysis (Markdown list with scores 1-10) under the header 'ASPECTS:'.
-""" + SYSTEM_RESTRICTION),
+After the list, provide a brief 2-sentence aspect summary under 'ASPECTS_SUMMARY:'.""" + SYSTEM_RESTRICTION),
         ("user", "Analyze these reviews:\n\n{reviews}")
     ])
 
-    out = clean_llm_output((prompt | llm_0).invoke({"reviews": reviews_text}).content)
-    
-    # Python-based counting
-    pos, neu, neg = 0, 0, 0
-    # Extract classifications: - Review_0: POSITIVE or - Review 0: POSITIVE
-    tally_matches = re.findall(r"Review[_\s]\d+:\s*(POSITIVE|NEGATIVE|NEUTRAL)", out, re.I)
-    
-    for code in tally_matches:
-        code = code.upper()
-        if code == 'POSITIVE': pos += 1
-        elif code == 'NEGATIVE': neg += 1
-        elif code == 'NEUTRAL': neu += 1
-    
+    # Process in batches
+    for i in range(0, len(unique_reviews), batch_size):
+        batch = unique_reviews[i : i + batch_size]
+        batch_text = ""
+        for j, r in enumerate(batch):
+            batch_text += f"Review_{j}: {r}\n"
+
+        try:
+            out = clean_llm_output((prompt | llm_0).invoke({"reviews": batch_text}).content)
+            
+            # Count sentiments in this batch
+            tally_matches = re.findall(r"Review[_\s]\d+:\s*(POSITIVE|NEGATIVE|NEUTRAL)", out, re.I)
+            for code in tally_matches:
+                code = code.upper()
+                if code == 'POSITIVE': pos += 1
+                elif code == 'NEGATIVE': neg += 1
+                elif code == 'NEUTRAL': neu += 1
+            
+            # Collect aspect insights
+            if "ASPECTS_SUMMARY:" in out:
+                all_aspect_summaries.append(out.split("ASPECTS_SUMMARY:")[1].strip())
+        except Exception as e:
+            print(f"Error processing batch {i//batch_size}: {e}")
+
     total_counted = pos + neu + neg
     total_for_score = total_counted or 1
     score = ((pos + 0.5 * neu) / total_for_score) * 10
     
-    aspects = "Aspect analysis unavailable."
-    try:
-        aspects = out.split("ASPECTS:")[1].strip()
-    except:
-        pass
-    
+    # Final aggregation for aspects
+    aspect_text = "Aspect analysis based on total data:\n" + "\n".join(all_aspect_summaries[:5]) # Show first few key insights
+
     final_text = f"OVERALL SCORE: {score:.1f}/10\n\nDISTRIBUTION (Based on {total_counted} analyzed reviews):\n- Positive: {pos}\n- Neutral: {neu}\n- Negative: {neg}"
 
     return {
         "sentiment_analysis": final_text,
         "sentiment_distribution": {"positive": pos, "neutral": neu, "negative": neg},
-        "aspect_analysis": aspects
+        "aspect_analysis": aspect_text
     }
 
 
 def run_timeline_agent(state: DashboardState):
+    """Group D: Timeline Trend with 100% Review Batching"""
     reviews_list = state.get("retrieved_reviews", [])
     if not reviews_list: 
         return {"timeline_analysis": "No data", "sentiment_trend": []}
 
     unique_reviews = list(dict.fromkeys(reviews_list))
-    reviews_text = "\n- ".join(unique_reviews[:100])
+    
+    batch_size = 100
+    trend = []
+    all_output = []
 
     prompt = ChatPromptTemplate.from_messages([
         ("system", """You are a time-series analyst. 
-Each input is a JSON string with "text", "rating", and "date".
-Task: Extract the date and calculate the true sentiment score (1-10) based on the text.
-
+Extract the date and calculate the true sentiment score (1-10) based on the text.
 STRICT FORMAT:
 - [YYYY-MM-DD]: [Score]
-
-CRITICAL: 
-1. Use ONLY the "date" from the JSON. 
-2. Return ONLY the list of points, one per line.""" + SYSTEM_RESTRICTION),
+Return ONLY the list of points.""" + SYSTEM_RESTRICTION),
         ("user", "Reviews:\n{reviews}")
     ])
 
-    out = clean_llm_output((prompt | llm_0).invoke({"reviews": reviews_text}).content)
+    # Process in batches to cover the whole timeline
+    for i in range(0, len(unique_reviews), batch_size):
+        # We can skip some batches if there are thousands to save time, 
+        # but for accuracy, we process a sampled selection across the file
+        batch = unique_reviews[i : i + batch_size]
+        reviews_text = "\n- ".join(batch)
 
-    trend = []
-    matches = re.findall(r"(?:-\s*)?([\d-]{10}):\s*([\d.]+)", out)
-    for date_str, score in matches:
         try:
-            trend.append({"date": date_str.strip(), "score": float(score)})
-        except ValueError:
-            continue
+            out = clean_llm_output((prompt | llm_0).invoke({"reviews": reviews_text}).content)
+            all_output.append(out)
+            
+            matches = re.findall(r"(?:-\s*)?([\d-]{10}):\s*([\d.]+)", out)
+            for date_str, score in matches:
+                try:
+                    trend.append({"date": date_str.strip(), "score": float(score)})
+                except ValueError:
+                    continue
+        except Exception as e:
+            print(f"Error in timeline batch {i//batch_size}: {e}")
 
+    # Sort by date for the graph
     trend.sort(key=lambda x: x["date"])
-    return {"timeline_analysis": out, "sentiment_trend": trend}
+    
+    return {
+        "timeline_analysis": "\n".join(all_output[:2]), # Store a snippet for debug
+        "sentiment_trend": trend
+    }
 
 
 def run_security_agent(state: DashboardState):
