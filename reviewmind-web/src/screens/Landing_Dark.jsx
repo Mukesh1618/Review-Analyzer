@@ -54,11 +54,7 @@ const Landing_Dark = () => {
           </div>
         </div>
         <div className="flex items-center gap-4">
-          <div className="hidden sm:flex items-center bg-surface-container-low rounded-full px-3 py-1.5 gap-2">
-            <span className="material-symbols-outlined text-outline text-sm">search</span>
-            <input className="bg-transparent border-none focus:ring-0 text-xs w-32 placeholder:text-outline-variant text-on-surface" placeholder="Search insights..." type="text" />
-          </div>
-          <Link to="/dashboard" className="text-on-surface-variant hover:text-primary transition-colors px-3 py-2">Login</Link>
+          <Link to="/login" className="text-on-surface-variant hover:text-primary transition-colors px-3 py-2">Login</Link>
         </div>
       </nav>
 
@@ -77,7 +73,7 @@ const Landing_Dark = () => {
             Unlock the hidden narrative in your user feedback. ReviewMind categorizes sentiment, detects trends, and answers your toughest product questions in seconds.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link to="/upload" className="w-full sm:w-auto bg-primary text-on-primary px-8 py-4 rounded-xl font-bold shadow-lg shadow-primary/20 hover:bg-primary-fixed-dim transition-all text-center">
+            <Link to="/login" className="w-full sm:w-auto bg-primary text-on-primary px-8 py-4 rounded-xl font-bold shadow-lg shadow-primary/20 hover:bg-primary-fixed-dim transition-all text-center">
               Get Started Free
             </Link>
             <button className="w-full sm:w-auto bg-surface-container-highest text-on-surface px-8 py-4 rounded-xl font-bold border border-outline-variant/30 hover:bg-surface-container-high transition-colors">
@@ -264,7 +260,7 @@ const Landing_Dark = () => {
           <h2 className="text-4xl lg:text-5xl font-extrabold mb-8 tracking-tight text-on-surface">Stop guessing. <br /><span className="text-primary">Start knowing.</span></h2>
           <p className="text-on-surface-variant text-lg mb-12">Join 500+ teams using ReviewMind to build products people actually love.</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/upload" className="bg-primary text-on-primary px-10 py-5 rounded-xl font-bold text-lg hover:bg-primary-fixed-dim transition-colors text-center">Get Started Now</Link>
+            <Link to="/login" className="bg-primary text-on-primary px-10 py-5 rounded-xl font-bold text-lg hover:bg-primary-fixed-dim transition-colors text-center">Get Started Now</Link>
             <button className="w-full sm:w-auto bg-surface-container-high text-on-surface px-10 py-5 rounded-xl font-bold text-lg border border-outline-variant/30 hover:bg-surface-container-highest transition-colors">Talk to Sales</button>
           </div>
         </section>

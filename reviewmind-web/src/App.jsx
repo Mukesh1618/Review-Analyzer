@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 
 import LandingDark from './screens/Landing_Dark';
+import LoginDark from './screens/Login_Dark';
 import DashboardDark from './screens/Dashboard_Dark';
 import FileUploadDark from './screens/FileUpload_Dark';
 import AnalysisResultsDark from './screens/AnalysisResults_Dark';
@@ -13,6 +14,7 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<LandingDark />} />
+        <Route path="/login" element={<LoginDark />} />
         <Route path="/dashboard" element={<DashboardDark />} />
         <Route path="/upload" element={<FileUploadDark />} />
         <Route path="/analysis" element={<AnalysisResultsDark />} />
