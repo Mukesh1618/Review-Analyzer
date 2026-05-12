@@ -3,31 +3,78 @@ import { Link } from 'react-router-dom';
 
 const Dashboard_Dark = () => {
     const [data, setData] = useState(null);
+    const [allProducts, setAllProducts] = useState([]);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [showResults, setShowResults] = useState(false);
+    const [shuffledReviews, setShuffledReviews] = useState([]);
+    const [visibleCount, setVisibleCount] = useState(15);
+    const [showAllModal, setShowAllModal] = useState(false);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+
+    const fetchAllProducts = async () => {
+        try {
+            const response = await fetch('http://127.0.0.1:8000/products');
+            const products = await response.json();
+            setAllProducts(products);
+        } catch (err) {
+            console.error("Failed to fetch products:", err);
+        }
+    };
+
+    const handleSelectProduct = async (productId) => {
+        try {
+            setLoading(true);
+            setShowResults(false);
+            setSearchQuery("");
+            const response = await fetch(`http://127.0.0.1:8000/select_product?product_id=${productId}`, {
+                method: 'POST'
+            });
+            const result = await response.json();
+            if (result.message) {
+                // Clear cache and re-fetch analysis
+                localStorage.removeItem('reviewMindData');
+                window.location.reload();
+            }
+        } catch (err) {
+            setError("Failed to switch product.");
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
         const fetchData = async () => {
             try {
+                fetchAllProducts();
                 const cachedData = localStorage.getItem('reviewMindData');
+                let resultData = null;
+                
                 if (cachedData) {
                     const parsed = JSON.parse(cachedData);
-                    // Validate cache structure
                     if (parsed && parsed.sentiment_distribution && parsed.key_metrics) {
-                        setData(parsed);
-                        setLoading(false);
-                        return;
+                        resultData = parsed;
                     } else {
                         localStorage.removeItem('reviewMindData');
                     }
                 }
-                const response = await fetch('http://127.0.0.1:8000/analyze');
-                const json = await response.json();
-                if (json.error) {
-                    setError(json.error);
-                } else {
-                    setData(json);
-                    localStorage.setItem('reviewMindData', JSON.stringify(json));
+
+                if (!resultData) {
+                    const response = await fetch('http://127.0.0.1:8000/analyze');
+                    resultData = await response.json();
+                    if (resultData.error) {
+                        setError(resultData.error);
+                        setLoading(false);
+                        return;
+                    }
+                    localStorage.setItem('reviewMindData', JSON.stringify(resultData));
+                }
+
+                setData(resultData);
+                
+                // Shuffle reviews once on load
+                if (resultData.retrieved_reviews) {
+                    const shuffled = [...resultData.retrieved_reviews].sort(() => Math.random() - 0.5);
+                    setShuffledReviews(shuffled);
                 }
             } catch (err) {
                 setError('Failed to connect to backend. Is the server running?');
@@ -132,10 +179,44 @@ const Dashboard_Dark = () => {
             <main className="md:ml-64 min-h-screen flex flex-col">
                 {/* TopNavBar */}
                 <header className="w-full h-16 sticky top-0 flex justify-between items-center px-8 z-30 bg-surface/80 backdrop-blur-md border-b border-outline-variant/10 font-label-md text-left">
-                    <div className="flex items-center gap-6 flex-1 text-left">
-                        <div className="relative w-full max-w-md text-left">
+                    <div className="flex-1 max-w-xl mx-auto px-8">
+                        <div className="relative group">
                             <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-lg">search</span>
-                            <input className="w-full bg-surface-container-low border-none rounded-lg pl-10 pr-4 py-2 focus:ring-2 focus:ring-primary/20 text-sm placeholder:text-on-surface-variant/40 text-on-surface" placeholder="Search analysis, keywords..." type="text" />
+                            <input 
+                                className="w-full bg-surface-container-low border-none rounded-lg pl-10 pr-4 py-2 focus:ring-2 focus:ring-primary/20 text-sm placeholder:text-on-surface-variant/40 text-on-surface" 
+                                placeholder="Search previously analyzed products..." 
+                                type="text"
+                                value={searchQuery}
+                                onChange={(e) => {
+                                    setSearchQuery(e.target.value);
+                                    setShowResults(true);
+                                }}
+                                onFocus={() => setShowResults(true)}
+                            />
+
+                            {/* Autocomplete Dropdown */}
+                            {showResults && searchQuery.length > 0 && (
+                                <div className="absolute top-full left-0 w-full mt-2 bg-surface-container-high border border-outline-variant/20 rounded-xl shadow-2xl z-[100] max-h-64 overflow-y-auto overflow-x-hidden">
+                                    {allProducts.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase())).length > 0 ? (
+                                        allProducts
+                                            .filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase()))
+                                            .map((product) => (
+                                                <button
+                                                    key={product.id}
+                                                    onClick={() => handleSelectProduct(product.id)}
+                                                    className="w-full px-5 py-3 text-left hover:bg-primary/10 flex items-center gap-3 transition-colors border-b border-outline-variant/5 last:border-none"
+                                                >
+                                                    <span className="material-symbols-outlined text-primary text-sm">history</span>
+                                                    <span className="text-on-surface font-medium text-sm">{product.name}</span>
+                                                </button>
+                                            ))
+                                    ) : (
+                                        <div className="px-5 py-4 text-on-surface-variant text-xs italic">No matching products found</div>
+                                    )}
+                                </div>
+                            )}
+                            {/* Click outside to close */}
+                            {showResults && <div className="fixed inset-0 z-[90]" onClick={() => setShowResults(false)}></div>}
                         </div>
                     </div>
                 </header>
@@ -445,7 +526,12 @@ const Dashboard_Dark = () => {
                             <div className="bg-surface-container-lowest rounded-xl editorial-shadow overflow-hidden border border-outline-variant/10 text-left">
                                 <div className="px-8 py-6 border-b border-outline-variant/10 flex items-center justify-between">
                                     <h3 className="text-lg font-bold font-headline-md text-on-surface">Raw Review Samples</h3>
-                                    <button className="text-primary text-sm font-semibold hover:underline">View All {data?.total_reviews || 0}</button>
+                                    <button 
+                                        onClick={() => setShowAllModal(true)}
+                                        className="text-primary text-sm font-semibold hover:underline"
+                                    >
+                                        View All ({data?.total_reviews || 0})
+                                    </button>
                                 </div>
                                 <div className="overflow-x-auto">
                                     <table className="w-full text-left text-sm">
@@ -458,7 +544,7 @@ const Dashboard_Dark = () => {
                                             </tr>
                                         </thead>
                                         <tbody className="divide-y divide-outline-variant/10">
-                                            {data?.retrieved_reviews && data.retrieved_reviews.map((raw, i) => {
+                                            {shuffledReviews.slice(0, visibleCount).map((raw, i) => {
                                                 const review = parseReview(raw);
                                                 return (
                                                     <tr key={i} className="hover:bg-surface-container-high/20 transition-colors">
@@ -481,11 +567,93 @@ const Dashboard_Dark = () => {
                                         </tbody>
                                     </table>
                                 </div>
+                                {shuffledReviews.length > visibleCount && (
+                                    <div className="p-6 border-t border-outline-variant/10 flex justify-center">
+                                        <button 
+                                            onClick={() => setVisibleCount(prev => prev + 15)}
+                                            className="px-6 py-2 bg-surface-container-high text-primary font-bold rounded-lg hover:bg-primary/10 transition-colors flex items-center gap-2"
+                                        >
+                                            <span className="material-symbols-outlined text-lg">expand_more</span>
+                                            See More Reviews
+                                        </button>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     )}
                 </div>
             </main>
+
+            {/* View All Reviews Modal */}
+            {showAllModal && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-10">
+                    <div 
+                        className="absolute inset-0 bg-background/80 backdrop-blur-md"
+                        onClick={() => setShowAllModal(false)}
+                    ></div>
+                    <div className="relative w-full max-w-5xl bg-surface-container-lowest rounded-2xl shadow-2xl border border-outline-variant/20 flex flex-col max-h-full overflow-hidden">
+                        {/* Modal Header */}
+                        <div className="px-8 py-6 border-b border-outline-variant/10 flex items-center justify-between bg-surface-container-lowest">
+                            <div>
+                                <h3 className="text-2xl font-bold text-on-surface">All {data?.total_reviews || 0} Reviews</h3>
+                                <p className="text-on-surface-variant text-sm">Comprehensive list for {data?.product_name || 'Product'}</p>
+                            </div>
+                            <button 
+                                onClick={() => setShowAllModal(false)}
+                                className="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface hover:bg-error/10 hover:text-error transition-all"
+                            >
+                                <span className="material-symbols-outlined">close</span>
+                            </button>
+                        </div>
+
+                        {/* Modal Content - Scrollable Table */}
+                        <div className="flex-1 overflow-auto bg-surface-container-lowest">
+                            <table className="w-full text-left text-sm">
+                                <thead className="sticky top-0 z-10 bg-surface-container-low shadow-sm">
+                                    <tr className="text-on-surface-variant font-bold uppercase text-[10px] tracking-widest">
+                                        <th className="px-8 py-4">User</th>
+                                        <th className="px-8 py-4">Sentiment</th>
+                                        <th className="px-8 py-4">Review Content</th>
+                                        <th className="px-8 py-4 text-right">Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-outline-variant/10">
+                                    {data?.retrieved_reviews && data.retrieved_reviews.map((raw, i) => {
+                                        const review = parseReview(raw);
+                                        return (
+                                            <tr key={i} className="hover:bg-surface-container-high/20 transition-colors">
+                                                <td className="px-8 py-5">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center font-bold text-xs text-on-surface">R{i + 1}</div>
+                                                        <span className="font-medium text-on-surface whitespace-nowrap">Reviewer {i + 1}</span>
+                                                    </div>
+                                                </td>
+                                                <td className="px-8 py-5">
+                                                    <span className={`px-3 py-1 rounded-full text-[10px] font-bold ${getSentimentColor(review.sentiment)}`}>
+                                                        {review.sentiment || 'NEUTRAL'}
+                                                    </span>
+                                                </td>
+                                                <td className="px-8 py-5 text-on-surface leading-relaxed">{review.text}</td>
+                                                <td className="px-8 py-5 text-right font-medium text-on-surface-variant whitespace-nowrap">{review.date}</td>
+                                            </tr>
+                                        );
+                                    })}
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        {/* Modal Footer */}
+                        <div className="px-8 py-4 bg-surface-container-low border-t border-outline-variant/10 flex justify-end">
+                            <button 
+                                onClick={() => setShowAllModal(false)}
+                                className="px-8 py-2 bg-primary text-on-primary font-bold rounded-lg hover:shadow-lg transition-all"
+                            >
+                                Close View
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
