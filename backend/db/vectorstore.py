@@ -8,19 +8,27 @@ FAISS_BASE_PATH = "faiss_index"
 embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
 global_vector_db = None
 current_product_id = "default"
+current_user_id = "default"
 
 def get_db():
     global global_vector_db
     return global_vector_db
 
-def load_vector_db(product_id="default"):
-    global global_vector_db, current_product_id
+def get_user_path(user_id=None):
+    uid = user_id or current_user_id
+    return os.path.join(FAISS_BASE_PATH, uid)
+
+def load_vector_db(product_id="default", user_id=None):
+    global global_vector_db, current_product_id, current_user_id
     current_product_id = product_id
-    path = os.path.join(FAISS_BASE_PATH, product_id)
+    if user_id:
+        current_user_id = user_id
+    
+    path = os.path.join(get_user_path(user_id), product_id)
     if os.path.exists(path):
         try:
             global_vector_db = FAISS.load_local(path, embeddings, allow_dangerous_deserialization=True)
-            print(f"Loaded FAISS index for {product_id} from disk.")
+            print(f"Loaded FAISS index for {product_id} (User: {current_user_id}) from disk.")
         except Exception as e:
             print(f"Error loading FAISS index: {e}")
             global_vector_db = None
@@ -28,13 +36,16 @@ def load_vector_db(product_id="default"):
         global_vector_db = None
     return global_vector_db
 
-def save_vector_db(db, product_name):
-    global global_vector_db, current_product_id
+def save_vector_db(db, product_name, user_id=None):
+    global global_vector_db, current_product_id, current_user_id
+    uid = user_id or current_user_id
+    
     # Create a safe ID from the product name
     product_id = "".join([c if c.isalnum() else "_" for c in product_name]).strip("_")
     current_product_id = product_id
+    current_user_id = uid
 
-    path = os.path.join(FAISS_BASE_PATH, product_id)
+    path = os.path.join(get_user_path(uid), product_id)
     if not os.path.exists(path):
         os.makedirs(path)
 
@@ -44,38 +55,44 @@ def save_vector_db(db, product_name):
     return product_id
 
 def set_product_name(name, product_id=None):
-    # No longer saving to a separate file, logic removed to reduce clutter
+    # This is a legacy function kept for compatibility with dashboard agents
     pass
 
-def get_product_name(product_id=None):
+def get_product_name(product_id=None, user_id=None):
     pid = product_id or current_product_id
+    uid = user_id or current_user_id
+    
     # First try to get it from the analysis.json if it exists
-    analysis = load_analysis_data(pid)
+    analysis = load_analysis_data(pid, uid)
     if analysis and analysis.get("product_name"):
         return analysis["product_name"]
     
     # Fallback: Clean up the folder name (replace underscores with spaces)
     return pid.replace("_", " ")
 
-def get_all_products():
-    if not os.path.exists(FAISS_BASE_PATH):
+def get_all_products(user_id=None):
+    uid = user_id or current_user_id
+    user_path = get_user_path(uid)
+    
+    if not os.path.exists(user_path):
         return []
 
     products = []
-    for pid in os.listdir(FAISS_BASE_PATH):
-        path = os.path.join(FAISS_BASE_PATH, pid)
+    for pid in os.listdir(user_path):
+        path = os.path.join(user_path, pid)
         if os.path.isdir(path):
-            name = get_product_name(pid)
+            name = get_product_name(pid, uid)
             products.append({"id": pid, "name": name})
     return products
 
-def save_analysis_data(data, product_id=None):
+def save_analysis_data(data, product_id=None, user_id=None):
     """Saves the fully computed dashboard state to a JSON file."""
     pid = product_id or current_product_id
-    path = os.path.join(FAISS_BASE_PATH, pid)
+    uid = user_id or current_user_id
+    
+    path = os.path.join(get_user_path(uid), pid)
     if not os.path.exists(path):
         os.makedirs(path)
-    # We shouldn't serialize the raw retrieved docs to save space if it's large, but let's save the main fields
     try:
         with open(os.path.join(path, "analysis.json"), "w", encoding='utf-8') as f:
             json.dump(data, f, indent=4)
@@ -84,28 +101,34 @@ def save_analysis_data(data, product_id=None):
         print(f"Failed to save analysis data: {e}")
         return False
 
-def save_data_hash(content_hash, product_id=None):
+def save_data_hash(content_hash, product_id=None, user_id=None):
     """Saves the fingerprint of the raw data to check for changes later."""
     pid = product_id or current_product_id
-    path = os.path.join(FAISS_BASE_PATH, pid)
+    uid = user_id or current_user_id
+    
+    path = os.path.join(get_user_path(uid), pid)
     if not os.path.exists(path):
         os.makedirs(path)
     with open(os.path.join(path, "data_hash.txt"), "w") as f:
         f.write(content_hash)
 
-def get_data_hash(product_id=None):
+def get_data_hash(product_id=None, user_id=None):
     """Retrieves the stored fingerprint for a product."""
     pid = product_id or current_product_id
-    path = os.path.join(FAISS_BASE_PATH, pid, "data_hash.txt")
+    uid = user_id or current_user_id
+    
+    path = os.path.join(get_user_path(uid), pid, "data_hash.txt")
     if os.path.exists(path):
         with open(path, "r") as f:
             return f.read().strip()
     return None
 
-def load_analysis_data(product_id=None):
+def load_analysis_data(product_id=None, user_id=None):
     """Loads the previously computed dashboard state from JSON."""
     pid = product_id or current_product_id
-    path = os.path.join(FAISS_BASE_PATH, pid, "analysis.json")
+    uid = user_id or current_user_id
+    
+    path = os.path.join(get_user_path(uid), pid, "analysis.json")
     if os.path.exists(path):
         try:
             with open(path, "r", encoding='utf-8') as f:

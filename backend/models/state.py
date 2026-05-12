@@ -20,6 +20,8 @@ class DashboardState(TypedDict):
     predicted_rating: str
     timeline_analysis: str
     fake_review_analysis: str
+    is_valid: bool
+    validation_error: str
     # New fields for structured data from preferred logic
     sentiment_distribution: dict  # {"positive": X, "neutral": Y, "negative": Z}
     sentiment_trend: List[dict]    # [{"date": "...", "score": ...}]

@@ -9,6 +9,67 @@ from langchain_core.prompts import ChatPromptTemplate
 llm_0 = get_llm(0.0)
 llm_1 = get_llm(0.1)
 
+def validate_node(state: DashboardState):
+    """Guardrail: Verify if the uploaded content actually contains product reviews."""
+    reviews_list = state.get("retrieved_reviews", [])
+    print(f"DEBUG: Validating {len(reviews_list)} reviews.")
+    
+    if not reviews_list:
+        return {"is_valid": False, "validation_error": "No data found to validate."}
+
+    # Take a representative sample
+    total = len(reviews_list)
+    if total <= 15:
+        sample = reviews_list
+    else:
+        sample = reviews_list[:5] + reviews_list[total//2 - 2 : total//2 + 3] + reviews_list[-5:]
+    
+    sample_text = "\n---\n".join([str(r)[:500] for r in sample])
+    print(f"DEBUG: Sample text for validation: {sample_text[:200]}...")
+
+    prompt = ChatPromptTemplate.from_messages([
+        ("system", """You are a strict content filter. Your ONLY job is to determine if the provided text consists of product reviews or customer feedback.
+
+A valid review MUST contain qualitative opinions about a product's performance, quality, or features. 
+
+INVALID content includes:
+- HTML/CSS/JavaScript code or web page source.
+- Server logs or system data.
+- Documentation or instructional text.
+- Random marketing copy or landing page text that isn't a USER review.
+
+Respond EXACTLY in this JSON format:
+{{
+  "is_valid": true/false,
+  "reason": "Brief explanation if invalid (e.g., 'Source code', 'Landing page content', 'Gibberish')"
+}}""" + SYSTEM_RESTRICTION),
+        ("user", "Analyze this sample content:\n\n{sample}")
+    ])
+
+    try:
+        response = (prompt | llm_0).invoke({"sample": sample_text})
+        content = clean_llm_output(response.content)
+        print(f"DEBUG: Validation LLM response: {content}")
+        
+        # Handle potential markdown blocks in response
+        if "```json" in content:
+            content = content.split("```json")[1].split("```")[0].strip()
+        elif "```" in content:
+            content = content.split("```")[1].split("```")[0].strip()
+        
+        result = json.loads(content)
+        is_valid = result.get("is_valid", False)
+        print(f"DEBUG: Final decision - is_valid: {is_valid}")
+        
+        return {
+            "is_valid": is_valid,
+            "validation_error": result.get("reason", "Unknown content type") if not is_valid else ""
+        }
+    except Exception as e:
+        print(f"Validation Error: {e}")
+        return {"is_valid": True}
+
+
 def ingest_node(state: DashboardState):
     db = get_db()
     if not db:

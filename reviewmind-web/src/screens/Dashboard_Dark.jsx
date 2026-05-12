@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../AuthContext';
 
 const Dashboard_Dark = () => {
+    const { user, loading: authLoading } = useAuth();
+    const navigate = useNavigate();
     const [data, setData] = useState(null);
     const [allProducts, setAllProducts] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
@@ -13,8 +16,11 @@ const Dashboard_Dark = () => {
     const [error, setError] = useState(null);
 
     const fetchAllProducts = async () => {
+        if (!user) return;
         try {
-            const response = await fetch('http://127.0.0.1:8000/products');
+            const response = await fetch('http://127.0.0.1:8000/products', {
+                headers: { 'X-User-ID': user.uid }
+            });
             const products = await response.json();
             setAllProducts(products);
         } catch (err) {
@@ -23,17 +29,19 @@ const Dashboard_Dark = () => {
     };
 
     const handleSelectProduct = async (productId) => {
+        if (!user) return;
         try {
             setLoading(true);
             setShowResults(false);
             setSearchQuery("");
             const response = await fetch(`http://127.0.0.1:8000/select_product?product_id=${productId}`, {
-                method: 'POST'
+                method: 'POST',
+                headers: { 'X-User-ID': user.uid }
             });
             const result = await response.json();
             if (result.message) {
                 // Clear cache and re-fetch analysis
-                localStorage.removeItem('reviewMindData');
+                localStorage.removeItem(`reviewMindData_${user.uid}`);
                 window.location.reload();
             }
         } catch (err) {
@@ -43,10 +51,16 @@ const Dashboard_Dark = () => {
     };
 
     useEffect(() => {
+        if (!authLoading && !user) {
+            navigate('/login');
+            return;
+        }
+
         const fetchData = async () => {
+            if (!user) return;
             try {
                 fetchAllProducts();
-                const cachedData = localStorage.getItem('reviewMindData');
+                const cachedData = localStorage.getItem(`reviewMindData_${user.uid}`);
                 let resultData = null;
                 
                 if (cachedData) {
@@ -54,19 +68,26 @@ const Dashboard_Dark = () => {
                     if (parsed && parsed.sentiment_distribution && parsed.key_metrics) {
                         resultData = parsed;
                     } else {
-                        localStorage.removeItem('reviewMindData');
+                        localStorage.removeItem(`reviewMindData_${user.uid}`);
                     }
                 }
 
                 if (!resultData) {
-                    const response = await fetch('http://127.0.0.1:8000/analyze');
-                    resultData = await response.json();
-                    if (resultData.error) {
-                        setError(resultData.error);
+                    const response = await fetch('http://127.0.0.1:8000/analyze', {
+                        headers: { 'X-User-ID': user.uid }
+                    });
+                    
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        // If it's a validation error (400), we MUST clear the cache to stop showing old product data
+                        localStorage.removeItem(`reviewMindData_${user.uid}`);
+                        setError(errorData.detail || errorData.error || "Analysis failed.");
                         setLoading(false);
                         return;
                     }
-                    localStorage.setItem('reviewMindData', JSON.stringify(resultData));
+
+                    resultData = await response.json();
+                    localStorage.setItem(`reviewMindData_${user.uid}`, JSON.stringify(resultData));
                 }
 
                 setData(resultData);
@@ -82,8 +103,11 @@ const Dashboard_Dark = () => {
                 setLoading(false);
             }
         };
-        fetchData();
-    }, []);
+        
+        if (user) {
+            fetchData();
+        }
+    }, [user, authLoading, navigate]);
 
     const parseReview = (raw) => {
         if (!raw) return { text: '', sentiment: 'NEUTRAL', date: 'Recent' };

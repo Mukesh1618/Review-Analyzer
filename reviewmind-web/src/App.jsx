@@ -9,19 +9,23 @@ import AnalysisResultsDark from './screens/AnalysisResults_Dark';
 import ChatInterfaceDark from './screens/ChatInterface_Dark';
 import ReviewDetailDark from './screens/ReviewDetail_Dark';
 
+import { AuthProvider } from './AuthContext';
+
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<LandingDark />} />
-        <Route path="/login" element={<LoginDark />} />
-        <Route path="/dashboard" element={<DashboardDark />} />
-        <Route path="/upload" element={<FileUploadDark />} />
-        <Route path="/analysis" element={<AnalysisResultsDark />} />
-        <Route path="/chat" element={<ChatInterfaceDark />} />
-        <Route path="/review" element={<ReviewDetailDark />} />
-      </Routes>
-    </Router>
+    <AuthProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<LandingDark />} />
+          <Route path="/login" element={<LoginDark />} />
+          <Route path="/dashboard" element={<DashboardDark />} />
+          <Route path="/upload" element={<FileUploadDark />} />
+          <Route path="/analysis" element={<AnalysisResultsDark />} />
+          <Route path="/chat" element={<ChatInterfaceDark />} />
+          <Route path="/review" element={<ReviewDetailDark />} />
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
 }
 

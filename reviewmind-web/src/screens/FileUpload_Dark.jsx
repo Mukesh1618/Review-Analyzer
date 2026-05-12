@@ -1,12 +1,20 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../AuthContext';
 
 const FileUpload_Dark = () => {
+    const { user, loading: authLoading } = useAuth();
     const [file, setFile] = useState(null);
     const [uploading, setUploading] = useState(false);
     const [message, setMessage] = useState('');
     const fileInputRef = useRef(null);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        if (!authLoading && !user) {
+            navigate('/login');
+        }
+    }, [user, authLoading, navigate]);
 
     const handleFileChange = (e) => {
         if (e.target.files && e.target.files.length > 0) {
@@ -20,7 +28,7 @@ const FileUpload_Dark = () => {
     };
 
     const handleUpload = async () => {
-        if (!file) {
+        if (!file || !user) {
             setMessage("Please select a file first.");
             return;
         }
@@ -33,14 +41,15 @@ const FileUpload_Dark = () => {
         try {
             const response = await fetch('http://127.0.0.1:8000/upload', {
                 method: 'POST',
+                headers: { 'X-User-ID': user.uid },
                 body: formData,
             });
             const data = await response.json();
-            if (data.error) {
-                setMessage(data.error);
+            if (data.error || !response.ok) {
+                setMessage(data.error || "Upload failed. Please try again.");
             } else {
                 setMessage(data.message || "Upload successful!");
-                localStorage.removeItem('reviewMindData');
+                localStorage.removeItem(`reviewMindData_${user.uid}`);
                 setTimeout(() => navigate('/dashboard'), 1500);
             }
         } catch (error) {
@@ -52,19 +61,21 @@ const FileUpload_Dark = () => {
     };
 
     const handleSampleUpload = async (sampleName) => {
+        if (!user) return;
         setUploading(true);
         setMessage(`Loading sample: ${sampleName}...`);
 
         try {
             const response = await fetch(`http://127.0.0.1:8000/upload_sample?sample_name=${sampleName}`, {
-                method: 'POST'
+                method: 'POST',
+                headers: { 'X-User-ID': user.uid }
             });
             const data = await response.json();
-            if (data.error) {
-                setMessage(data.error);
+            if (data.error || !response.ok) {
+                setMessage(data.error || "Failed to load sample.");
             } else {
                 setMessage(data.message || "Sample loaded!");
-                localStorage.removeItem('reviewMindData');
+                localStorage.removeItem(`reviewMindData_${user.uid}`);
                 setTimeout(() => navigate('/dashboard'), 1500);
             }
         } catch (error) {

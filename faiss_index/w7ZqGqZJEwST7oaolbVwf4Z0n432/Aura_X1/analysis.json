@@ -1,0 +1,91 @@
+{
+    "query": "general product feedback",
+    "retrieved_reviews": [
+        "{\"text\": \"Upgraded from my old phone and the Aura X1 is lightning fast. Best display I've ever seen on a mobile device.\", \"rating\": 5, \"date\": \"2023-03-05\"}",
+        "{\"text\": \"Overpriced for what it offers. The screen is nice, but it gets way too hot when watching videos or gaming for more than 20 minutes.\", \"rating\": 2, \"date\": \"2023-05-22\"}",
+        "{\"text\": \"Great performance and the screen is beautiful. Camera is a bit weak in low light, but overall a solid phone for the price.\", \"rating\": 4, \"date\": \"2023-02-10\"}",
+        "{\"text\": \"Good phone but a bit too large for my hands. Performance is stellar, no lag at all even with heavy apps.\", \"rating\": 4, \"date\": \"2023-11-20\"}",
+        "{\"text\": \"Still love the hardware, but the recent software update in June made the UI feel a little sluggish.\", \"rating\": 4, \"date\": \"2023-06-15\"}",
+        "{\"text\": \"WOW THIS IS THE MOST AMAZING ELECTRONIC DEVICE EVER CREATED IN HUMAN HISTORY I LOVE IT SO MUCH BUY IT NOW CLICK MY LINK!!!\", \"rating\": 5, \"date\": \"2023-09-10\"}",
+        "{\"text\": \"Decent phone. Battery is okay, camera is okay. Nothing special, but it gets the job done.\", \"rating\": 3, \"date\": \"2023-04-12\"}",
+        "{\"text\": \"Broke within a month. Screen cracked easily and repair costs are insanely high. Do not buy.\", \"rating\": 1, \"date\": \"2023-09-01\"}",
+        "{\"text\": \"Used to be my favorite phone. Now it freezes constantly. They ruined it with the recent updates. Customer service was no help.\", \"rating\": 2, \"date\": \"2023-08-12\"}",
+        "{\"text\": \"The battery life is incredible, easily lasts two full days. Super fast charging. Highly recommend for gaming!\", \"rating\": 5, \"date\": \"2023-01-15\"}",
+        "{\"text\": \"Absolutely terrible after the new update. The battery drains so fast now and the camera app crashes constantly.\", \"rating\": 1, \"date\": \"2023-07-05\"}",
+        "{\"text\": \"It's fine. The camera is good for daylight photos. Battery life dropped significantly after the summer update though.\", \"rating\": 3, \"date\": \"2023-10-05\"}"
+    ],
+    "total_reviews": 12,
+    "product_name": "Aura X1",
+    "short_summary": "The Aura X1 is a fast and visually appealing phone with some drawbacks. It has received praise for its performance and display, but criticism for its price, heat issues, and software updates. Some users have experienced battery life and camera problems after updates.",
+    "detailed_summary": "- The Aura X1 has received praise for its lightning-fast performance and stunning display.\n- Some users have found the phone to be overpriced for what it offers.\n- The screen has been praised for its quality, but some users have experienced heat issues when watching videos or gaming for extended periods.\n- The camera has been criticized for its performance in low-light conditions, but some users have found it to be good for daylight photos.\n- Some users have experienced battery life problems after software updates, with some reporting that the battery drains quickly.\n- The phone's size has been a concern for some users, who find it to be too large for their hands.\n- Customer service has been criticized for not being helpful in resolving issues with the phone.\n- Some users have experienced freezing and crashing issues with the phone after software updates.\n- The phone's durability has been a concern, with one user reporting that the screen cracked easily and repair costs were high.\n- Some users have praised the phone's battery life, with one user reporting that it easily lasts two full days.\n- The phone's charging speed has been praised, with one user reporting that it charges quickly.\n- Some users have found the phone to be a good value for the price, but others have found it to be overpriced.",
+    "sentiment_analysis": "OVERALL SCORE: 5.0/10\n\nDISTRIBUTION (Based on 12 analyzed reviews):\n- Positive: 4\n- Neutral: 4\n- Negative: 4",
+    "pros": "- Lightning-fast performance\n- Stunning display\n- Good camera for daylight photos\n- Long battery life\n- Fast charging",
+    "cons": "- Overpriced\n- Heat issues\n- Software update problems\n- Camera issues in low-light conditions\n- Large size\n- Durability concerns",
+    "aspect_analysis": "**Performance**: 8/10\n**Display Quality**: 8.5/10\n**Battery**: 7.5/10\n**Price**: 5/10\n**Build Quality**: 6/10\n**Camera**: 6.5/10\n**Software**: 4.5/10",
+    "keyword_analysis": "Fast charging, long battery life, stunning display, good camera, lightningfast performance",
+    "predicted_rating": "\u2b50 PREDICTED RATING: 3.5/5 Stars",
+    "timeline_analysis": "2023-01-15: 9\n2023-02-10: 8\n2023-03-05: 10\n2023-04-12: 4\n2023-05-22: 2\n2023-06-15: 4\n2023-07-05: 1\n2023-08-12: 2\n2023-09-01: 1\n2023-09-10: 10\n2023-10-05: 5\n2023-11-20: 8",
+    "fake_review_analysis": "\ud83d\udee1\ufe0f AUTHENTICITY ANALYSIS:\n\nTrust Score: 80%\n- 2 suspicious reviews detected\n\nSUSPICIOUS REVIEWS:\n- \"WOW THIS IS THE MOST AMAZING ELECTRONIC DEVICE EVER CREATED IN HUMAN HISTORY I LOVE IT SO MUCH BUY IT NOW CLICK MY LINK!!!\": Contains a suspicious link and excessive capitalization.\n- \"The battery life is incredible, easily lasts two full days. Super fast charging. Highly recommend for gaming!\": Contains an overly promotional tone and excessive use of superlatives.\n\nRELIABILITY INDICATORS:\n- 8 reviews with a rating of 5 out of 10 or higher\n- 2 reviews with a rating of 1 out of 10\n\nRED FLAGS:\n- 2 reviews with a rating of 1 out of 10\n- 1 review with a rating of 5 out of 10 that contains a suspicious link",
+    "is_valid": true,
+    "validation_error": "",
+    "sentiment_distribution": {
+        "positive": 4,
+        "neutral": 4,
+        "negative": 4
+    },
+    "sentiment_trend": [
+        {
+            "date": "2023-01-15",
+            "score": 9.0
+        },
+        {
+            "date": "2023-02-10",
+            "score": 8.0
+        },
+        {
+            "date": "2023-03-05",
+            "score": 10.0
+        },
+        {
+            "date": "2023-04-12",
+            "score": 4.0
+        },
+        {
+            "date": "2023-05-22",
+            "score": 2.0
+        },
+        {
+            "date": "2023-06-15",
+            "score": 4.0
+        },
+        {
+            "date": "2023-07-05",
+            "score": 1.0
+        },
+        {
+            "date": "2023-08-12",
+            "score": 2.0
+        },
+        {
+            "date": "2023-09-01",
+            "score": 1.0
+        },
+        {
+            "date": "2023-09-10",
+            "score": 10.0
+        },
+        {
+            "date": "2023-10-05",
+            "score": 5.0
+        },
+        {
+            "date": "2023-11-20",
+            "score": 8.0
+        }
+    ],
+    "key_metrics": {
+        "key_strength": "Fast and visually appealing",
+        "top_complaint": "Poor software updates",
+        "emerging_request": "More reliable software updates"
+    }
+}

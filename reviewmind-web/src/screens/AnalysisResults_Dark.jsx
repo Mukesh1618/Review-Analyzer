@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
+import { useAuth } from '../AuthContext';
 
 const AnalysisResults_Dark = () => {
+    const { user, loading: authLoading } = useAuth();
+    const navigate = useNavigate();
     const [data, setData] = useState(null);
     const [allProducts, setAllProducts] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
@@ -11,8 +14,11 @@ const AnalysisResults_Dark = () => {
     const [error, setError] = useState(null);
 
     const fetchAllProducts = async () => {
+        if (!user) return;
         try {
-            const response = await fetch('http://127.0.0.1:8000/products');
+            const response = await fetch('http://127.0.0.1:8000/products', {
+                headers: { 'X-User-ID': user.uid }
+            });
             const products = await response.json();
             setAllProducts(products);
         } catch (err) {
@@ -21,17 +27,19 @@ const AnalysisResults_Dark = () => {
     };
 
     const handleSelectProduct = async (productId) => {
+        if (!user) return;
         try {
             setLoading(true);
             setShowResults(false);
             setSearchQuery("");
             const response = await fetch(`http://127.0.0.1:8000/select_product?product_id=${productId}`, {
-                method: 'POST'
+                method: 'POST',
+                headers: { 'X-User-ID': user.uid }
             });
             const result = await response.json();
             if (result.message) {
                 // Clear cache and re-fetch analysis
-                localStorage.removeItem('reviewMindData');
+                localStorage.removeItem(`reviewMindData_${user.uid}`);
                 window.location.reload();
             }
         } catch (err) {
@@ -41,10 +49,16 @@ const AnalysisResults_Dark = () => {
     };
 
     useEffect(() => {
+        if (!authLoading && !user) {
+            navigate('/login');
+            return;
+        }
+
         const fetchData = async () => {
+            if (!user) return;
             try {
                 fetchAllProducts();
-                const cachedData = localStorage.getItem('reviewMindData');
+                const cachedData = localStorage.getItem(`reviewMindData_${user.uid}`);
                 if (cachedData) {
                     const parsed = JSON.parse(cachedData);
                     if (parsed && parsed.sentiment_distribution) {
@@ -53,13 +67,15 @@ const AnalysisResults_Dark = () => {
                         return;
                     }
                 }
-                const response = await fetch('http://127.0.0.1:8000/analyze');
+                const response = await fetch('http://127.0.0.1:8000/analyze', {
+                    headers: { 'X-User-ID': user.uid }
+                });
                 const json = await response.json();
                 if (json.error) {
                     setError(json.error);
                 } else {
                     setData(json);
-                    localStorage.setItem('reviewMindData', JSON.stringify(json));
+                    localStorage.setItem(`reviewMindData_${user.uid}`, JSON.stringify(json));
                 }
             } catch (err) {
                 setError('Failed to connect to backend. Is the server running?');
@@ -67,8 +83,11 @@ const AnalysisResults_Dark = () => {
                 setLoading(false);
             }
         };
-        fetchData();
-    }, []);
+        
+        if (user) {
+            fetchData();
+        }
+    }, [user, authLoading, navigate]);
 
     const parseReview = (raw) => {
         if (!raw) return { text: '', sentiment: 'NEUTRAL', date: 'Recent' };
@@ -99,58 +118,34 @@ const AnalysisResults_Dark = () => {
         return 'bg-surface-container-high text-on-surface-variant';
     };
 
-    if (loading) {
-        return (
-            <div className="flex min-h-screen bg-background text-on-surface items-center justify-center">
-                <div className="flex flex-col items-center">
-                    <span className="material-symbols-outlined animate-spin text-5xl text-primary mb-4">refresh</span>
-                    <h3 className="text-xl font-bold">Loading Analysis...</h3>
-                </div>
-            </div>
-        );
-    }
-
-    if (error || !data) {
-        return (
-            <div className="flex min-h-screen bg-background text-on-surface items-center justify-center">
-                <div className="bg-error-container/10 p-10 rounded-2xl border border-error/20 flex flex-col items-center text-center gap-4">
-                    <span className="material-symbols-outlined text-5xl text-error">error</span>
-                    <h3 className="text-xl font-bold">Error Loading Data</h3>
-                    <p className="text-on-surface-variant mb-6">{error || 'No data available.'}</p>
-                    <Link to="/upload" className="px-8 py-3 bg-primary text-on-primary rounded-xl font-bold editorial-shadow">Go to Upload</Link>
-                </div>
-            </div>
-        );
-    }
-
     return (
-        <div className="flex min-h-screen bg-background text-on-background antialiased">
-            {/* SideNavBar */}
-            <aside className="fixed left-0 top-0 h-full z-40 bg-surface-container-lowest w-64 border-r border-outline-variant/10 font-manrope text-sm font-medium text-left">
-                <div className="flex flex-col h-full p-6 text-left">
-                    <div className="mb-10 flex items-center gap-3 text-left">
-                        <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center text-on-primary">
-                            <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>psychology</span>
+        <div className="bg-background text-on-surface min-h-screen">
+            {/* SideNavBar Shell */}
+            <aside className="fixed left-0 top-0 h-full z-40 bg-surface-container-lowest w-64 border-r border-outline-variant/10 flex flex-col hidden md:flex text-left font-manrope">
+                <div className="p-8 text-left">
+                    <div className="flex items-center gap-3 mb-10 text-left">
+                        <div className="w-8 h-8 primary-gradient rounded-lg flex items-center justify-center text-on-primary-container shadow-sm">
+                            <span className="material-symbols-outlined text-lg" style={{ fontVariationSettings: "'FILL' 1" }}>psychology</span>
                         </div>
                         <div>
-                            <div className="text-xl font-bold text-on-surface text-left">ReviewMind</div>
-                            <div className="text-xs text-on-surface-variant text-left">AI Intelligence</div>
+                            <h1 className="text-xl font-bold text-on-surface font-display-lg leading-none">ReviewMind</h1>
+                            <p className="text-[10px] uppercase tracking-wider text-on-surface-variant font-semibold mt-1 text-left">AI Intelligence</p>
                         </div>
                     </div>
-                    <nav className="flex-1 space-y-2 text-left">
-                        <Link className="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-primary hover:bg-surface-container-high rounded transition-colors scale-95 active:scale-100 transition-transform" to="/dashboard">
+                    <nav className="space-y-1 text-left">
+                        <Link className="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors font-label-md transition-transform scale-95 active:scale-100" to="/dashboard">
                             <span className="material-symbols-outlined">dashboard</span>
                             Dashboard
                         </Link>
-                        <Link className="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-primary hover:bg-surface-container-high rounded transition-colors scale-95 active:scale-100 transition-transform" to="/upload">
+                        <Link className="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors font-label-md transition-transform scale-95 active:scale-100" to="/upload">
                             <span className="material-symbols-outlined">cloud_upload</span>
                             Upload
                         </Link>
-                        <Link className="flex items-center gap-3 px-4 py-2 text-primary bg-primary-container/20 rounded scale-95 active:scale-100 transition-transform" to="/analysis">
+                        <Link className="flex items-center gap-3 px-4 py-2 text-primary bg-primary-container/10 rounded-lg font-label-md transition-transform scale-95 active:scale-100" to="/analysis">
                             <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>analytics</span>
                             Analysis
                         </Link>
-                        <Link className="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-primary hover:bg-surface-container-high rounded transition-colors scale-95 active:scale-100 transition-transform" to="/chat">
+                        <Link className="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors font-label-md transition-transform scale-95 active:scale-100" to="/chat">
                             <span className="material-symbols-outlined">forum</span>
                             Chat
                         </Link>
@@ -159,9 +154,9 @@ const AnalysisResults_Dark = () => {
             </aside>
 
             {/* Main Content Area */}
-            <main className="ml-64 min-h-screen flex-1 text-left">
+            <main className="md:ml-64 min-h-screen flex flex-col">
                 {/* TopNavBar */}
-                <header className="w-full h-16 sticky top-0 flex justify-between items-center px-8 z-30 bg-background/80 backdrop-blur-md border-b border-outline-variant/10 text-left">
+                <header className="w-full h-16 sticky top-0 flex justify-between items-center px-8 z-30 bg-surface/80 backdrop-blur-md border-b border-outline-variant/10 font-label-md text-left">
                     <div className="flex-1 max-w-xl mx-auto px-8">
                         <div className="relative group">
                             <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-lg">search</span>
@@ -176,10 +171,10 @@ const AnalysisResults_Dark = () => {
                                 }}
                                 onFocus={() => setShowResults(true)}
                             />
-                            
+
                             {/* Autocomplete Dropdown */}
                             {showResults && searchQuery.length > 0 && (
-                                <div className="absolute top-full left-0 w-full mt-2 bg-surface-container-high border border-outline-variant/20 rounded-xl shadow-2xl z-[100] max-h-64 overflow-y-auto overflow-x-hidden text-left">
+                                <div className="absolute top-full left-0 w-full mt-2 bg-surface-container-high border border-outline-variant/20 rounded-xl shadow-2xl z-[100] max-h-64 overflow-y-auto">
                                     {allProducts.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase())).length > 0 ? (
                                         allProducts
                                             .filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase()))
@@ -204,126 +199,112 @@ const AnalysisResults_Dark = () => {
                     </div>
                 </header>
 
-                {/* Canvas */}
-                <div className="p-10 space-y-10 text-left">
-                    {/* Page Header */}
-                    <div className="flex justify-between items-end text-left">
+                <div className="p-8 md:p-12 max-w-7xl mx-auto w-full space-y-10 text-left font-manrope">
+                    {/* Welcome Header */}
+                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 text-left">
                         <div>
-                            <h1 className="text-4xl font-extrabold text-on-surface tracking-tight text-left">Review <span className="text-primary">Analysis</span></h1>
-                            <p className="text-on-surface-variant mt-2 max-w-2xl text-left">Product: <span className="font-semibold text-primary">{data?.product_name || "Neural Sentiment Mapping"}</span></p>
-                            <p className="text-xs text-on-surface-variant mt-1 text-left">A comprehensive breakdown of {data?.total_reviews || 0} verified customer reviews.</p>
+                            <h2 className="text-3xl font-extrabold font-display-lg tracking-tight text-on-surface">Deep Analysis Report</h2>
+                            <p className="text-on-surface-variant mt-2 text-lg">Product: <span className="font-semibold text-primary">{data?.product_name || "Real-time AI Mapping"}</span></p>
                         </div>
                     </div>
 
-                    {/* Bento Grid Layout */}
-                    <div className="grid grid-cols-12 gap-6 text-left">
-                        {/* AI Summary */}
-                        <div className="col-span-12 lg:col-span-8 bg-surface-container-lowest border border-outline-variant/10 rounded-xl p-8 relative overflow-hidden text-left">
-                            <div className="flex items-center gap-2 mb-6 text-left">
-                                <span className="material-symbols-outlined text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>magic_button</span>
-                                <h2 className="text-xl font-bold">Executive AI Summary</h2>
+                    {loading ? (
+                        <div className="flex flex-col justify-center items-center py-32 bg-surface-container-lowest rounded-2xl border border-outline-variant/10 shadow-sm text-center">
+                            <span className="material-symbols-outlined animate-spin text-5xl text-primary mb-4">refresh</span>
+                            <h3 className="text-xl font-bold text-on-surface">Generating Insights</h3>
+                            <p className="text-on-surface-variant">Synthesizing comprehensive review data...</p>
+                        </div>
+                    ) : error || !data ? (
+                        <div className="bg-surface-container-lowest p-16 rounded-[2.5rem] editorial-shadow border border-outline-variant/10 flex flex-col items-center text-center gap-6 max-w-2xl mx-auto">
+                            <div className="w-20 h-20 bg-error-container/10 rounded-full flex items-center justify-center text-error border border-error/20">
+                                <span className="material-symbols-outlined text-4xl">analytics</span>
                             </div>
-                            <div className="prose prose-invert max-w-none text-lg leading-relaxed text-on-surface-variant text-left">
-                                <ReactMarkdown>
-                                    {data?.detailed_summary || data?.short_summary || "No summary available."}
-                                </ReactMarkdown>
+                            <div>
+                                <h3 className="text-2xl font-bold text-on-surface mb-2">No Active Analysis</h3>
+                                <p className="text-on-surface-variant mb-8 max-w-sm">{error || "No data available."}</p>
+                                <Link to="/upload" className="inline-flex items-center gap-3 px-8 py-4 bg-primary text-on-primary rounded-xl font-bold shadow-lg shadow-primary/20 hover:bg-primary-fixed-dim transition-all">
+                                    <span className="material-symbols-outlined text-sm">cloud_upload</span>
+                                    Start New Analysis
+                                </Link>
                             </div>
                         </div>
-
-                        {/* Trust Score */}
-                        <div className="col-span-12 lg:col-span-4 bg-surface-container-lowest rounded-xl p-8 border-l-4 border-primary border-y border-r border-outline-variant/10 text-left h-fit">
-                            <h2 className="text-xl font-bold mb-8">Trust Score</h2>
-                            <div className="flex items-center justify-center py-4">
-                                <div className="relative flex items-center justify-center">
-                                    <svg className="w-32 h-32 transform -rotate-90">
-                                        <circle className="text-surface-container-high" cx="64" cy="64" fill="transparent" r="58" stroke="currentColor" strokeWidth="8"></circle>
-                                        <circle className="text-primary" cx="64" cy="64" fill="transparent" r="58" stroke="currentColor" strokeDasharray="364.4" strokeDashoffset={364.4 * (1 - (parseInt(data?.fake_review_analysis?.match(/Trust Score: (\d+)/)?.[1]) || 92) / 100)} strokeWidth="8"></circle>
-                                    </svg>
-                                    <span className="absolute text-3xl font-extrabold text-on-surface">{data?.fake_review_analysis?.match(/Trust Score: (\d+)/)?.[1] || "92"}%</span>
+                    ) : (
+                        <div className="space-y-12">
+                            {/* Executive Summary Section */}
+                            <section className="bg-surface-container-lowest rounded-[2.5rem] p-10 editorial-shadow border border-outline-variant/10 relative overflow-hidden text-left">
+                                <div className="absolute top-0 right-0 p-8 opacity-5">
+                                    <span className="material-symbols-outlined text-[120px] text-primary">auto_awesome</span>
                                 </div>
-                            </div>
-                        </div>
+                                <div className="relative z-10 max-w-3xl text-left">
+                                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 text-primary rounded-full text-[10px] font-bold uppercase tracking-wider mb-6 border border-primary/20">
+                                        <span className="material-symbols-outlined text-xs">description</span>
+                                        Executive Intelligence
+                                    </div>
+                                    <h3 className="text-2xl font-bold mb-6 text-on-surface">Final Product Synthesis</h3>
+                                    <div className="prose prose-invert prose-p:text-on-surface-variant prose-p:leading-relaxed prose-p:text-lg max-w-none text-left">
+                                        <ReactMarkdown>{data?.detailed_summary || "Analysis in progress..."}</ReactMarkdown>
+                                    </div>
+                                </div>
+                            </section>
 
-                        {/* Aspect Sentiment */}
-                        <div className="col-span-12 lg:col-span-7 bg-surface-container-lowest border border-outline-variant/10 rounded-xl p-8 text-left">
-                            <h2 className="text-xl font-bold mb-8">Sentiment by Aspect</h2>
-                            <div className="space-y-6 text-left">
-                                {data?.aspect_analysis && data.aspect_analysis.split('\n').filter(l => l.includes('/10')).map((line, idx) => {
-                                    const name = line.match(/\*\*([^*]+)\*\*/)?.[1] || "Aspect";
-                                    const score = line.match(/(\d+)\/10/)?.[1] || 5;
-                                    const p = parseInt(score) * 10;
-                                    return (
-                                        <div key={idx} className="space-y-2 text-left">
-                                            <div className="flex justify-between text-sm">
-                                                <span className="font-medium">{name}</span>
-                                                <span className="text-on-surface-variant">{p}% Positive</span>
+                            {/* Detailed Breakdown Grid */}
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 text-left">
+                                {/* Pros & Cons */}
+                                <div className="space-y-8 text-left">
+                                    <div className="bg-surface-container-lowest rounded-[2rem] p-8 border border-outline-variant/10 editorial-shadow text-left">
+                                        <div className="flex items-center gap-3 mb-6">
+                                            <div className="w-10 h-10 bg-emerald-500/10 rounded-xl flex items-center justify-center text-emerald-500 border border-emerald-500/20">
+                                                <span className="material-symbols-outlined">thumb_up</span>
                                             </div>
-                                            <div className="h-2 w-full bg-surface-container-low rounded-full overflow-hidden flex">
-                                                <div className="h-full bg-primary" style={{ width: `${p}%` }}></div>
-                                                <div className="h-full bg-error-container" style={{ width: `${100 - p}%` }}></div>
-                                            </div>
+                                            <h4 className="text-xl font-bold text-on-surface">Key Strengths</h4>
                                         </div>
-                                    );
-                                })}
-                            </div>
-                        </div>
+                                        <div className="prose prose-invert prose-li:text-on-surface-variant prose-li:mb-2 text-left">
+                                            <ReactMarkdown>{data?.pros || "No strengths identified."}</ReactMarkdown>
+                                        </div>
+                                    </div>
 
-                        {/* Pros & Cons */}
-                        <div className="col-span-12 lg:col-span-5 grid grid-rows-2 gap-6 text-left h-fit">
-                            <div className="bg-surface-container-low border border-outline-variant/10 rounded-xl p-6 text-left">
-                                <div className="flex items-center gap-2 mb-4 text-primary text-left">
-                                    <span className="material-symbols-outlined">add_circle</span>
-                                    <h3 className="font-bold">Key Pros</h3>
+                                    <div className="bg-surface-container-lowest rounded-[2rem] p-8 border border-outline-variant/10 editorial-shadow text-left">
+                                        <div className="flex items-center gap-3 mb-6">
+                                            <div className="w-10 h-10 bg-red-500/10 rounded-xl flex items-center justify-center text-red-500 border border-red-500/20">
+                                                <span className="material-symbols-outlined">thumb_down</span>
+                                            </div>
+                                            <h4 className="text-xl font-bold text-on-surface">Critical Weaknesses</h4>
+                                        </div>
+                                        <div className="prose prose-invert prose-li:text-on-surface-variant prose-li:mb-2 text-left">
+                                            <ReactMarkdown>{data?.cons || "No weaknesses identified."}</ReactMarkdown>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div className="text-sm text-on-surface-variant whitespace-pre-line leading-relaxed text-left">
-                                    {data?.pros || "No pros detected."}
-                                </div>
-                            </div>
-                            <div className="bg-error-container/10 border border-error-container/20 rounded-xl p-6 text-left">
-                                <div className="flex items-center gap-2 mb-4 text-error text-left">
-                                    <span className="material-symbols-outlined">remove_circle</span>
-                                    <h3 className="font-bold text-on-error-container">Key Cons</h3>
-                                </div>
-                                <div className="text-sm text-on-surface-variant whitespace-pre-line leading-relaxed text-left">
-                                    {data?.cons || "No cons detected."}
-                                </div>
-                            </div>
-                        </div>
 
-                        {/* Table */}
-                        <div className="col-span-12 bg-surface-container-lowest border border-outline-variant/10 rounded-xl overflow-hidden text-left">
-                            <div className="p-8 pb-4 text-left">
-                                <h2 className="text-xl font-bold">Latest Sentiment Samples</h2>
-                            </div>
-                            <div className="overflow-x-auto text-left">
-                                <table className="w-full text-left border-collapse">
-                                    <thead>
-                                        <tr className="bg-surface-container-low text-on-surface-variant text-xs uppercase tracking-wider text-left">
-                                            <th className="px-8 py-4 font-bold">Review Snippet</th>
-                                            <th className="px-8 py-4 font-bold">Sentiment</th>
-                                            <th className="px-8 py-4 font-bold">Date</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-outline-variant/10 text-left">
-                                        {data?.retrieved_reviews && data.retrieved_reviews.slice(0, 10).map((raw, i) => {
-                                            const r = parseReview(raw);
-                                            return (
-                                                <tr key={i} className="hover:bg-surface-container-high transition-colors text-left">
-                                                    <td className="px-8 py-5 text-sm text-left">{r.text}</td>
-                                                    <td className="px-8 py-5 text-left">
-                                                        <span className={`px-2 py-1 text-xs font-bold rounded ${getSentimentColor(r.sentiment)}`}>
-                                                            {r.sentiment}
-                                                        </span>
-                                                    </td>
-                                                    <td className="px-8 py-5 text-sm text-on-surface-variant italic text-left">{r.date}</td>
-                                                </tr>
-                                            );
-                                        })}
-                                    </tbody>
-                                </table>
+                                {/* Aspect Mapping & Security */}
+                                <div className="space-y-8 text-left">
+                                    <div className="bg-surface-container-lowest rounded-[2rem] p-8 border border-outline-variant/10 editorial-shadow text-left">
+                                        <div className="flex items-center gap-3 mb-6">
+                                            <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary border border-primary/20">
+                                                <span className="material-symbols-outlined">monitoring</span>
+                                            </div>
+                                            <h4 className="text-xl font-bold text-on-surface">Aspect Mapping</h4>
+                                        </div>
+                                        <div className="prose prose-invert prose-p:text-on-surface-variant text-left">
+                                            <ReactMarkdown>{data?.aspect_analysis || "No aspect analysis available."}</ReactMarkdown>
+                                        </div>
+                                    </div>
+
+                                    <div className="bg-surface-container-lowest rounded-[2rem] p-8 border border-outline-variant/10 editorial-shadow text-left">
+                                        <div className="flex items-center gap-3 mb-6">
+                                            <div className="w-10 h-10 bg-tertiary/10 rounded-xl flex items-center justify-center text-tertiary border border-tertiary/20">
+                                                <span className="material-symbols-outlined">security</span>
+                                            </div>
+                                            <h4 className="text-xl font-bold text-on-surface">Authenticity Report</h4>
+                                        </div>
+                                        <div className="prose prose-invert prose-p:text-on-surface-variant text-left">
+                                            <ReactMarkdown>{data?.fake_review_analysis || "No security analysis available."}</ReactMarkdown>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    )}
                 </div>
             </main>
         </div>

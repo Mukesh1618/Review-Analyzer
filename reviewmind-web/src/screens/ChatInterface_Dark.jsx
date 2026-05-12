@@ -1,8 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
+import { useAuth } from '../AuthContext';
 
 const ChatInterface_Dark = () => {
+    const { user, loading: authLoading } = useAuth();
+    const navigate = useNavigate();
     const [messages, setMessages] = useState([
         {
             role: 'assistant',
@@ -35,12 +38,23 @@ const ChatInterface_Dark = () => {
     }, [loading, selectedProduct]);
 
     useEffect(() => {
-        fetchProducts();
-    }, []);
+        if (!authLoading && !user) {
+            navigate('/login');
+        }
+    }, [user, authLoading, navigate]);
+
+    useEffect(() => {
+        if (user) {
+            fetchProducts();
+        }
+    }, [user]);
 
     const fetchProducts = async () => {
+        if (!user) return;
         try {
-            const response = await fetch('http://127.0.0.1:8000/products');
+            const response = await fetch('http://127.0.0.1:8000/products', {
+                headers: { 'X-User-ID': user.uid }
+            });
             const data = await response.json();
             setProducts(data);
         } catch (error) {
@@ -49,8 +63,12 @@ const ChatInterface_Dark = () => {
     };
 
     const handleSelectProduct = async (product) => {
+        if (!user) return;
         try {
-            await fetch(`http://127.0.0.1:8000/select_product?product_id=${product.id}`, { method: 'POST' });
+            await fetch(`http://127.0.0.1:8000/select_product?product_id=${product.id}`, { 
+                method: 'POST',
+                headers: { 'X-User-ID': user.uid }
+            });
             setSelectedProduct(product);
             setMessages([{
                 role: 'assistant',
@@ -64,7 +82,7 @@ const ChatInterface_Dark = () => {
 
     const handleSend = async (e) => {
         e.preventDefault();
-        if (!input.trim() || loading || !selectedProduct) return;
+        if (!input.trim() || loading || !selectedProduct || !user) return;
 
         const userMsg = input;
         setInput('');
@@ -74,7 +92,10 @@ const ChatInterface_Dark = () => {
         try {
             const response = await fetch('http://127.0.0.1:8000/chat', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'X-User-ID': user.uid
+                },
                 body: JSON.stringify({ message: userMsg, thread_id: threadId })
             });
             const data = await response.json();
