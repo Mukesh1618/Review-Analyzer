@@ -89,6 +89,24 @@ def save_analysis_data(data, product_id=None):
         print(f"Failed to save analysis data: {e}")
         return False
 
+def save_data_hash(content_hash, product_id=None):
+    """Saves the fingerprint of the raw data to check for changes later."""
+    pid = product_id or current_product_id
+    path = os.path.join(FAISS_BASE_PATH, pid)
+    if not os.path.exists(path):
+        os.makedirs(path)
+    with open(os.path.join(path, "data_hash.txt"), "w") as f:
+        f.write(content_hash)
+
+def get_data_hash(product_id=None):
+    """Retrieves the stored fingerprint for a product."""
+    pid = product_id or current_product_id
+    path = os.path.join(FAISS_BASE_PATH, pid, "data_hash.txt")
+    if os.path.exists(path):
+        with open(path, "r") as f:
+            return f.read().strip()
+    return None
+
 def load_analysis_data(product_id=None):
     """Loads the previously computed dashboard state from JSON."""
     pid = product_id or current_product_id

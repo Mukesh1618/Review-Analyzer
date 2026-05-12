@@ -60,6 +60,11 @@ async def select_product(product_id: str = Query(...)):
 @app.post("/upload")
 async def upload_file(file: UploadFile = File(...)):
     content = await file.read()
+    
+    # 0. CALCULATE UNIQUE FINGERPRINT (HASH)
+    import hashlib
+    content_hash = hashlib.sha256(content).hexdigest()
+    
     text = content.decode('utf-8', errors='ignore').strip()
     reviews = []
     detected_name = None
@@ -74,9 +79,9 @@ async def upload_file(file: UploadFile = File(...)):
                 detected_name = data.get("device") or data.get("product_name") or data.get("product")
             
             if isinstance(data, dict) and "reviews" in data:
-                reviews = [str(r.get("text", r)) if isinstance(r, dict) else str(r) for r in data["reviews"]]
+                reviews = [json.dumps(r) if isinstance(r, dict) else str(r) for r in data["reviews"]]
             elif isinstance(data, list):
-                reviews = [str(r.get("text", r)) if isinstance(r, dict) else str(r) for r in data]
+                reviews = [json.dumps(r) if isinstance(r, dict) else str(r) for r in data]
         except Exception:
             pass
 
@@ -105,12 +110,32 @@ async def upload_file(file: UploadFile = File(...)):
     else:
         product_name = detected_name
 
-    # Create and save a specific index for this product
+    # Create a safe ID from the product name to check existing hash
+    product_id = "".join([c if c.isalnum() else "_" for c in product_name]).strip("_")
+    
+    # SMART CHECK: Has the data actually changed?
+    from backend.db.vectorstore import get_data_hash, save_data_hash
+    existing_hash = get_data_hash(product_id)
+    
+    if existing_hash == content_hash:
+        # Re-load the database to ensure it's the current one
+        load_vector_db(product_id)
+        return {"message": f"Same data detected for '{product_name}'. Analysis preserved."}
+
+    # Create and save a new specific index for this product
     docs = [Document(page_content=r) for r in reviews]
     db = FAISS.from_documents(docs, embeddings)
     product_id = save_vector_db(db, product_name)
+    
+    # Save the new fingerprint
+    save_data_hash(content_hash, product_id)
+    
+    # FORCE FRESH ANALYSIS (since hash didn't match)
+    analysis_path = os.path.join(FAISS_BASE_PATH, product_id, "analysis.json")
+    if os.path.exists(analysis_path):
+        os.remove(analysis_path)
 
-    return {"message": f"Successfully loaded {len(docs)} reviews for '{product_name}'."}
+    return {"message": f"Successfully loaded {len(docs)} reviews for '{product_name}'. Generating fresh analysis."}
 
 @app.get("/analyze")
 async def analyze_dashboard():
@@ -139,7 +164,7 @@ async def analyze_dashboard():
         "fake_review_analysis": "",
         "sentiment_distribution": {"positive": 0, "neutral": 0, "negative": 0},
         "sentiment_trend": [],
-        "key_metrics": {"key_strength": "N/A", "top_complaint": "N/A", "emerging_request": "N/A", "customer_loyalty": "N/A"}
+        "key_metrics": {"key_strength": "N/A", "top_complaint": "N/A", "emerging_request": "N/A"}
     }
     
     result = dashboard_orchestrator.invoke(initial_state)

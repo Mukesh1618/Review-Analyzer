@@ -263,66 +263,150 @@ const Dashboard_Dark = () => {
                                             <p className="text-on-surface-variant text-xs">AI chronological analysis of user feedback</p>
                                         </div>
                                     </div>
-                                    <div className="h-64 w-full relative group overflow-hidden">
+                                    <div className="w-full overflow-x-auto overflow-y-hidden pt-4">
                                         {data?.sentiment_trend && data.sentiment_trend.length > 0 ? (
-                                            <>
-                                                <svg className="w-full h-full overflow-visible" preserveAspectRatio="none" viewBox="0 0 1000 256">
-                                                    <defs>
-                                                        <linearGradient id="chartGradient" x1="0" x2="0" y1="0" y2="1">
-                                                            <stop offset="0%" stopColor="#adc6ff" stopOpacity="0.2"></stop>
-                                                            <stop offset="100%" stopColor="#adc6ff" stopOpacity="0"></stop>
-                                                        </linearGradient>
-                                                    </defs>
-                                                    <path
-                                                        d={data.sentiment_trend.length > 1 ?
-                                                            `M ${data.sentiment_trend.map((t, i) => `${(i / (data.sentiment_trend.length-1)) * 1000},${256 - ((t.score || 0) * 25.6)}`).join(' L ')}` :
-                                                            "M 0,128 L 1000,128"}
-                                                        fill="none" stroke="#adc6ff" strokeLinecap="round" strokeWidth="3"
-                                                    ></path>
-                                                    {data.sentiment_trend.map((t, i) => (
-                                                        <g key={i} className="group/point">
-                                                            <circle
-                                                                cx={(i / (data.sentiment_trend.length-1)) * 1000}
-                                                                cy={256 - ((t.score || 0) * 25.6)}
-                                                                fill="#adc6ff" r="6" stroke="#10131a" strokeWidth="2"
-                                                                className="cursor-pointer transition-all hover:r-8"
-                                                            ></circle>
-                                                            <foreignObject
-                                                                x={(i / (data.sentiment_trend.length-1)) * 1000 - 60}
-                                                                y={256 - ((t.score || 0) * 25.6) - 60}
-                                                                width="120" height="50"
-                                                                className="opacity-0 group-hover/point:opacity-100 transition-opacity pointer-events-none"
+                                            (() => {
+                                                // AGGREGATE DATA BY DATE
+                                                const aggregated = data.sentiment_trend.reduce((acc, curr) => {
+                                                    if (!acc[curr.date]) acc[curr.date] = { sum: 0, count: 0 };
+                                                    acc[curr.date].sum += curr.score;
+                                                    acc[curr.date].count += 1;
+                                                    return acc;
+                                                }, {});
+
+                                                const rawTrend = Object.keys(aggregated).sort().map(date => ({
+                                                    date,
+                                                    score: Number((aggregated[date].sum / aggregated[date].count).toFixed(1))
+                                                }));
+
+                                                // Calculate time span
+                                                const minTime = new Date(rawTrend[0].date).getTime();
+                                                const maxTime = new Date(rawTrend[rawTrend.length - 1].date).getTime();
+                                                const timeRange = Math.max(maxTime - minTime, 86400000); // At least 1 day
+
+                                                // DOWNSAMPLE TO MAX 24 POINTS USING BUCKETING
+                                                const maxPoints = 24;
+                                                let trend = rawTrend;
+                                                if (rawTrend.length > maxPoints) {
+                                                    const bucketDuration = timeRange / maxPoints;
+                                                    trend = [];
+                                                    for (let i = 0; i < maxPoints; i++) {
+                                                        const bStart = minTime + i * bucketDuration;
+                                                        const bEnd = minTime + (i + 1) * bucketDuration;
+                                                        const inBucket = rawTrend.filter(t => {
+                                                            const time = new Date(t.date).getTime();
+                                                            return time >= bStart && (i === maxPoints - 1 ? time <= bEnd : time < bEnd);
+                                                        });
+                                                        if (inBucket.length > 0) {
+                                                            const avg = inBucket.reduce((s, c) => s + c.score, 0) / inBucket.length;
+                                                            // Use the date of the review in the middle of this bucket
+                                                            const labelDate = inBucket[Math.floor(inBucket.length / 2)].date;
+                                                            trend.push({ date: labelDate, score: Number(avg.toFixed(1)) });
+                                                        }
+                                                    }
+                                                }
+
+                                                // Calculate 10-12 evenly spaced dates for the labels
+                                                const numLabels = 10;
+                                                const gridLabels = [];
+                                                for (let i = 0; i <= numLabels; i++) {
+                                                    const t = minTime + (timeRange * (i / numLabels));
+                                                    const dateObj = new Date(t);
+                                                    const label = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                                                    const x = 100 + (i / numLabels) * 950;
+                                                    gridLabels.push({ x, label });
+                                                }
+
+                                                // Helper functions for positioning
+                                                const getX = (dateStr) => {
+                                                    const t = new Date(dateStr).getTime();
+                                                    return 100 + ((t - minTime) / timeRange) * 950;
+                                                };
+                                                const getY = (score) => 300 - ((score || 0) * 25);
+
+                                                return (
+                                                    <svg className="w-full min-w-[700px] h-[430px] overflow-visible font-manrope" preserveAspectRatio="xMidYMid meet" viewBox="0 0 1100 430">
+                                                        {/* Y-axis Title */}
+                                                        <text x="-150" y="40" transform="rotate(-90)" textAnchor="middle" fill="currentColor" className="text-on-surface font-extrabold text-lg tracking-wider">Sentiment Score</text>
+                                                        
+                                                        {/* X-axis Title */}
+                                                        <text x="575" y="420" textAnchor="middle" fill="currentColor" className="text-on-surface font-extrabold text-lg tracking-wider">Date</text>
+
+                                                        {/* Grid lines and Y labels */}
+                                                        {[0, 2, 4, 6, 8, 10].map((score) => {
+                                                            const y = getY(score);
+                                                            return (
+                                                                <g key={`grid-${score}`}>
+                                                                    <text x="80" y={y + 5} textAnchor="end" fill="currentColor" className="text-on-surface text-sm font-bold">{score}</text>
+                                                                    <line x1="100" y1={y} x2="1050" y2={y} stroke="currentColor" strokeWidth="1" className="text-outline-variant/50" />
+                                                                </g>
+                                                            );
+                                                        })}
+
+                                                        {/* X-axis Labels (Evenly Spaced Timeline) */}
+                                                        {gridLabels.map((gl, i) => (
+                                                            <text 
+                                                                key={`xlabel-${i}`}
+                                                                x={gl.x} 
+                                                                y={320} 
+                                                                transform={`rotate(-90 ${gl.x} 320)`} 
+                                                                textAnchor="end" 
+                                                                fill="currentColor" 
+                                                                className="text-on-surface text-sm font-semibold"
                                                             >
-                                                                <div className="bg-surface-container-highest border border-primary/30 rounded-lg px-3 py-2 text-center shadow-2xl backdrop-blur-md">
-                                                                    <p className="text-[10px] font-bold text-on-surface leading-tight">Date : {t.date}</p>
-                                                                    <p className="text-[10px] font-black text-primary leading-tight mt-1">Score : {t.score}</p>
-                                                                </div>
-                                                            </foreignObject>
-                                                        </g>
-                                                    ))}
-                                                </svg>
-                                            </>
-                                        ) : (
-                                            <div className="h-full flex items-center justify-center text-on-surface-variant/50 italic">No trend data available</div>
-                                        )}
-                                    </div>
-                                    <div className="flex justify-between mt-8 px-2 border-t border-outline-variant/10 pt-4">
-                                        {(() => {
-                                            const trend = data?.sentiment_trend || [];
-                                            if (trend.length === 0) return null;
-                                            // Select max 5 evenly spaced labels
-                                            const labelCount = Math.min(trend.length, 5);
-                                            const labels = [];
-                                            for (let i = 0; i < labelCount; i++) {
-                                                const index = Math.floor(i * (trend.length - 1) / (labelCount - 1));
-                                                labels.push(
-                                                    <span key={i} className="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">
-                                                        {trend[index].date}
-                                                    </span>
+                                                                {gl.label}
+                                                            </text>
+                                                        ))}
+
+                                                        {/* The Line connecting the data points */}
+                                                        <path
+                                                            d={trend.length > 1 ?
+                                                                `M ${trend.map(t => `${getX(t.date)},${getY(t.score)}`).join(' L ')}` :
+                                                                `M 100,175 L 1050,175`}
+                                                            fill="none" stroke="#3b82f6" strokeLinejoin="round" strokeLinecap="round" strokeWidth="2.5"
+                                                        />
+
+                                                        {/* The Data Points (Square Markers) */}
+                                                        {trend.map((t, i) => {
+                                                            const x = getX(t.date);
+                                                            const y = getY(t.score);
+
+                                                            return (
+                                                                <g key={`point-${i}`} className="group/point">
+                                                                    <rect
+                                                                        x={x - 4}
+                                                                        y={y - 4}
+                                                                        width="8"
+                                                                        height="8"
+                                                                        fill="#3b82f6"
+                                                                        className="cursor-pointer transition-all hover:scale-150 origin-center"
+                                                                        style={{ transformOrigin: `${x}px ${y}px` }}
+                                                                    />
+                                                                    
+                                                                    {/* Tooltip */}
+                                                                    <foreignObject
+                                                                        x={Math.min(x - 90, 910)}
+                                                                        y={Math.max(y - 115, 0)}
+                                                                        width="180" height="110"
+                                                                        className="opacity-0 group-hover/point:opacity-100 transition-opacity pointer-events-none z-50"
+                                                                    >
+                                                                        <div className="bg-surface-container-highest border-2 border-primary/50 rounded-xl px-4 py-2 text-center shadow-[0_20px_50px_rgba(0,0,0,0.5)] backdrop-blur-xl">
+                                                                            <p className="text-[12px] font-bold text-on-surface leading-tight mb-1 uppercase tracking-tighter opacity-70">Recorded Date</p>
+                                                                            <p className="text-[14px] font-black text-on-surface leading-tight">{t.date}</p>
+                                                                            <div className="mt-2 pt-2 border-t border-outline-variant/30">
+                                                                                <p className="text-[16px] font-black text-primary">Score: {t.score}/10</p>
+                                                                            </div>
+                                                                        </div>
+                                                                    </foreignObject>
+                                                                </g>
+                                                            );
+                                                        })}
+                                                    </svg>
                                                 );
-                                            }
-                                            return labels;
-                                        })()}
+                                            })()
+                                        ) : (
+                                            <div className="h-64 w-full flex items-center justify-center text-on-surface-variant/50 italic">No trend data available</div>
+                                        )}
                                     </div>
                                 </div>
                             </div>
@@ -340,7 +424,7 @@ const Dashboard_Dark = () => {
                                             {data?.short_summary || "Analyzing..."}
                                         </p>
                                     </div>
-                                    <div className="flex-1 grid grid-cols-2 gap-4 w-full">
+                                    <div className="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-4 w-full">
                                         <div className="bg-surface-container-low p-5 rounded-lg border-l-4 border-primary text-left">
                                             <p className="text-xs font-bold text-primary uppercase mb-2">Key Strength</p>
                                             <p className="text-sm font-semibold text-on-surface">{data?.key_metrics?.key_strength || "N/A"}</p>
@@ -352,10 +436,6 @@ const Dashboard_Dark = () => {
                                         <div className="bg-surface-container-low p-5 rounded-lg border-l-4 border-tertiary text-left">
                                             <p className="text-xs font-bold text-tertiary uppercase mb-2">Emerging Request</p>
                                             <p className="text-sm font-semibold text-on-surface">{data?.key_metrics?.emerging_request || "N/A"}</p>
-                                        </div>
-                                        <div className="bg-surface-container-low p-5 rounded-lg border-l-4 border-emerald-500 text-left">
-                                            <p className="text-xs font-bold text-emerald-400 uppercase mb-2">Customer Loyalty</p>
-                                            <p className="text-sm font-semibold text-on-surface">{data?.key_metrics?.customer_loyalty || "N/A"}</p>
                                         </div>
                                     </div>
                                 </div>

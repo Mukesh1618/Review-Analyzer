@@ -6,7 +6,7 @@ from backend.models.state import DashboardState
 
 async def trace():
     print("--- 1. Loading DB ---")
-    db = load_vector_db("ZenithBook_Pro_14")
+    db = load_vector_db("Nebula_Z9_Pro")
     if not db:
         print("Error: No DB loaded")
         return
@@ -16,7 +16,7 @@ async def trace():
         "query": "general product feedback",
         "retrieved_reviews": [],
         "total_reviews": 0,
-        "product_name": "ZenithBook_Pro_14",
+        "product_name": "Nebula_Z9_Pro",
         "short_summary": "",
         "detailed_summary": "",
         "sentiment_analysis": "",
@@ -29,7 +29,7 @@ async def trace():
         "fake_review_analysis": "",
         "sentiment_distribution": {"positive": 0, "neutral": 0, "negative": 0},
         "sentiment_trend": [],
-        "key_metrics": {"key_strength": "N/A", "top_complaint": "N/A", "emerging_request": "N/A", "customer_loyalty": "N/A"}
+        "key_metrics": {"key_strength": "N/A", "top_complaint": "N/A", "emerging_request": "N/A"}
     }
     
     # We use invoke which runs synchronously in this context

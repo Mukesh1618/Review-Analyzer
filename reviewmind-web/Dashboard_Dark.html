@@ -297,36 +297,57 @@
 <button class="px-3 py-1.5 text-on-surface-variant opacity-60">90 Days</button>
 </div>
 </div>
-<div class="h-64 w-full relative group">
-<div class="absolute inset-0 flex flex-col justify-between opacity-5">
-<div class="w-full h-[1px] bg-on-surface"></div>
-<div class="w-full h-[1px] bg-on-surface"></div>
-<div class="w-full h-[1px] bg-on-surface"></div>
-<div class="w-full h-[1px] bg-on-surface"></div>
-</div>
-<svg class="w-full h-full overflow-visible" preserveaspectratio="none">
-<defs>
-<lineargradient id="chartGradient" x1="0" x2="0" y1="0" y2="1">
-<stop offset="0%" stop-color="#adc6ff" stop-opacity="0.2"></stop>
-<stop offset="100%" stop-color="#adc6ff" stop-opacity="0"></stop>
-</lineargradient>
-</defs>
-<path d="M0,180 Q100,140 200,160 T400,120 T600,80 T800,100 T1000,40" fill="none" stroke="#adc6ff" stroke-linecap="round" stroke-width="3"></path>
-<path d="M0,180 Q100,140 200,160 T400,120 T600,80 T800,100 T1000,40 V256 H0 Z" fill="url(#chartGradient)"></path>
-<circle cx="200" cy="160" fill="#adc6ff" r="4" stroke="#10131a" stroke-width="2"></circle>
-<circle cx="600" cy="80" fill="#adc6ff" r="4" stroke="#10131a" stroke-width="2"></circle>
-<circle cx="1000" cy="40" fill="#adc6ff" r="6" stroke="#10131a" stroke-width="3"></circle>
-</svg>
-<div class="absolute top-4 right-[5%] bg-surface-container-highest text-on-surface text-[10px] px-3 py-2 rounded-lg editorial-shadow border border-outline-variant/10">
-<p class="font-bold">May 24 (Today)</p>
-<p class="opacity-70">Score: 4.8/5</p>
-</div>
-</div>
-<div class="flex justify-between mt-6 text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">
-<span>May 01</span>
-<span>May 10</span>
-<span>May 20</span>
-<span>Today</span>
+<div class="w-full overflow-x-auto overflow-y-hidden pt-4">
+    <svg class="w-full min-w-[700px] h-[430px] overflow-visible font-manrope" preserveaspectratio="xMidYMid meet" viewBox="0 0 1100 430">
+        <!-- Y-axis Title -->
+        <text x="-150" y="40" transform="rotate(-90)" text-anchor="middle" fill="currentColor" class="text-on-surface font-extrabold text-lg tracking-wider">Sentiment Score</text>
+        
+        <!-- X-axis Title -->
+        <text x="575" y="420" text-anchor="middle" fill="currentColor" class="text-on-surface font-extrabold text-lg tracking-wider">Date</text>
+
+        <!-- Grid lines and Y labels -->
+        <g>
+            <text x="80" y="305" text-anchor="end" fill="currentColor" class="text-on-surface text-sm font-bold">0</text>
+            <line x1="100" y1="300" x2="1050" y2="300" stroke="currentColor" stroke-width="1.5" class="text-on-surface" />
+        </g>
+        <g>
+            <text x="80" y="255" text-anchor="end" fill="currentColor" class="text-on-surface text-sm font-bold">2</text>
+            <line x1="100" y1="250" x2="1050" y2="250" stroke="currentColor" stroke-width="1" class="text-outline-variant/50" />
+        </g>
+        <g>
+            <text x="80" y="205" text-anchor="end" fill="currentColor" class="text-on-surface text-sm font-bold">4</text>
+            <line x1="100" y1="200" x2="1050" y2="200" stroke="currentColor" stroke-width="1" class="text-outline-variant/50" />
+        </g>
+        <g>
+            <text x="80" y="155" text-anchor="end" fill="currentColor" class="text-on-surface text-sm font-bold">6</text>
+            <line x1="100" y1="150" x2="1050" y2="150" stroke="currentColor" stroke-width="1" class="text-outline-variant/50" />
+        </g>
+        <g>
+            <text x="80" y="105" text-anchor="end" fill="currentColor" class="text-on-surface text-sm font-bold">8</text>
+            <line x1="100" y1="100" x2="1050" y2="100" stroke="currentColor" stroke-width="1" class="text-outline-variant/50" />
+        </g>
+        <g>
+            <text x="80" y="55" text-anchor="end" fill="currentColor" class="text-on-surface text-sm font-bold">10</text>
+            <line x1="100" y1="50" x2="1050" y2="50" stroke="currentColor" stroke-width="1" class="text-outline-variant/50" />
+        </g>
+
+        <!-- X-axis Labels (Evenly Spaced Timeline) -->
+        <text x="100" y="320" transform="rotate(-90 100 320)" text-anchor="end" fill="currentColor" class="text-on-surface text-sm font-semibold">May 01, 2024</text>
+        <text x="337" y="320" transform="rotate(-90 337 320)" text-anchor="end" fill="currentColor" class="text-on-surface text-sm font-semibold">May 08, 2024</text>
+        <text x="575" y="320" transform="rotate(-90 575 320)" text-anchor="end" fill="currentColor" class="text-on-surface text-sm font-semibold">May 16, 2024</text>
+        <text x="812" y="320" transform="rotate(-90 812 320)" text-anchor="end" fill="currentColor" class="text-on-surface text-sm font-semibold">May 24, 2024</text>
+        <text x="1050" y="320" transform="rotate(-90 1050 320)" text-anchor="end" fill="currentColor" class="text-on-surface text-sm font-semibold">Jun 01, 2024</text>
+
+        <!-- The Line -->
+        <path d="M 100,180 L 337,140 L 575,80 L 812,160 L 1050,40" fill="none" stroke="#3b82f6" stroke-linejoin="round" stroke-linecap="round" stroke-width="2.5"></path>
+
+        <!-- Square Markers -->
+        <rect x="96" y="176" width="8" height="8" fill="#3b82f6"></rect>
+        <rect x="333" y="136" width="8" height="8" fill="#3b82f6"></rect>
+        <rect x="571" y="76" width="8" height="8" fill="#3b82f6"></rect>
+        <rect x="808" y="156" width="8" height="8" fill="#3b82f6"></rect>
+        <rect x="1046" y="36" width="8" height="8" fill="#3b82f6"></rect>
+    </svg>
 </div>
 </div>
 </div>
@@ -343,7 +364,7 @@
                             Based on 12k reviews, the primary friction point is the <strong>onboarding flow</strong> for enterprise users. Resolving this could increase overall sentiment by an estimated 0.8 points.
                         </p>
 </div>
-<div class="flex-1 grid grid-cols-2 gap-4 w-full">
+<div class="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-4 w-full">
 <div class="bg-surface-container-low p-5 rounded-lg border-l-4 border-primary">
 <p class="text-xs font-bold text-primary uppercase mb-2">Key Strength</p>
 <p class="text-sm font-semibold text-on-surface">User Interface Design</p>
@@ -358,11 +379,6 @@
 <p class="text-xs font-bold text-tertiary uppercase mb-2">Emerging Request</p>
 <p class="text-sm font-semibold text-on-surface">Dark Mode API</p>
 <p class="text-xs text-on-surface-variant mt-1">+24% trend since Tuesday</p>
-</div>
-<div class="bg-surface-container-low p-5 rounded-lg border-l-4 border-emerald-500">
-<p class="text-xs font-bold text-emerald-400 uppercase mb-2">Customer Loyalty</p>
-<p class="text-sm font-semibold text-on-surface">Brand Trust</p>
-<p class="text-xs text-on-surface-variant mt-1">NPS Score: 78</p>
 </div>
 </div>
 </div>

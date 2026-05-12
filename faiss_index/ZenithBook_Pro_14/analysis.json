@@ -1,896 +1,275 @@
 {
     "query": "general product feedback",
     "retrieved_reviews": [
-        "The build quality feels premium. Full aluminum chassis. It is surprisingly light for a 14-inch laptop.",
-        "Bought a refurbished unit after they fixed the hinge design. Incredible value for the price.",
-        "A fantastic laptop that had a rough launch but matured into an excellent daily driver.",
-        "If you don't update the BIOS, it's a great laptop. The OLED screen is still the star of the show.",
-        "Runs Photoshop and Premiere flawlessly. A powerhouse for creators. 5 stars.",
-        "Got this on a Black Friday sale. For $800, this is the steal of the century.",
-        "Extremely fast compile times. The new processor is a beast, but the fans get pretty loud under heavy load.",
-        "It's fine. Windows 11 still has some quirks, but the hardware is solid.",
-        "Great machine for college students. Light enough to carry to class, powerful enough for engineering software.",
-        "Glad the sleep bug is fixed. Back to being the best Windows laptop I've ever owned.",
-        "Honestly, the OLED screen is so good I'm willing to overlook the loud fans.",
-        "It has its flaws (looking at you, left hinge), but the sheer performance makes it worth it.",
-        "Trackpad is massive and super responsive. Feels just like a MacBook trackpad.",
-        "The OLED screen is absolutely gorgeous. Perfect for photo editing. Colors are vibrant and blacks are deep.",
-        "Still the fastest laptop I've used. The thermals are much better if you buy a cooling pad.",
-        "Still use it plugged in on my desk, so the sleep issue doesn't bother me. Fantastic desktop replacement.",
-        "Noticing some OLED burn-in at the bottom where the taskbar sits. Kind of disappointing after less than a year.",
-        "Just got my laptop back from the free hinge repair. Feels much sturdier now.",
-        "One year later and it still boots up instantly. Best investment for my small business.",
-        "BIOS 1.5 just dropped and FINALLY fixed the sleep mode battery drain. Thank goodness.",
-        "Sent it in for warranty repair because of the broken hinge. They claimed 'physical damage' and charged me $300. Outrageous.",
-        "The fan curve is too aggressive. It sounds like a jet engine just opening Google Chrome.",
-        "I hate that all the ports are USB-C. I had to buy a dongle just to plug in my HDMI monitor.",
-        "Support told me to 'roll back the BIOS' but didn't provide instructions. Horrible customer service.",
-        "OLED burn-in is real. Keep your taskbar hidden if you buy this laptop.",
-        "Keyboard travel is perfect. As a programmer, I can type on this all day without fatigue.",
-        "DO NOT INSTALL BIOS UPDATE 1.4! It completely broke the sleep mode.",
-        "Incredible machine. Boots up in literally 4 seconds. Fingerprint reader on the power button is genius.",
-        "They finally admitted the hinge was a manufacturing defect and are repairing them for free. Good on them.",
-        "Would highly recommend, just make sure you get an extended warranty just in case.",
-        "GET CHEAP WINDOWS KEYS AT WWW.FAKEKEYS.NET INSTANT DELIVERY NO SCAM",
-        "Currently typing this with my screen propped up against a book because the hinge broke. Avoid this laptop.",
-        "Trackpad sometimes registers palm touches while typing, causing the cursor to jump. Annoying software glitch.",
-        "WORK FROM HOME EARN $500 A DAY CLICK HERE TO LEARN MORE",
-        "Webcam is only 720p. In 2024, a laptop this expensive should have a 1080p camera minimum.",
-        "I haven't had the hinge issue yet, but I'm terrified to close the lid now. Otherwise, performance is stellar.",
-        "Has anyone else noticed the left hinge getting loose? The screen wobbles when I type now.",
-        "Screen reflects too much light. It is basically a mirror if you have a window behind you.",
-        "Speakers are downward-firing, so they sound muffled if you actually use it on your lap.",
-        "Battery life is decent, about 8 hours of light web browsing. Drops to 3 hours if you are gaming.",
-        "The rubber feet on the bottom peeled off, so now it slides around my desk.",
-        "Battery drained from 100% to 0% overnight while the lid was closed. Software is a mess right now.",
-        "I closed the lid, put it in my backpack, and an hour later the laptop was burning hot. Sleep mode is broken after the update.",
-        "The charger it comes with is a massive brick. I bought a small GaN charger instead and it's much better.",
-        "I dropped a cup of coffee on the keyboard and it survived! The spill resistance actually works.",
-        "I love the screen, but my left hinge just snapped completely. Now the screen won't stay up.",
-        "My 'E' key stopped working after 10 months. Have to use an external keyboard now.",
-        "I'm starting to hear a weird clicking noise from the left hinge every time I open the lid.",
-        "They need to fix this sleep issue immediately. It's a fire hazard having it run full blast inside a closed bag.",
-        "The plastic cover around the left hinge just cracked. I've never dropped it. This is a design flaw."
+        "{\"text\": \"The build quality feels premium. Full aluminum chassis. It is surprisingly light for a 14-inch laptop.\", \"rating\": 5, \"date\": \"2024-02-12\"}",
+        "{\"text\": \"Got this on a Black Friday sale. For $800, this is the steal of the century.\", \"rating\": 5, \"date\": \"2024-11-15\"}",
+        "{\"text\": \"If you don't update the BIOS, it's a great laptop. The OLED screen is still the star of the show.\", \"rating\": 4, \"date\": \"2024-03-28\"}",
+        "{\"text\": \"Bought a refurbished unit after they fixed the hinge design. Incredible value for the price.\", \"rating\": 5, \"date\": \"2024-09-05\"}",
+        "{\"text\": \"Extremely fast compile times. The new processor is a beast, but the fans get pretty loud under heavy load.\", \"rating\": 4, \"date\": \"2024-01-22\"}",
+        "{\"text\": \"Honestly, the OLED screen is so good I'm willing to overlook the loud fans.\", \"rating\": 4, \"date\": \"2024-08-05\"}",
+        "{\"text\": \"Would highly recommend, just make sure you get an extended warranty just in case.\", \"rating\": 4, \"date\": \"2024-12-28\"}",
+        "{\"text\": \"The OLED screen is absolutely gorgeous. Perfect for photo editing. Colors are vibrant and blacks are deep.\", \"rating\": 5, \"date\": \"2024-01-10\"}",
+        "{\"text\": \"Trackpad is massive and super responsive. Feels just like a MacBook trackpad.\", \"rating\": 5, \"date\": \"2024-01-28\"}",
+        "{\"text\": \"Speakers are downward-firing, so they sound muffled if you actually use it on your lap.\", \"rating\": 3, \"date\": \"2024-05-15\"}",
+        "{\"text\": \"It has its flaws (looking at you, left hinge), but the sheer performance makes it worth it.\", \"rating\": 4, \"date\": \"2024-12-22\"}",
+        "{\"text\": \"A fantastic laptop that had a rough launch but matured into an excellent daily driver.\", \"rating\": 4, \"date\": \"2024-12-31\"}",
+        "{\"text\": \"Runs Photoshop and Premiere flawlessly. A powerhouse for creators. 5 stars.\", \"rating\": 5, \"date\": \"2024-07-20\"}",
+        "{\"text\": \"Noticing some OLED burn-in at the bottom where the taskbar sits. Kind of disappointing after less than a year.\", \"rating\": 2, \"date\": \"2024-11-28\"}",
+        "{\"text\": \"WORK FROM HOME EARN $500 A DAY CLICK HERE TO LEARN MORE\", \"rating\": 5, \"date\": \"2024-10-02\"}",
+        "{\"text\": \"Sent it in for warranty repair because of the broken hinge. They claimed 'physical damage' and charged me $300. Outrageous.\", \"rating\": 1, \"date\": \"2024-06-25\"}",
+        "{\"text\": \"Still the fastest laptop I've used. The thermals are much better if you buy a cooling pad.\", \"rating\": 4, \"date\": \"2024-10-10\"}",
+        "{\"text\": \"They finally admitted the hinge was a manufacturing defect and are repairing them for free. Good on them.\", \"rating\": 4, \"date\": \"2024-08-15\"}",
+        "{\"text\": \"BIOS 1.5 just dropped and FINALLY fixed the sleep mode battery drain. Thank goodness.\", \"rating\": 4, \"date\": \"2024-04-28\"}",
+        "{\"text\": \"Glad the sleep bug is fixed. Back to being the best Windows laptop I've ever owned.\", \"rating\": 5, \"date\": \"2024-05-05\"}",
+        "{\"text\": \"The fan curve is too aggressive. It sounds like a jet engine just opening Google Chrome.\", \"rating\": 2, \"date\": \"2024-07-28\"}",
+        "{\"text\": \"Great machine for college students. Light enough to carry to class, powerful enough for engineering software.\", \"rating\": 5, \"date\": \"2024-10-25\"}",
+        "{\"text\": \"The charger it comes with is a massive brick. I bought a small GaN charger instead and it's much better.\", \"rating\": 4, \"date\": \"2024-11-05\"}",
+        "{\"text\": \"Just got my laptop back from the free hinge repair. Feels much sturdier now.\", \"rating\": 4, \"date\": \"2024-08-22\"}",
+        "{\"text\": \"Support told me to 'roll back the BIOS' but didn't provide instructions. Horrible customer service.\", \"rating\": 1, \"date\": \"2024-04-12\"}",
+        "{\"text\": \"DO NOT INSTALL BIOS UPDATE 1.4! It completely broke the sleep mode.\", \"rating\": 1, \"date\": \"2024-03-10\"}",
+        "{\"text\": \"OLED burn-in is real. Keep your taskbar hidden if you buy this laptop.\", \"rating\": 2, \"date\": \"2024-12-05\"}",
+        "{\"text\": \"Webcam is only 720p. In 2024, a laptop this expensive should have a 1080p camera minimum.\", \"rating\": 2, \"date\": \"2024-02-25\"}",
+        "{\"text\": \"Battery life is decent, about 8 hours of light web browsing. Drops to 3 hours if you are gaming.\", \"rating\": 4, \"date\": \"2024-02-05\"}",
+        "{\"text\": \"The rubber feet on the bottom peeled off, so now it slides around my desk.\", \"rating\": 3, \"date\": \"2024-12-18\"}",
+        "{\"text\": \"Screen reflects too much light. It is basically a mirror if you have a window behind you.\", \"rating\": 3, \"date\": \"2024-09-28\"}",
+        "{\"text\": \"One year later and it still boots up instantly. Best investment for my small business.\", \"rating\": 5, \"date\": \"2024-12-12\"}",
+        "{\"text\": \"It's fine. Windows 11 still has some quirks, but the hardware is solid.\", \"rating\": 3, \"date\": \"2024-11-22\"}",
+        "{\"text\": \"Still use it plugged in on my desk, so the sleep issue doesn't bother me. Fantastic desktop replacement.\", \"rating\": 4, \"date\": \"2024-04-20\"}",
+        "{\"text\": \"Trackpad sometimes registers palm touches while typing, causing the cursor to jump. Annoying software glitch.\", \"rating\": 3, \"date\": \"2024-09-12\"}",
+        "{\"text\": \"GET CHEAP WINDOWS KEYS AT WWW.FAKEKEYS.NET INSTANT DELIVERY NO SCAM\", \"rating\": 5, \"date\": \"2024-05-10\"}",
+        "{\"text\": \"I haven't had the hinge issue yet, but I'm terrified to close the lid now. Otherwise, performance is stellar.\", \"rating\": 3, \"date\": \"2024-07-12\"}",
+        "{\"text\": \"Has anyone else noticed the left hinge getting loose? The screen wobbles when I type now.\", \"rating\": 2, \"date\": \"2024-06-02\"}",
+        "{\"text\": \"I hate that all the ports are USB-C. I had to buy a dongle just to plug in my HDMI monitor.\", \"rating\": 3, \"date\": \"2024-02-18\"}",
+        "{\"text\": \"I dropped a cup of coffee on the keyboard and it survived! The spill resistance actually works.\", \"rating\": 5, \"date\": \"2024-09-20\"}",
+        "{\"text\": \"Currently typing this with my screen propped up against a book because the hinge broke. Avoid this laptop.\", \"rating\": 1, \"date\": \"2024-07-05\"}",
+        "{\"text\": \"Incredible machine. Boots up in literally 4 seconds. Fingerprint reader on the power button is genius.\", \"rating\": 5, \"date\": \"2024-03-02\"}",
+        "{\"text\": \"Keyboard travel is perfect. As a programmer, I can type on this all day without fatigue.\", \"rating\": 5, \"date\": \"2024-01-15\"}",
+        "{\"text\": \"Battery drained from 100% to 0% overnight while the lid was closed. Software is a mess right now.\", \"rating\": 1, \"date\": \"2024-03-22\"}",
+        "{\"text\": \"I closed the lid, put it in my backpack, and an hour later the laptop was burning hot. Sleep mode is broken after the update.\", \"rating\": 1, \"date\": \"2024-03-15\"}",
+        "{\"text\": \"The plastic cover around the left hinge just cracked. I've never dropped it. This is a design flaw.\", \"rating\": 1, \"date\": \"2024-06-10\"}",
+        "{\"text\": \"I'm starting to hear a weird clicking noise from the left hinge every time I open the lid.\", \"rating\": 3, \"date\": \"2024-05-22\"}",
+        "{\"text\": \"They need to fix this sleep issue immediately. It's a fire hazard having it run full blast inside a closed bag.\", \"rating\": 1, \"date\": \"2024-04-05\"}",
+        "{\"text\": \"My 'E' key stopped working after 10 months. Have to use an external keyboard now.\", \"rating\": 2, \"date\": \"2024-10-18\"}",
+        "{\"text\": \"I love the screen, but my left hinge just snapped completely. Now the screen won't stay up.\", \"rating\": 1, \"date\": \"2024-06-18\"}"
     ],
     "total_reviews": 50,
     "product_name": "ZenithBook Pro 14",
-    "short_summary": "This laptop has a premium build quality, a surprisingly light aluminum chassis, and an excellent OLED display. It's a great value for the price, especially with refurbished units available. The laptop is a powerhouse for creators, running software like Photoshop and Premiere flawlessly.",
-    "detailed_summary": "- The laptop's build quality is a major highlight, with a full aluminum chassis that feels premium.\n- The device is surprisingly light for a 14-inch laptop, making it easy to carry around.\n- The OLED display is a standout feature, with vibrant colors and deep blacks that make it perfect for photo editing.\n- The laptop is a great value for the price, especially with refurbished units available after the manufacturer fixed the hinge design.\n- It's a powerhouse for creators, running software like Photoshop and Premiere flawlessly.\n- Some users have reported issues with the BIOS, including sleep mode battery drain and loud fans under heavy load.\n- However, the manufacturer has released updates to address these issues, including BIOS 1.5, which fixed the sleep mode battery drain.\n- The laptop has a massive and super responsive trackpad, similar to a MacBook trackpad.\n- Some users have reported issues with OLED burn-in, particularly at the bottom of the screen where the taskbar sits.\n- The laptop's performance is excellent, with fast compile times and instant boot-up times.",
-    "sentiment_analysis": "OVERALL SCORE: 6.2/10\n\nDISTRIBUTION:\n- Positive: 17\n- Neutral: 7\n- Negative: 9\n\nREASONING: The overall sentiment is positive due to the laptop's performance, OLED screen, and value for the price, but is marred by issues with the hinge, sleep mode, and customer service.",
-    "pros": "- Premium build quality\n- Surprisingly light aluminum chassis\n- Excellent OLED display\n- Great value for the price\n- Powerful performance\n- Fast compile times\n- Instant boot-up times",
-    "cons": "- Issues with BIOS, including sleep mode battery drain and loud fans\n- OLED burn-in reported by some users\n- Aggressive fan curve\n- All USB-C ports may require a dongle for some users\n- Customer service issues reported by some users",
-    "aspect_analysis": "- **Performance**: 9/10\n- **OLED screen**: 9/10\n- **Value for the price**: 9/10\n- **Battery life**: 7/10\n- **Trackpad**: 8/10\n- **Keyboard**: 8/10\n- **Speakers**: 4/10\n- **Hinge**: 2/10\n- **Customer service**: 2/10",
-    "keyword_analysis": "OLED Display, Battery Life, Aluminum Chassis, USBC Ports, Fingerprint Reader",
-    "predicted_rating": "\u2b50 PREDICTED RATING: 4.5/5 Stars",
-    "timeline_analysis": "2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 9\n2022-01-01: 9\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01: 8\n2022-01-01:",
-    "fake_review_analysis": "\ud83d\udee1\ufe0f AUTHENTICITY ANALYSIS:\n\nTrust Score: 80%\n- 7 suspicious reviews detected\n\nSUSPICIOUS REVIEWS:\n- \"Got this on a Black Friday sale. For $800, this is the steal of the century.\" (Overly promotional language)\n- \"Runs Photoshop and Premiere flawlessly. A powerhouse for creators. 5 stars.\" (Overly promotional language)\n- \"Incredible machine. Boots up in literally 4 seconds. Fingerprint reader on the power button is genius.\" (Overly promotional language)\n- \"Would highly recommend, just make sure you get an extended warranty just in case.\" (Overly promotional language)\n- \"DO NOT INSTALL BIOS UPDATE 1.4! It completely broke the sleep mode.\" (Overly dramatic language)\n- \"Sent it in for warranty repair because of the broken hinge. They claimed 'physical damage' and charged me $300. Outrageous.\" (Negative review with potential bias)\n- \"Support told me to 'roll back the BIOS' but didn't provide instructions. Horrible customer service.\" (Negative review with potential bias)\n\nRELIABILITY INDICATORS:\n- 7 reviews mention specific technical issues (e.g. sleep mode, BIOS updates, hinge design)\n- 4 reviews mention the OLED screen as a major selling point\n\nRED FLAGS:\n- Overly promotional language in 4 reviews\n- Negative reviews with potential bias in 2 reviews\n- Unusual emphasis on specific technical issues in 7 reviews",
+    "short_summary": "The laptop has received praise for its premium build quality, fast performance, and excellent OLED screen. However, some users have experienced issues with the hinge design, loud fans, and OLED burn-in. The manufacturer has addressed some of these concerns with BIOS updates and free repairs.",
+    "detailed_summary": "- The laptop's build quality has been praised by many users, with some noting that it feels premium and is surprisingly light for a 14-inch laptop.\n- The OLED screen has been a major highlight, with users praising its vibrant colors, deep blacks, and excellent performance for photo editing and other creative tasks.\n- However, some users have experienced issues with the hinge design, with some experiencing broken hinges and others noting that the left hinge is particularly prone to failure.\n- The fans have also been a point of contention, with some users noting that they get loud under heavy load, while others have found that buying a cooling pad can help mitigate this issue.\n- OLED burn-in has also been a concern for some users, with some noting that it can occur even after less than a year of use.\n- The manufacturer has addressed some of these concerns with BIOS updates and free repairs, including a fix for the sleep mode battery drain and a free repair program for broken hinges.\n- Some users have also praised the laptop's performance, noting that it is extremely fast and can handle demanding tasks like Photoshop and Premiere with ease.\n- However, others have noted that the laptop's battery life is decent but not exceptional, with some users reporting that it can drop to as low as 3 hours if they are gaming.\n- Additionally, some users have noted that the laptop's webcam is only 720p, which is considered subpar for a laptop of this price.",
+    "sentiment_analysis": "OVERALL SCORE: 5.1/10\n\nDISTRIBUTION (Based on 50 analyzed reviews):\n- Positive: 20\n- Neutral: 11\n- Negative: 19",
+    "pros": "- Premium build quality\n- Excellent OLED screen\n- Fast performance\n- Great for creative tasks\n- Good battery life",
+    "cons": "- Hinge design issues\n- Loud fans\n- OLED burn-in\n- Subpar webcam\n- Battery life can be inconsistent",
+    "aspect_analysis": "### Build Quality\n- Premium feel: 9/10\n- Durable: 8/10\n- Flaws: 4/10\n\n### Performance\n- Fast compile times: 9/10\n- Powerful processor: 9/10\n- Good thermals: 7/10\n\n### Display\n- OLED screen: 9/10\n- Vibrant colors: 9/10\n- Deep blacks: 9/10\n- Burn-in: 2/10\n\n### Battery Life\n- Decent battery life: 6/10\n- Drops to 3 hours gaming: 4/10\n\n### Ports and Connectivity\n- USB-C ports: 5/10\n- No 1080p webcam: 3/10\n\n### Design and Build\n- Light weight: 8/10\n- Premium materials: 8/10\n- Flaws in design: 4/10\n\n### Software\n- Quirks in Windows 11: 5/10\n- Sleep mode issues: 2/10\n\n### Accessories\n- Trackpad: 8/10\n- Keyboard: 9/10\n- Charger: 4/10",
+    "keyword_analysis": "OLED screen, fast performance, premium build quality, hinge design issues, BIOS updates",
+    "predicted_rating": "\u2b50 PREDICTED RATING: 4/5 Stars",
+    "timeline_analysis": "2024-02-12: 8\n2024-11-15: 8\n2024-03-28: 6\n2024-09-05: 8\n2024-01-22: 6\n2024-08-05: 6\n2024-12-28: 6\n2024-01-10: 8\n2024-01-28: 8\n2024-05-15: 4\n2024-12-22: 6\n2024-12-31: 6\n2024-07-20: 8\n2024-11-28: 2\n2024-10-02: 8\n2024-06-25: 1\n2024-10-10: 6\n2024-08-15: 6\n2024-04-28: 6\n2024-05-05: 8\n2024-07-28: 2\n2024-10-25: 8\n2024-11-05: 6\n2024-08-22: 6\n2024-04-12: 1\n2024-03-10: 1\n2024-12-05: 2\n2024-02-25: 2\n2024-02-05: 6\n2024-12-18: 3\n2024-09-28: 3\n2024-12-12: 8\n2024-11-22: 3\n2024-04-20: 6\n2024-09-12: 3\n2024-05-10: 8\n2024-07-12: 3\n2024-06-02: 2\n2024-02-18: 3\n2024-09-20: 8\n2024-07-05: 1\n2024-03-02: 8\n2024-01-15: 8\n2024-03-22: 1\n2024-03-15: 1\n2024-06-10: 1\n2024-05-22: 3\n2024-04-05: 1\n2024-10-18: 2",
+    "fake_review_analysis": "\ud83d\udee1\ufe0f AUTHENTICITY ANALYSIS:\n\nTrust Score: 85%\n- 3 suspicious reviews detected\n\nSUSPICIOUS REVIEWS:\n- \"WORK FROM HOME EARN $500 A DAY CLICK HERE TO LEARN MORE\": This review contains a clear spam link and is likely a fake review.\n- \"DO NOT INSTALL BIOS UPDATE 1.4! It completely broke the sleep mode.\": This review is written in an all-caps format and contains a strong warning, which may be an attempt to manipulate the reader.\n- \"Sent it in for warranty repair because of the broken hinge. They claimed 'physical damage' and charged me $300. Outrageous.\": This review contains a negative experience with the company's warranty process, but the tone is overly dramatic and may be an attempt to sway public opinion.\n\nRELIABILITY INDICATORS:\n- The majority of reviews are written in a neutral or positive tone, indicating a genuine interest in the product.\n- Many reviewers mention specific features and experiences, such as the OLED screen and the hinge design, which suggests that they have actually used the product.\n\nRED FLAGS:\n- The presence of spam links and all-caps warnings in two reviews.\n- The dramatic tone and language used in the review about the warranty process.",
     "sentiment_distribution": {
-        "positive": 17,
-        "neutral": 7,
-        "negative": 9
+        "positive": 20,
+        "neutral": 11,
+        "negative": 19
     },
     "sentiment_trend": [
         {
-            "date": "2022-01-01",
+            "date": "2024-01-10",
             "score": 8.0
         },
         {
-            "date": "2022-01-01",
+            "date": "2024-01-15",
             "score": 8.0
         },
         {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 9.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 9.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
+            "date": "2024-01-22",
+            "score": 6.0
         },
         {
-            "date": "2022-01-01",
+            "date": "2024-01-28",
             "score": 8.0
         },
         {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
+            "date": "2024-02-05",
+            "score": 6.0
         },
         {
-            "date": "2022-01-01",
+            "date": "2024-02-12",
             "score": 8.0
         },
         {
-            "date": "2022-01-01",
-            "score": 8.0
-        },
-        {
-            "date": "2022-01-01",
-            "score": 8.0
+            "date": "2024-02-18",
+            "score": 3.0
         },
         {
-            "date": "2022-01-01",
-            "score": 8.0
+            "date": "2024-02-25",
+            "score": 2.0
         },
         {
-            "date": "2022-01-01",
+            "date": "2024-03-02",
             "score": 8.0
         },
         {
-            "date": "2022-01-01",
-            "score": 8.0
+            "date": "2024-03-10",
+            "score": 1.0
         },
         {
-            "date": "2022-01-01",
-            "score": 8.0
+            "date": "2024-03-15",
+            "score": 1.0
         },
         {
-            "date": "2022-01-01",
-            "score": 8.0
+            "date": "2024-03-22",
+            "score": 1.0
         },
         {
-            "date": "2022-01-01",
-            "score": 8.0
+            "date": "2024-03-28",
+            "score": 6.0
         },
         {
-            "date": "2022-01-01",
-            "score": 8.0
+            "date": "2024-04-05",
+            "score": 1.0
         },
         {
-            "date": "2022-01-01",
-            "score": 8.0
+            "date": "2024-04-12",
+            "score": 1.0
         },
         {
-            "date": "2022-01-01",
-            "score": 8.0
+            "date": "2024-04-20",
+            "score": 6.0
         },
         {
-            "date": "2022-01-01",
-            "score": 8.0
+            "date": "2024-04-28",
+            "score": 6.0
         },
         {
-            "date": "2022-01-01",
+            "date": "2024-05-05",
             "score": 8.0
         },
         {
-            "date": "2022-01-01",
+            "date": "2024-05-10",
             "score": 8.0
         },
         {
-            "date": "2022-01-01",
-            "score": 8.0
+            "date": "2024-05-15",
+            "score": 4.0
         },
         {
-            "date": "2022-01-01",
-            "score": 8.0
+            "date": "2024-05-22",
+            "score": 3.0
         },
         {
-            "date": "2022-01-01",
-            "score": 8.0
+            "date": "2024-06-02",
+            "score": 2.0
         },
         {
-            "date": "2022-01-01",
-            "score": 8.0
+            "date": "2024-06-10",
+            "score": 1.0
         },
         {
-            "date": "2022-01-01",
-            "score": 8.0
+            "date": "2024-06-25",
+            "score": 1.0
         },
         {
-            "date": "2022-01-01",
-            "score": 8.0
+            "date": "2024-07-05",
+            "score": 1.0
         },
         {
-            "date": "2022-01-01",
-            "score": 8.0
+            "date": "2024-07-12",
+            "score": 3.0
         },
         {
-            "date": "2022-01-01",
+            "date": "2024-07-20",
             "score": 8.0
         },
         {
-            "date": "2022-01-01",
-            "score": 8.0
+            "date": "2024-07-28",
+            "score": 2.0
         },
         {
-            "date": "2022-01-01",
-            "score": 8.0
+            "date": "2024-08-05",
+            "score": 6.0
         },
         {
-            "date": "2022-01-01",
-            "score": 8.0
+            "date": "2024-08-15",
+            "score": 6.0
         },
         {
-            "date": "2022-01-01",
-            "score": 8.0
+            "date": "2024-08-22",
+            "score": 6.0
         },
         {
-            "date": "2022-01-01",
+            "date": "2024-09-05",
             "score": 8.0
         },
         {
-            "date": "2022-01-01",
-            "score": 8.0
+            "date": "2024-09-12",
+            "score": 3.0
         },
         {
-            "date": "2022-01-01",
+            "date": "2024-09-20",
             "score": 8.0
         },
         {
-            "date": "2022-01-01",
-            "score": 8.0
+            "date": "2024-09-28",
+            "score": 3.0
         },
         {
-            "date": "2022-01-01",
+            "date": "2024-10-02",
             "score": 8.0
         },
         {
-            "date": "2022-01-01",
-            "score": 8.0
+            "date": "2024-10-10",
+            "score": 6.0
         },
         {
-            "date": "2022-01-01",
-            "score": 8.0
+            "date": "2024-10-18",
+            "score": 2.0
         },
         {
-            "date": "2022-01-01",
+            "date": "2024-10-25",
             "score": 8.0
         },
         {
-            "date": "2022-01-01",
-            "score": 8.0
+            "date": "2024-11-05",
+            "score": 6.0
         },
         {
-            "date": "2022-01-01",
+            "date": "2024-11-15",
             "score": 8.0
         },
         {
-            "date": "2022-01-01",
-            "score": 8.0
+            "date": "2024-11-22",
+            "score": 3.0
         },
         {
-            "date": "2022-01-01",
-            "score": 8.0
+            "date": "2024-11-28",
+            "score": 2.0
         },
         {
-            "date": "2022-01-01",
-            "score": 8.0
+            "date": "2024-12-05",
+            "score": 2.0
         },
         {
-            "date": "2022-01-01",
+            "date": "2024-12-12",
             "score": 8.0
         },
         {
-            "date": "2022-01-01",
-            "score": 8.0
+            "date": "2024-12-18",
+            "score": 3.0
         },
         {
-            "date": "2022-01-01",
-            "score": 8.0
+            "date": "2024-12-22",
+            "score": 6.0
         },
         {
-            "date": "2022-01-01",
-            "score": 8.0
+            "date": "2024-12-28",
+            "score": 6.0
         },
         {
-            "date": "2022-01-01",
-            "score": 8.0
+            "date": "2024-12-31",
+            "score": 6.0
         }
     ],
     "key_metrics": {
-        "key_strength": "Performance, OLED screen, value for the price",
-        "top_complaint": "Hinge issues, sleep mode problems, customer service",
-        "emerging_request": "Fix sleep issue, improve customer service",
-        "customer_loyalty": "Some users are loyal despite issues, but others are deterred"
+        "key_strength": "Excellent performance",
+        "top_complaint": "Hinge design issues",
+        "emerging_request": "More consistent battery life"
     }
 }

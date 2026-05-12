@@ -23,4 +23,4 @@ class DashboardState(TypedDict):
     # New fields for structured data from preferred logic
     sentiment_distribution: dict  # {"positive": X, "neutral": Y, "negative": Z}
     sentiment_trend: List[dict]    # [{"date": "...", "score": ...}]
-    key_metrics: dict             # {"key_strength": "...", "top_complaint": "...", "emerging_request": "...", "customer_loyalty": "..."}
+    key_metrics: dict             # {"key_strength": "...", "top_complaint": "...", "emerging_request": "..."}
