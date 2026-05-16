@@ -4,7 +4,7 @@ import json
 from langchain_community.vectorstores import FAISS
 from langchain_huggingface import HuggingFaceEmbeddings
 
-FAISS_BASE_PATH = "faiss_index"
+FAISS_BASE_PATH = os.path.join("data", "faiss_index")
 embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
 global_vector_db = None
 current_product_id = "default"
