@@ -53,7 +53,7 @@ def main():
             
         jsx_content = parse_html_to_jsx(content, f)
         
-        with open(f"src/screens/{f}.jsx", 'w', encoding='utf-8') as out_file:
+        with open(f"src/pages/{f}.jsx", 'w', encoding='utf-8') as out_file:
             out_file.write(jsx_content)
 
 if __name__ == "__main__":

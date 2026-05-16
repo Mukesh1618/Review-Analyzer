@@ -52,6 +52,6 @@ files.forEach(f => {
     if (fs.existsSync(htmlPath)) {
         const content = fs.readFileSync(htmlPath, 'utf8');
         const jsxContent = parseHtmlToJsx(content, f);
-        fs.writeFileSync(`src/screens/${f}.jsx`, jsxContent, 'utf8');
+        fs.writeFileSync(`src/pages/${f}.jsx`, jsxContent, 'utf8');
     }
 });

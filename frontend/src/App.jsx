@@ -1,13 +1,13 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 
-import LandingDark from './screens/Landing_Dark';
-import LoginDark from './screens/Login_Dark';
-import DashboardDark from './screens/Dashboard_Dark';
-import FileUploadDark from './screens/FileUpload_Dark';
-import AnalysisResultsDark from './screens/AnalysisResults_Dark';
-import ChatInterfaceDark from './screens/ChatInterface_Dark';
-import ReviewDetailDark from './screens/ReviewDetail_Dark';
+import LandingDark from './pages/Landing_Dark';
+import LoginDark from './pages/Login_Dark';
+import DashboardDark from './pages/Dashboard_Dark';
+import FileUploadDark from './pages/FileUpload_Dark';
+import AnalysisResultsDark from './pages/AnalysisResults_Dark';
+import ChatInterfaceDark from './pages/ChatInterface_Dark';
+import ReviewDetailDark from './pages/ReviewDetail_Dark';
 
 import { AuthProvider } from './AuthContext';
 

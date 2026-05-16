@@ -1,0 +1,97 @@
+==========================================================================
+            REVIEWMIND: PRODUCT REVIEWS ANALYZER & Q&A GUIDE
+==========================================================================
+
+Welcome to ReviewMind! This project is an AI-powered platform designed to 
+analyze product reviews using a Multi-Agent system. It transforms raw 
+customer feedback into structured insights and provides a conversational 
+interface for deep querying.
+
+--------------------------------------------------------------------------
+1. PROJECT STRUCTURE OVERVIEW
+--------------------------------------------------------------------------
+
+- backend/             : The core Python engine (FastAPI).
+  - agents/            : AI logic for Summaries, Sentiment, Trends, etc.
+  - services/          : Orchestration logic using LangGraph.
+  - db/                : Database handlers for FAISS.
+- frontend/            : The user interface (React + Vite).
+  - src/pages/         : The different screens (Dashboard, Upload, Chat).
+  - src/components/    : Reusable UI elements.
+- data/                : The storage hub.
+  - faiss_index/       : Stores processed review embeddings for search.
+  - Sample_Files/      : Pre-loaded datasets for testing.
+- development_assets/  : Backup of legacy code, debug scripts, and images.
+- venv/                : Python Virtual Environment.
+
+--------------------------------------------------------------------------
+2. HOW TO RUN THE PROJECT
+--------------------------------------------------------------------------
+
+Prerequisites:
+- Python 3.10+
+- Node.js & npm
+- An .env file in the root with your API keys (GROQ_API_KEY, etc.)
+
+STEP 1: Start the Backend
+1. Open a terminal in the project root.
+2. Run: .\venv\Scripts\python.exe -m uvicorn backend.main:app --port 8000 --reload
+3. The backend is ready when you see: "Uvicorn running on http://127.0.0.1:8000"
+
+STEP 2: Start the Frontend
+1. Open a second terminal in the project root.
+2. Navigate to the frontend folder: cd frontend
+3. (Optional) If first time running: npm install
+4. Run: npm run dev
+5. Open your browser to: http://localhost:5173
+
+--------------------------------------------------------------------------
+3. HOW THE WEBSITE WORKS (THE PROCESS)
+--------------------------------------------------------------------------
+
+The application follows a professional AI pipeline:
+
+1. LOGIN/LANDING:
+   Users enter through a modern dark-themed landing page and authenticate.
+
+2. KNOWLEDGE INGESTION (Upload Page):
+   - You can upload your own CSV, JSON, or TXT review files.
+   - Alternatively, use "Sample Files" to load pre-existing laptop or smartphone reviews.
+   - GATEKEEPER: An AI "Validation Agent" checks the file first to ensure 
+     it actually contains reviews and not random code or garbage.
+
+3. AI ORCHESTRATION (The Backend):
+   - Once uploaded, the reviews are split into chunks and converted into 
+     mathematical vectors (embeddings).
+   - These are stored in the FAISS Vector Database in the `data/` folder.
+   - A Multi-Agent system runs in PARALLEL to analyze the product:
+     * Identity Agent  : Detects product name and predicts a star rating.
+     * Sentiment Agent : Calculates scores and identifies distribution.
+     * Summary Agent   : Generates both executive and detailed summaries.
+     * Timeline Agent  : Maps how sentiment has changed over time.
+     * Security Agent  : Detects potentially fake or spam reviews.
+
+4. INSIGHTS DASHBOARD:
+   The results are displayed in a professional dashboard featuring:
+   - Sentiment Donut Charts.
+   - Interactive Timeline Graphs.
+   - Executive Summaries and Pros/Cons lists.
+   - Key Performance Metrics.
+
+5. CONVERSATIONAL Q&A (Chat Interface):
+   - Users can ask specific questions like "Is the battery life good?"
+   - The Chat Agent retrieves relevant review snippets from the FAISS database 
+     to provide evidence-based answers.
+
+--------------------------------------------------------------------------
+4. DATA PERSISTENCE
+--------------------------------------------------------------------------
+
+- Analysis results are cached as `analysis.json` in the `data/faiss_index/` 
+  directory for each product. 
+- This means if you reload the dashboard for a product you already analyzed, 
+  it loads instantly without re-running the expensive AI agents.
+
+==========================================================================
+Developed with a Modular, Professional, and Agentic AI Architecture.
+==========================================================================
