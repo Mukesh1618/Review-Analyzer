@@ -78,6 +78,45 @@ web_modules/
 .env.test.local
 .env.production.local
 .env.local
+# Also explicitly cover nested .env files (e.g. frontend/.env)
+frontend/.env
+frontend/.env.local
+
+# ---------------------------------------------------------------
+# Python / Backend
+# ---------------------------------------------------------------
+
+# Virtual environment
+venv/
+.venv/
+env/
+
+# Python bytecode cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+
+# Distribution / packaging
+*.egg-info/
+dist/
+build/
+*.egg
+
+# ---------------------------------------------------------------
+# ReviewMind Project-specific
+# ---------------------------------------------------------------
+
+# FAISS vector index + stored analysis data (generated at runtime)
+data/
+
+# Generated test PDF artifacts
+test_report.pdf
+*.pdf
+
+# Model cache downloaded by sentence-transformers / HuggingFace
+.cache/huggingface/
+~/.cache/
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache
