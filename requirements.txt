@@ -1,0 +1,69 @@
+# ============================================================
+#  ReviewMind AI — Python Backend Requirements
+#  Install with: pip install -r requirements.txt
+#
+#  Python 3.10+ recommended
+#  Note: PyTorch (torch, torchaudio, torchvision) is installed
+#  automatically as a dependency of sentence-transformers.
+#  If you have a CUDA GPU you may want to install the CUDA
+#  build of torch separately from https://pytorch.org/
+# ============================================================
+
+
+# --- Web Framework ---
+fastapi==0.136.1
+uvicorn==0.46.0
+starlette==1.0.0
+python-multipart==0.0.27
+
+# --- Environment & Config ---
+python-dotenv==1.2.2
+pydantic==2.12.5
+pydantic-settings==2.13.1
+
+# --- LangChain Core ---
+langchain==1.2.15
+langchain-core==1.3.2
+langchain-community==0.4.1
+langchain-text-splitters==1.1.1
+
+# --- LangChain Integrations ---
+langchain-groq==1.1.2
+langchain-huggingface==1.2.2
+langgraph==1.1.6
+
+# --- LLM Providers ---
+groq==0.37.1
+
+# --- Embeddings & Vector Store ---
+sentence-transformers==5.3.0
+faiss-cpu==1.13.2
+transformers==5.5.0
+tokenizers==0.22.2
+huggingface-hub==1.9.0
+safetensors==0.7.0
+
+# --- PDF Generation ---
+reportlab==4.5.1
+
+# --- Data Processing ---
+pandas==3.0.2
+numpy==2.4.4
+scikit-learn==1.8.0
+scipy==1.17.1
+
+# --- HTTP & Networking ---
+httpx==0.28.1
+requests==2.33.1
+aiohttp==3.13.5
+
+# --- Utilities ---
+python-dateutil==2.9.0.post0
+tqdm==4.67.3
+tenacity==9.1.4
+pyyaml==6.0.3
+regex==2026.4.4
+pillow==12.2.0
+beautifulsoup4==4.14.3
+lxml==6.1.1
+rich==14.3.3
