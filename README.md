@@ -1,4 +1,4 @@
-<![CDATA[# 🧠 ReviewMind AI
+# 🧠 ReviewMind AI
 
 > **An intelligent, multi-agent product review analysis platform powered by LangChain, Groq LLaMA 3, and FAISS.**
 
@@ -222,4 +222,3 @@ This project is licensed under the MIT License.
 ---
 
 <p align="center">Built with ❤️ using LangChain · Groq · FastAPI · React</p>
-]]>
