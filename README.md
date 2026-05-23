@@ -75,24 +75,30 @@ Query your entire review corpus in plain English using a semantic RAG (Retrieval
 ```
 Review-Analyzer/
 ├── backend/
-│   ├── agents/          # LangChain/LangGraph agent definitions
+│   ├── agents/          # LangChain/LangGraph agent definitions (chat + dashboard)
 │   ├── db/              # FAISS vector store management
-│   ├── models/          # Pydantic state models
-│   ├── services/        # Orchestrator & PDF reporter
-│   ├── utils/           # LLM wrapper, helper utilities
-│   └── main.py          # FastAPI app entry point
+│   ├── models/          # Pydantic/TypedDict state models for LangGraph
+│   ├── services/        # Graph orchestrator & ReportLab PDF reporter
+│   ├── utils/           # Groq LLM wrapper + helper utilities
+│   └── main.py          # FastAPI app entry point & all API endpoints
 ├── frontend/
 │   ├── src/
-│   │   ├── components/  # Reusable UI components
+│   │   ├── components/  # Reusable UI components (ProfileDropdown)
 │   │   ├── pages/       # Route-level page components
-│   │   ├── AuthContext.jsx
-│   │   └── firebase.js  # Firebase config (uses .env)
-│   └── index.html
-├── data/                # FAISS indices & analysis cache (git-ignored)
-├── .env.example         # Backend env template
-├── frontend/.env.example # Frontend env template
-├── requirements.txt     # Python dependencies
-└── README.md
+│   │   ├── AuthContext.jsx  # Global Firebase auth state provider
+│   │   └── firebase.js  # Firebase initialisation (reads .env)
+│   ├── .env.example     # Frontend env variable template
+│   └── index.html       # Vite HTML entry point
+├── docs/
+│   ├── sample_files/    # Example review files for testing (CSV, TXT)
+│   ├── USER_GUIDE.txt   # End-user guide for the platform
+│   ├── CODEBASE_EXPLAINED.md  # Full file-by-file code walkthrough
+│   └── Project_Specifications.pdf  # Original project spec document
+├── data/                # Runtime FAISS indices & analysis cache (git-ignored)
+├── .env.example         # Backend env variable template
+├── .gitignore           # Git ignore rules
+├── requirements.txt     # Python backend dependencies
+└── README.md            # Project introduction & setup guide
 ```
 
 ---

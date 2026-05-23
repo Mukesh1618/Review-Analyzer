@@ -180,7 +180,7 @@ async def upload_sample(sample_name: str = Query(...), x_user_id: str = Header(N
     if not x_user_id:
         return {"error": "Authentication required."}
     # Look for files in Sample_Files directory
-    sample_path = os.path.join("data", "Sample_Files", sample_name)
+    sample_path = os.path.join("docs", "sample_files", sample_name)
     if not os.path.exists(sample_path):
         return {"error": f"Sample file {sample_name} not found."}
     
