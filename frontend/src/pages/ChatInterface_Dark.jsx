@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import { useAuth } from '../AuthContext';
+import ProfileDropdown from '../components/ProfileDropdown';
 
 const ChatInterface_Dark = () => {
     const { user, loading: authLoading } = useAuth();
@@ -163,48 +164,51 @@ const ChatInterface_Dark = () => {
                         </div>
                     </div>
 
-                    <div className="relative">
-                        <button 
-                            onClick={() => setShowProductList(!showProductList)}
-                            className="px-4 py-2 bg-surface-container rounded-lg border border-outline-variant/10 text-xs font-bold flex items-center gap-2 hover:bg-surface-container-high transition-colors"
-                        >
-                            <span className="material-symbols-outlined text-sm">inventory_2</span>
-                            {selectedProduct ? selectedProduct.name : "Select Product"}
-                            <span className="material-symbols-outlined text-sm">expand_more</span>
-                        </button>
-                        
-                        {showProductList && (
-                            <div className="absolute right-0 mt-2 w-72 bg-surface-container-highest border border-outline-variant/20 rounded-xl shadow-2xl z-50 overflow-hidden text-left">
-                                <div className="p-3 border-b border-outline-variant/10">
-                                    <input 
-                                        type="text"
-                                        placeholder="Search products..."
-                                        className="w-full bg-surface-container-low border-none rounded-lg px-3 py-2 text-xs focus:ring-1 focus:ring-primary/30"
-                                        value={searchQuery}
-                                        onChange={(e) => setSearchQuery(e.target.value)}
-                                    />
+                    <div className="flex items-center gap-4">
+                        <div className="relative">
+                            <button 
+                                onClick={() => setShowProductList(!showProductList)}
+                                className="px-4 py-2 bg-surface-container rounded-lg border border-outline-variant/10 text-xs font-bold flex items-center gap-2 hover:bg-surface-container-high transition-colors"
+                            >
+                                <span className="material-symbols-outlined text-sm">inventory_2</span>
+                                {selectedProduct ? selectedProduct.name : "Select Product"}
+                                <span className="material-symbols-outlined text-sm">expand_more</span>
+                            </button>
+                            
+                            {showProductList && (
+                                <div className="absolute right-0 mt-2 w-72 bg-surface-container-highest border border-outline-variant/20 rounded-xl shadow-2xl z-50 overflow-hidden text-left">
+                                    <div className="p-3 border-b border-outline-variant/10">
+                                        <input 
+                                            type="text"
+                                            placeholder="Search products..."
+                                            className="w-full bg-surface-container-low border-none rounded-lg px-3 py-2 text-xs focus:ring-1 focus:ring-primary/30"
+                                            value={searchQuery}
+                                            onChange={(e) => setSearchQuery(e.target.value)}
+                                        />
+                                    </div>
+                                    <div className="max-h-64 overflow-y-auto">
+                                        {filteredProducts.length > 0 ? filteredProducts.map(p => (
+                                            <button
+                                                key={p.id}
+                                                onClick={() => handleSelectProduct(p)}
+                                                className="w-full px-4 py-3 text-left hover:bg-primary/5 transition-colors flex items-center gap-3 group border-b border-outline-variant/5 last:border-0"
+                                            >
+                                                <div className="w-8 h-8 rounded-lg bg-surface-container-low flex items-center justify-center text-on-surface-variant group-hover:text-primary transition-colors">
+                                                    <span className="material-symbols-outlined text-sm">laptop_mac</span>
+                                                </div>
+                                                <div>
+                                                    <p className="text-xs font-bold text-on-surface">{p.name}</p>
+                                                    <p className="text-[10px] text-on-surface-variant">Click to analyze</p>
+                                                </div>
+                                            </button>
+                                        )) : (
+                                            <div className="p-4 text-center text-on-surface-variant text-[10px] font-bold uppercase italic opacity-50">No products found</div>
+                                        )}
+                                    </div>
                                 </div>
-                                <div className="max-h-64 overflow-y-auto">
-                                    {filteredProducts.length > 0 ? filteredProducts.map(p => (
-                                        <button
-                                            key={p.id}
-                                            onClick={() => handleSelectProduct(p)}
-                                            className="w-full px-4 py-3 text-left hover:bg-primary/5 transition-colors flex items-center gap-3 group border-b border-outline-variant/5 last:border-0"
-                                        >
-                                            <div className="w-8 h-8 rounded-lg bg-surface-container-low flex items-center justify-center text-on-surface-variant group-hover:text-primary transition-colors">
-                                                <span className="material-symbols-outlined text-sm">laptop_mac</span>
-                                            </div>
-                                            <div>
-                                                <p className="text-xs font-bold text-on-surface">{p.name}</p>
-                                                <p className="text-[10px] text-on-surface-variant">Click to analyze</p>
-                                            </div>
-                                        </button>
-                                    )) : (
-                                        <div className="p-4 text-center text-on-surface-variant text-[10px] font-bold uppercase italic opacity-50">No products found</div>
-                                    )}
-                                </div>
-                            </div>
-                        )}
+                            )}
+                        </div>
+                        <ProfileDropdown />
                     </div>
                 </header>
 

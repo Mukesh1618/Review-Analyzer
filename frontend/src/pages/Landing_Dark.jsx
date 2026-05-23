@@ -1,38 +1,51 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../AuthContext';
+import ProfileDropdown from '../components/ProfileDropdown';
 
 const Landing_Dark = () => {
+  const { user } = useAuth();
   const [activeStep, setActiveStep] = useState(0);
 
   const steps = [
     {
-      title: "1. Upload Your Data",
-      description: "Start by uploading your customer reviews in CSV or JSON format. Our system securely ingests and prepares your data for deep analysis.",
+      title: "1. Upload & AI Gatekeeper",
+      description: "Ingest your customer reviews in CSV, JSON, or TXT formats. An AI Gatekeeper Validation Agent automatically screens uploaded content to block non-review text or garbage files.",
       icon: "cloud_upload",
       color: "primary",
-      detail: "8,402 reviews processed",
-      progress: 85,
+      detail: "Gatekeeper Active",
+      progress: 100,
       buttonText: "Go to Upload",
       link: "/upload"
     },
     {
-      title: "2. AI Analysis & Insights",
-      description: "Our advanced LLMs categorize sentiment, detect key themes, and identify churn risks automatically, turning raw text into actionable intelligence.",
+      title: "2. AI Multi-Agent Analysis",
+      description: "Collaborative agents execute in parallel to extract predicted ratings, sentiment distribution donut values, historical timelines, pros & cons, and aspect attribute metrics.",
       icon: "analytics",
       color: "tertiary",
-      detail: "92% Sentiment Accuracy",
-      progress: 92,
+      detail: "Multi-Agent Active",
+      progress: 95,
       buttonText: "View Dashboard",
       link: "/dashboard"
     },
     {
-      title: "3. Chat with your Data",
-      description: "Ask natural language questions about your feedback. Get instant answers on top feature requests, UI friction, or competitive advantages.",
-      icon: "forum",
+      title: "3. Premium PDF Report Export",
+      description: "Instantly download a corporate-grade, visually stunning executive intelligence report compiled with alternating benchmark scorecards, structured rose bot audits, and metallic header banners.",
+      icon: "download",
       color: "primary",
-      detail: "AI-Powered Q&A",
+      detail: "Professional Compiler",
       progress: 100,
-      buttonText: "Start Chatting",
+      buttonText: "View Analysis",
+      link: "/analysis"
+    },
+    {
+      title: "4. Natural Language Q&A Engine",
+      description: "Query your entire review corpus in plain English. The semantic RAG engine retrieves evidence-backed answers from your FAISS index with precise reviewer source citations.",
+      icon: "psychology",
+      color: "tertiary",
+      detail: "Semantic RAG Engine",
+      progress: 100,
+      buttonText: "Launch Q&A Engine",
       link: "/chat"
     }
   ];
@@ -54,7 +67,7 @@ const Landing_Dark = () => {
           </div>
         </div>
         <div className="flex items-center gap-4">
-          <Link to="/login" className="text-on-surface-variant hover:text-primary transition-colors px-3 py-2">Login</Link>
+          <ProfileDropdown />
         </div>
       </nav>
 
@@ -63,18 +76,18 @@ const Landing_Dark = () => {
         <section className="relative pt-24 pb-32 px-6 lg:px-12 text-center max-w-7xl mx-auto">
           <div className="inline-flex items-center gap-2 px-3 py-1 bg-tertiary-container/20 text-tertiary rounded-full text-xs font-semibold mb-8 border border-tertiary-container/30">
             <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>auto_awesome</span>
-            <span>Powered by Advanced LLMs</span>
+            <span>Enterprise Multi-Agent Review Architecture</span>
           </div>
           <h1 className="text-5xl lg:text-7xl font-extrabold text-on-surface leading-[1.1] tracking-tight mb-8">
             Turn customer reviews into <br />
             <span className="text-primary">AI-powered insights</span>
           </h1>
           <p className="text-lg lg:text-xl text-on-surface-variant max-w-2xl mx-auto mb-10 leading-relaxed">
-            Unlock the hidden narrative in your user feedback. ReviewMind categorizes sentiment, detects trends, and answers your toughest product questions in seconds.
+            Unlock the hidden narrative in your user feedback. ReviewMind validates your datasets, extracts chronological trends, audits review authenticity, and generates beautiful PDF summaries.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link to="/login" className="w-full sm:w-auto bg-primary text-on-primary px-8 py-4 rounded-xl font-bold shadow-lg shadow-primary/20 hover:bg-primary-fixed-dim transition-all text-center">
-              Get Started Free
+            <Link to={user ? "/dashboard" : "/login"} className="w-full sm:w-auto bg-primary text-on-primary px-8 py-4 rounded-xl font-bold shadow-lg shadow-primary/20 hover:bg-primary-fixed-dim transition-all text-center">
+              {user ? "Go to Dashboard" : "Get Started Free"}
             </Link>
             <button className="w-full sm:w-auto bg-surface-container-highest text-on-surface px-8 py-4 rounded-xl font-bold border border-outline-variant/30 hover:bg-surface-container-high transition-colors">
               View Demo
@@ -95,7 +108,7 @@ const Landing_Dark = () => {
           <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
             <div className="max-w-xl text-left">
               <h2 className="text-3xl lg:text-4xl font-bold mb-4 tracking-tight text-on-surface">Experience the Workflow</h2>
-              <p className="text-on-surface-variant">ReviewMind guides you from raw data to deep insights in three simple steps.</p>
+              <p className="text-on-surface-variant">ReviewMind guides you from raw data to deep insights in four professional phases.</p>
             </div>
             <div className="flex gap-4">
               <button 
@@ -138,26 +151,29 @@ const Landing_Dark = () => {
                   </div>
                   
                   <div className="flex-1 w-full relative">
-                    <div className="aspect-[4/3] bg-surface-container-highest rounded-3xl border border-outline-variant/20 shadow-inner overflow-hidden flex flex-col p-8">
+                    <div className="aspect-[4/3] bg-surface-container-highest rounded-3xl border border-outline-variant/20 shadow-inner overflow-hidden flex flex-col p-8 justify-center">
                       {index === 0 && (
                         <div className="flex-1 flex flex-col justify-center items-center gap-6 border-2 border-dashed border-outline-variant/30 rounded-2xl bg-surface-container-low/50">
                           <span className="material-symbols-outlined text-6xl text-outline-variant">cloud_upload</span>
                           <div className="text-center">
-                            <p className="font-bold text-on-surface">Drop files here</p>
-                            <p className="text-xs text-on-surface-variant">CSV, JSON (Max 10MB)</p>
+                            <p className="font-bold text-on-surface">Drop review files here</p>
+                            <p className="text-xs text-on-surface-variant">CSV, JSON, TXT (Max 10MB)</p>
                           </div>
                           <div className="w-48 h-2 bg-surface-container-high rounded-full overflow-hidden">
-                            <div className="bg-primary h-full w-[85%] transition-all duration-1000"></div>
+                            <div className="bg-primary h-full w-[100%] transition-all duration-1000"></div>
                           </div>
+                          <span className="px-3 py-1 bg-emerald-500/20 text-emerald-400 text-[10px] font-bold uppercase rounded-full border border-emerald-500/30 flex items-center gap-1">
+                            <span className="material-symbols-outlined text-[10px]">shield</span> AI Gatekeeper Verified
+                          </span>
                         </div>
                       )}
                       {index === 1 && (
                         <div className="flex-1 space-y-6 flex flex-col justify-center">
                           <div className="flex items-center gap-4 p-4 bg-surface-container-low rounded-xl border border-outline-variant/10">
-                            <div className="w-10 h-10 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-500 font-bold">92%</div>
+                            <div className="w-10 h-10 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-500 font-bold">96%</div>
                             <div>
-                              <p className="text-xs font-bold text-on-surface">Sentiment Accuracy</p>
-                              <p className="text-[10px] text-on-surface-variant">Systems performing optimally</p>
+                              <p className="text-xs font-bold text-on-surface">Multi-Agent Accuracy</p>
+                              <p className="text-[10px] text-on-surface-variant">Intelligent scoring systems verified</p>
                             </div>
                           </div>
                           <div className="flex items-center gap-4 p-4 bg-surface-container-low rounded-xl border border-outline-variant/10">
@@ -165,35 +181,119 @@ const Landing_Dark = () => {
                               <span className="material-symbols-outlined text-sm">trending_up</span>
                             </div>
                             <div className="flex-1 h-2 bg-surface-container-high rounded-full overflow-hidden">
-                              <div className="bg-primary h-full w-[75%] transition-all duration-1000 delay-300"></div>
+                              <div className="bg-primary h-full w-[85%] transition-all duration-1000 delay-300"></div>
                             </div>
                           </div>
                         </div>
                       )}
                       {index === 2 && (
-                        <div className="flex-1 space-y-4 flex flex-col justify-end">
-                          <div className="bg-surface-container-low p-4 rounded-xl rounded-bl-none border border-outline-variant/10 self-start max-w-[80%]">
-                            <p className="text-xs text-on-surface italic">"What are the top complaints?"</p>
+                        <div className="flex-1 flex flex-col justify-between p-4 bg-surface-container-low rounded-2xl border border-outline-variant/10 h-full">
+                          {/* Mini simulated PDF banner */}
+                          <div className="bg-[#005cbb] p-4 rounded-xl text-left text-white space-y-1 relative overflow-hidden">
+                            <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent rotate-45"></div>
+                            <p className="text-[7px] uppercase font-bold tracking-widest opacity-85">REVIEWMIND AI EXECUTIVE REPORT</p>
+                            <p className="text-sm font-extrabold font-display">ZenithBook Pro 14</p>
+                            <p className="text-[7px] opacity-70">Generated on May 23, 2026 • Powered by LangChain</p>
                           </div>
-                          <div className="bg-primary-container p-4 rounded-xl rounded-br-none border border-primary/20 self-end max-w-[80%]">
-                            <p className="text-xs text-on-primary-container">"Users mention the loading time on the checkout page is too slow."</p>
+                          
+                          {/* Simulated scorecard and pro/con previews */}
+                          <div className="grid grid-cols-2 gap-3 mt-3">
+                            <div className="bg-emerald-950/20 border border-emerald-500/20 p-2 rounded-lg text-[9px] text-emerald-400">
+                              <p className="font-bold mb-1 uppercase tracking-wider text-[8px]">Strengths</p>
+                              <p>• Vibrant OLED display</p>
+                              <p>• Fast compiler performance</p>
+                            </div>
+                            <div className="bg-error-container/20 border border-error/20 p-2 rounded-lg text-[9px] text-on-error-container">
+                              <p className="font-bold mb-1 uppercase tracking-wider text-[8px]">Weaknesses</p>
+                              <p>• Hinge design issues</p>
+                              <p>• Sleep mode drains battery</p>
+                            </div>
+                          </div>
+                          
+                          {/* Export progress */}
+                          <div className="flex items-center justify-between text-[10px] mt-4 pt-3 border-t border-outline-variant/10 text-on-surface-variant font-medium">
+                            <span className="flex items-center gap-1.5"><span className="material-symbols-outlined text-sm text-primary">picture_as_pdf</span>reviewmind_report_ZenithBook.pdf</span>
+                            <span className="text-emerald-400 font-bold flex items-center gap-1"><span className="material-symbols-outlined text-[12px]">check_circle</span>Downloaded</span>
                           </div>
                         </div>
                       )}
-                    </div>
-                    {/* Step Indicators */}
-                    <div className="absolute -bottom-12 left-1/2 -translate-x-1/2 flex gap-3">
-                      {steps.map((_, i) => (
-                        <div 
-                          key={i}
-                          className={`h-2 rounded-full transition-all duration-300 ${activeStep === i ? 'w-8 bg-primary' : 'w-2 bg-outline-variant/30'}`}
-                        />
-                      ))}
+                      {index === 3 && (
+                        <div className="flex-1 flex flex-col h-full bg-surface-container-low rounded-2xl border border-outline-variant/20 overflow-hidden">
+                          {/* Chat Header Bar */}
+                          <div className="flex items-center gap-3 px-4 py-3 border-b border-outline-variant/10 bg-surface-container-lowest">
+                            <div className="w-7 h-7 rounded-full bg-primary/15 flex items-center justify-center">
+                              <span className="material-symbols-outlined text-primary text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>smart_toy</span>
+                            </div>
+                            <div>
+                              <p className="text-[10px] font-extrabold text-on-surface tracking-wide">ReviewMind AI Analyst</p>
+                              <div className="flex items-center gap-1">
+                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block"></span>
+                                <p className="text-[8px] text-emerald-400 font-bold uppercase tracking-widest">Online</p>
+                              </div>
+                            </div>
+                            <span className="ml-auto text-[8px] font-bold text-on-surface-variant/40 uppercase tracking-widest">ZenithBook Pro 14</span>
+                          </div>
+
+                          {/* Messages */}
+                          <div className="flex-1 flex flex-col justify-end gap-3 p-3 overflow-hidden">
+                            {/* User message */}
+                            <div className="flex justify-end">
+                              <div className="flex flex-col items-end gap-1 max-w-[78%]">
+                                <div className="bg-primary text-on-primary px-3 py-2 rounded-2xl rounded-tr-sm text-[9px] leading-relaxed font-medium">
+                                  What are the most common build quality complaints?
+                                </div>
+                                <p className="text-[7px] text-on-surface-variant/50">14:22</p>
+                              </div>
+                            </div>
+
+                            {/* AI response */}
+                            <div className="flex justify-start gap-2">
+                              <div className="w-5 h-5 rounded-full bg-primary/15 flex items-center justify-center shrink-0 mt-auto mb-1">
+                                <span className="material-symbols-outlined text-primary text-[10px]" style={{ fontVariationSettings: "'FILL' 1" }}>smart_toy</span>
+                              </div>
+                              <div className="flex flex-col gap-1 max-w-[78%]">
+                                <div className="bg-surface-container-highest border border-outline-variant/15 px-3 py-2 rounded-2xl rounded-tl-sm text-[9px] leading-relaxed text-on-surface">
+                                  Based on <strong>23 reviews</strong>, the primary complaint is the <strong>hinge mechanism</strong> — users report it feels fragile after 3 months of use.
+                                </div>
+                                {/* Source citation chip */}
+                                <div className="flex items-center gap-1 px-2 py-1 bg-primary/8 border border-primary/20 rounded-full w-fit">
+                                  <span className="material-symbols-outlined text-primary text-[9px]">link</span>
+                                  <p className="text-[7px] text-primary font-bold">3 sources cited</p>
+                                </div>
+                                <p className="text-[7px] text-on-surface-variant/50">14:22</p>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Input Bar */}
+                          <div className="px-3 py-2.5 border-t border-outline-variant/10 bg-surface-container-lowest flex items-center gap-2">
+                            <div className="flex-1 bg-surface-container rounded-xl px-3 py-1.5 text-[8px] text-on-surface-variant/40 font-medium italic border border-outline-variant/10">
+                              Ask about battery life, display, performance...
+                            </div>
+                            <div className="w-6 h-6 rounded-lg bg-primary flex items-center justify-center shrink-0">
+                              <span className="material-symbols-outlined text-on-primary text-[11px]">send</span>
+                            </div>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
               ))}
             </div>
+          </div>
+
+          {/* Step Indicators — outside and centered below the carousel */}
+          <div className="flex items-center justify-center gap-3 mt-8">
+            {steps.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setActiveStep(i)}
+                className={`h-2 rounded-full transition-all duration-300 focus:outline-none ${
+                  activeStep === i ? 'w-8 bg-primary' : 'w-2 bg-outline-variant/30 hover:bg-outline-variant/60'
+                }`}
+              />
+            ))}
           </div>
         </section>
 

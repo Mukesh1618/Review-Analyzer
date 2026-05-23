@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
+import ProfileDropdown from '../components/ProfileDropdown';
 
 const FileUpload_Dark = () => {
     const { user, loading: authLoading } = useAuth();
@@ -126,6 +127,7 @@ const FileUpload_Dark = () => {
                 <header className="w-full h-16 sticky top-0 bg-background/80 backdrop-blur-md flex justify-between items-center px-8 z-30 border-b border-outline-variant/10 font-manrope text-sm">
                     {/* Search bar removed as per requirement */}
                     <div className="flex-1"></div>
+                    <ProfileDropdown />
                 </header>
 
                 <section className="p-12 max-w-6xl mx-auto text-left">

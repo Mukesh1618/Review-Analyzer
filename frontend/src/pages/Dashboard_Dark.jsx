@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
+import ProfileDropdown from '../components/ProfileDropdown';
 
 const Dashboard_Dark = () => {
     const { user, loading: authLoading } = useAuth();
@@ -269,6 +270,9 @@ const Dashboard_Dark = () => {
                             {/* Click outside to close */}
                             {showResults && <div className="fixed inset-0 z-[90]" onClick={() => setShowResults(false)}></div>}
                         </div>
+                    </div>
+                    <div className="flex items-center gap-4">
+                        <ProfileDropdown />
                     </div>
                 </header>
 
