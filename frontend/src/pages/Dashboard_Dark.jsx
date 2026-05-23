@@ -65,7 +65,7 @@ const Dashboard_Dark = () => {
                 
                 if (cachedData) {
                     const parsed = JSON.parse(cachedData);
-                    if (parsed && parsed.sentiment_distribution && parsed.key_metrics) {
+                    if (parsed && parsed.sentiment_distribution && parsed.key_metrics && parsed.detailed_summary !== "Analysis failed.") {
                         resultData = parsed;
                     } else {
                         localStorage.removeItem(`reviewMindData_${user.uid}`);
@@ -108,6 +108,33 @@ const Dashboard_Dark = () => {
             fetchData();
         }
     }, [user, authLoading, navigate]);
+
+    const handleDownloadPDF = async () => {
+        if (!user || !data) return;
+        try {
+            const currentProduct = allProducts.find(p => p.name === data.product_name);
+            const productId = currentProduct ? currentProduct.id : "default";
+
+            const response = await fetch(`http://127.0.0.1:8000/export_pdf?product_id=${productId}`, {
+                headers: { 'X-User-ID': user.uid }
+            });
+            if (!response.ok) {
+                alert("Failed to generate report.");
+                return;
+            }
+            const blob = await response.blob();
+            const downloadUrl = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = downloadUrl;
+            link.setAttribute('download', `reviewmind_report_${productId}.pdf`);
+            document.body.appendChild(link);
+            link.click();
+            link.parentNode.removeChild(link);
+        } catch (err) {
+            console.error("PDF download failed:", err);
+            alert("Error downloading PDF report.");
+        }
+    };
 
     const parseReview = (raw) => {
         if (!raw) return { text: '', sentiment: 'NEUTRAL', date: 'Recent' };
@@ -253,6 +280,15 @@ const Dashboard_Dark = () => {
                             <h2 className="text-3xl font-extrabold font-display-lg tracking-tight text-on-surface">Analysis Dashboard</h2>
                             <p className="text-on-surface-variant mt-2 text-lg">Product: <span className="font-semibold text-primary">{data?.product_name || "Real-time AI Mapping"}</span></p>
                         </div>
+                        {data && (
+                            <button
+                                onClick={handleDownloadPDF}
+                                className="px-6 py-3 bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 rounded-xl font-bold flex items-center gap-2 hover:-translate-y-0.5 active:translate-y-0 transition-all font-label-md shrink-0"
+                            >
+                                <span className="material-symbols-outlined text-sm">download</span>
+                                Download Report
+                            </button>
+                        )}
                     </div>
 
                     {loading ? (
@@ -313,7 +349,7 @@ const Dashboard_Dark = () => {
                                         </svg>
                                     </div>
                                     <div className="relative z-10 flex flex-col h-full justify-between">
-                                        <p className="text-on-surface-variant text-xs font-bold uppercase tracking-widest">Top Product Features</p>
+                                        <p className="text-on-surface-variant text-xs font-bold uppercase tracking-widest">Top Keywords Mentioned</p>
                                         <div className="flex flex-wrap gap-2">
                                             {data?.keyword_analysis ? data.keyword_analysis.split(',').slice(0, 5).map((kw, i) => (
                                                 <span key={i} className="px-3 py-1 bg-primary/10 text-primary rounded-full text-[10px] font-bold border border-primary/20">#{kw.trim()}</span>
@@ -529,7 +565,7 @@ const Dashboard_Dark = () => {
                                             {data?.short_summary || "Analyzing..."}
                                         </p>
                                     </div>
-                                    <div className="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-4 w-full">
+                                    <div className="flex-1 flex flex-col gap-4 w-full">
                                         <div className="bg-surface-container-low p-5 rounded-lg border-l-4 border-primary text-left">
                                             <p className="text-xs font-bold text-primary uppercase mb-2">Key Strength</p>
                                             <p className="text-sm font-semibold text-on-surface">{data?.key_metrics?.key_strength || "N/A"}</p>

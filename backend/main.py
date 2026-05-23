@@ -237,5 +237,30 @@ async def analyze_dashboard(x_user_id: str = Header(None)):
     
     return result
 
+@app.get("/export_pdf")
+async def export_pdf_endpoint(product_id: str = Query(...), x_user_id: str = Header(None)):
+    if not x_user_id:
+        raise HTTPException(status_code=401, detail="Authentication required.")
+        
+    # Load analysis data
+    analysis = load_analysis_data(product_id, x_user_id)
+    if not analysis:
+        raise HTTPException(status_code=404, detail="Product analysis not found. Please analyze the product first.")
+        
+    from backend.services.reporter import generate_report_pdf
+    from fastapi.responses import StreamingResponse
+    import io
+    
+    try:
+        pdf_bytes = generate_report_pdf(analysis)
+        return StreamingResponse(
+            io.BytesIO(pdf_bytes),
+            media_type="application/pdf",
+            headers={"Content-Disposition": f"attachment; filename=reviewmind_report_{product_id}.pdf"}
+        )
+    except Exception as e:
+        print(f"Error generating PDF: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to generate PDF report: {str(e)}")
+
 if __name__ == "__main__":
     uvicorn.run("backend.main:app", host="0.0.0.0", port=8000, reload=True)

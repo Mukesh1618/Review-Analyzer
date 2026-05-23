@@ -187,7 +187,7 @@ const FileUpload_Dark = () => {
                                             <span className="material-symbols-outlined text-secondary">smartphone</span>
                                             <div>
                                                 <div className="text-sm font-bold text-on-surface">Smartphone Reviews</div>
-                                                <div className="text-[10px] text-on-surface-variant">50 reviews • JSON</div>
+                                                <div className="text-[10px] text-on-surface-variant">100 reviews • JSON</div>
                                             </div>
                                         </div>
                                     </div>

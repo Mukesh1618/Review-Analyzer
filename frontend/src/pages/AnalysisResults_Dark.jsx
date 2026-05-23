@@ -12,6 +12,7 @@ const AnalysisResults_Dark = () => {
     const [showResults, setShowResults] = useState(false);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [exporting, setExporting] = useState(false);
 
     const fetchAllProducts = async () => {
         if (!user) return;
@@ -48,6 +49,51 @@ const AnalysisResults_Dark = () => {
         }
     };
 
+    const getProductId = () => {
+        if (!data?.product_name) return null;
+        const matched = allProducts.find(p => p.name === data.product_name);
+        if (matched) return matched.id;
+        // Fallback matching backend save_vector_db formatting:
+        return data.product_name.replace(/[^a-zA-Z0-9]/g, '_').replace(/^_+|_+$/g, '');
+    };
+
+    const handleExportPDF = async () => {
+        if (!user || !data?.product_name) return;
+        
+        const productId = getProductId();
+        if (!productId) return;
+        
+        try {
+            setExporting(true);
+            const response = await fetch(`http://127.0.0.1:8000/export_pdf?product_id=${productId}`, {
+                method: 'GET',
+                headers: { 
+                    'X-User-ID': user.uid 
+                }
+            });
+            
+            if (!response.ok) {
+                throw new Error("Failed to export PDF");
+            }
+            
+            // Convert to blob and trigger download
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `reviewmind_report_${productId}.pdf`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            window.URL.revokeObjectURL(url);
+        } catch (err) {
+            console.error("Export PDF failed:", err);
+            alert("Failed to export PDF. Please ensure your analysis is complete.");
+        } finally {
+            setExporting(false);
+        }
+    };
+
     useEffect(() => {
         if (!authLoading && !user) {
             navigate('/login');
@@ -61,7 +107,7 @@ const AnalysisResults_Dark = () => {
                 const cachedData = localStorage.getItem(`reviewMindData_${user.uid}`);
                 if (cachedData) {
                     const parsed = JSON.parse(cachedData);
-                    if (parsed && parsed.sentiment_distribution) {
+                    if (parsed && parsed.sentiment_distribution && parsed.detailed_summary !== "Analysis failed.") {
                         setData(parsed);
                         setLoading(false);
                         return;
@@ -206,6 +252,27 @@ const AnalysisResults_Dark = () => {
                             <h2 className="text-3xl font-extrabold font-display-lg tracking-tight text-on-surface">Deep Analysis Report</h2>
                             <p className="text-on-surface-variant mt-2 text-lg">Product: <span className="font-semibold text-primary">{data?.product_name || "Real-time AI Mapping"}</span></p>
                         </div>
+                        {data && !loading && (
+                            <div className="flex gap-3">
+                                <button 
+                                    onClick={handleExportPDF}
+                                    disabled={exporting}
+                                    className="px-5 py-2 bg-surface-container-high text-on-surface font-semibold rounded hover:bg-surface-container-highest transition-colors flex items-center gap-2 disabled:opacity-50 text-sm active:scale-95 transition-transform"
+                                >
+                                    {exporting ? (
+                                        <>
+                                            <span className="material-symbols-outlined animate-spin text-sm">refresh</span>
+                                            Downloading...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <span className="material-symbols-outlined text-sm">download</span>
+                                            Download Report
+                                        </>
+                                    )}
+                                </button>
+                            </div>
+                        )}
                     </div>
 
                     {loading ? (
@@ -241,7 +308,7 @@ const AnalysisResults_Dark = () => {
                                         Executive Intelligence
                                     </div>
                                     <h3 className="text-2xl font-bold mb-6 text-on-surface">Final Product Synthesis</h3>
-                                    <div className="prose prose-invert prose-p:text-on-surface-variant prose-p:leading-relaxed prose-p:text-lg max-w-none text-left">
+                                    <div className="prose prose-invert prose-p:text-on-surface-variant prose-p:leading-relaxed prose-p:text-lg prose-li:text-on-surface-variant prose-li:leading-relaxed prose-li:text-lg max-w-none text-left">
                                         <ReactMarkdown>{data?.detailed_summary || "Analysis in progress..."}</ReactMarkdown>
                                     </div>
                                 </div>
@@ -249,7 +316,7 @@ const AnalysisResults_Dark = () => {
 
                             {/* Detailed Breakdown Grid */}
                             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 text-left">
-                                {/* Pros & Cons */}
+                                {/* Pros & Cons & Security */}
                                 <div className="space-y-8 text-left">
                                     <div className="bg-surface-container-lowest rounded-[2rem] p-8 border border-outline-variant/10 editorial-shadow text-left">
                                         <div className="flex items-center gap-3 mb-6">
@@ -272,45 +339,6 @@ const AnalysisResults_Dark = () => {
                                         </div>
                                         <div className="prose prose-invert prose-li:text-on-surface-variant prose-li:mb-2 text-left">
                                             <ReactMarkdown>{data?.cons || "No weaknesses identified."}</ReactMarkdown>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Aspect Mapping & Security */}
-                                <div className="space-y-8 text-left">
-                                    <div className="bg-surface-container-lowest rounded-[2rem] p-8 border border-outline-variant/10 editorial-shadow text-left">
-                                        <div className="flex items-center gap-3 mb-8">
-                                            <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary border border-primary/20">
-                                                <span className="material-symbols-outlined">monitoring</span>
-                                            </div>
-                                            <h4 className="text-xl font-bold text-on-surface">Aspect Mapping</h4>
-                                        </div>
-                                        <div className="space-y-6">
-                                            {data?.aspect_analysis?.split('\n').filter(line => line.includes(':')).map((line, idx) => {
-                                                const match = line.match(/\*\*(.*)\*\*:\s*([\d.]+)\/10/);
-                                                if (!match) return null;
-                                                const [_, aspect, score] = match;
-                                                const scoreVal = parseFloat(score);
-                                                return (
-                                                    <div key={idx} className="space-y-2">
-                                                        <div className="flex justify-between items-center text-sm">
-                                                            <span className="font-bold text-on-surface">{aspect}</span>
-                                                            <span className={`px-2 py-0.5 rounded text-[10px] font-black ${scoreVal >= 8 ? 'bg-emerald-500/20 text-emerald-400' : scoreVal >= 6 ? 'bg-amber-500/20 text-amber-400' : 'bg-red-500/20 text-red-400'}`}>
-                                                                {score}/10
-                                                            </span>
-                                                        </div>
-                                                        <div className="h-1.5 w-full bg-surface-container-high rounded-full overflow-hidden">
-                                                            <div 
-                                                                className={`h-full transition-all duration-1000 ${scoreVal >= 8 ? 'bg-emerald-500' : scoreVal >= 6 ? 'bg-amber-500' : 'bg-red-500'}`}
-                                                                style={{ width: `${scoreVal * 10}%` }}
-                                                            ></div>
-                                                        </div>
-                                                    </div>
-                                                );
-                                            })}
-                                            {!data?.aspect_analysis?.includes(':') && (
-                                                <p className="text-on-surface-variant text-sm italic opacity-60">Aspect data being synthesized...</p>
-                                            )}
                                         </div>
                                     </div>
 
@@ -367,6 +395,45 @@ const AnalysisResults_Dark = () => {
                                                     </>
                                                 );
                                             })()}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Aspect Mapping */}
+                                <div className="space-y-8 text-left">
+                                    <div className="bg-surface-container-lowest rounded-[2rem] p-8 border border-outline-variant/10 editorial-shadow text-left">
+                                        <div className="flex items-center gap-3 mb-8">
+                                            <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary border border-primary/20">
+                                                <span className="material-symbols-outlined">monitoring</span>
+                                            </div>
+                                            <h4 className="text-xl font-bold text-on-surface">Aspect Mapping</h4>
+                                        </div>
+                                        <div className="space-y-6">
+                                            {data?.aspect_analysis?.split('\n').filter(line => line.includes(':')).map((line, idx) => {
+                                                const match = line.match(/\*\*(.*)\*\*:\s*([\d.]+)\/10/);
+                                                if (!match) return null;
+                                                const [_, aspect, score] = match;
+                                                const scoreVal = parseFloat(score);
+                                                return (
+                                                    <div key={idx} className="space-y-2">
+                                                        <div className="flex justify-between items-center text-sm">
+                                                            <span className="font-bold text-on-surface">{aspect}</span>
+                                                            <span className={`px-2 py-0.5 rounded text-[10px] font-black ${scoreVal >= 8 ? 'bg-emerald-500/20 text-emerald-400' : scoreVal >= 6 ? 'bg-amber-500/20 text-amber-400' : 'bg-red-500/20 text-red-400'}`}>
+                                                                {score}/10
+                                                            </span>
+                                                        </div>
+                                                        <div className="h-1.5 w-full bg-surface-container-high rounded-full overflow-hidden">
+                                                            <div 
+                                                                className={`h-full transition-all duration-1000 ${scoreVal >= 8 ? 'bg-emerald-500' : scoreVal >= 6 ? 'bg-amber-500' : 'bg-red-500'}`}
+                                                                style={{ width: `${scoreVal * 10}%` }}
+                                                            ></div>
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
+                                            {!data?.aspect_analysis?.includes(':') && (
+                                                <p className="text-on-surface-variant text-sm italic opacity-60">Aspect data being synthesized...</p>
+                                            )}
                                         </div>
                                     </div>
                                 </div>
