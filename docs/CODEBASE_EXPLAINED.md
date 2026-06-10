@@ -11,6 +11,7 @@
 3. [Backend — State Models](#3-backend--state-models-backendmodelsstatedpy)
 4. [Backend — LLM Wrapper](#4-backend--llm-wrapper-backendutilsllmpy)
 5. [Backend — Helpers](#5-backend--helpers-backendutilshelperspy)
+5b. [Backend — Playwright Amazon Scraper](#5b-backend--playwright-amazon-scraper-backendutilsamazon_scraperpy)
 6. [Backend — Vector Store](#6-backend--vector-store-backenddbvectorstoredpy)
 7. [Backend — Dashboard Agents](#7-backend--dashboard-agents-backendagentsdashboardpy)
 8. [Backend — Chat Agent](#8-backend--chat-agent-backendagentschatpy)
@@ -209,6 +210,24 @@ A post-processing regex cleaner that:
 3. Returns the cleaned, stripped text
 
 This is called on every single LLM response before it's used or stored.
+
+---
+
+## 5b. Backend — Playwright Amazon Scraper: `backend/utils/amazon_scraper.py`
+
+**Role:** A standalone browser automation utility to harvest reviews from any Amazon product details page or reviews list page.
+
+### Key Libraries Used
+* `playwright` (Chromium browser engine automation)
+* `re` (regular expressions for URL tokenizing and star rating cleanup)
+* `json` (export format metadata)
+* `time` (throttled sleep delays to mimic human interactions and avoid rate limits)
+
+### Key Logic & Safe Terminal Execution
+1. **Windows Encoding Safety:** Emojis are stripped from `print()` statements to prevent standard `UnicodeEncodeError: 'charmap' codec can't encode...` errors in Windows Command Prompt and PowerShell.
+2. **Detail-to-Review List Transitions:** Accepts raw ASIN tokens (e.g. `B08N5LNXC5`) and normalises them to `https://www.amazon.com/dp/{asin}` detail pages, then dynamically locates the "See all reviews" button and redirects automatically, avoiding the standard "404 Page Not Found" Dog pages.
+3. **Captcha Solver & Human Hand-off:** Automatically detects e-commerce bot checks and "Continue shopping" validation pages. If running in `--headed` mode inside a terminal, the script halts using `input()` to allow the user to complete the captcha and resumes parsing on ENTER keypresses.
+4. **Data Saver:** Writes scraped datasets as structured JSON indices and raw TXT rows directly into `docs/sample_files/` for immediate ReviewMind AI uploads.
 
 ---
 
