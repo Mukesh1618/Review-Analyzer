@@ -5,6 +5,8 @@ import hashlib
 import json
 from fastapi import FastAPI, UploadFile, File, Query, Header, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 import uvicorn
 from langchain_core.messages import HumanMessage
@@ -137,7 +139,7 @@ async def process_content(content: bytes, user_id: str):
 
     return {"message": f"Successfully loaded {len(docs)} reviews for '{product_name}'. Generating fresh analysis.", "product_id": product_id}
 
-@app.post("/chat")
+@app.post("/api/chat")
 async def chat_endpoint(req: ChatRequest, x_user_id: str = Header(None)):
     if not x_user_id:
         return {"error": "Authentication required."}
@@ -151,13 +153,13 @@ async def chat_endpoint(req: ChatRequest, x_user_id: str = Header(None)):
     reply = result["messages"][-1].content
     return {"reply": clean_llm_output(reply)}
 
-@app.get("/products")
+@app.get("/api/products")
 async def get_products(x_user_id: str = Header(None)):
     if not x_user_id:
         return []
     return get_all_products(user_id=x_user_id)
 
-@app.post("/select_product")
+@app.post("/api/select_product")
 async def select_product(product_id: str = Query(...), x_user_id: str = Header(None)):
     if not x_user_id:
         return {"error": "Authentication required."}
@@ -167,7 +169,7 @@ async def select_product(product_id: str = Query(...), x_user_id: str = Header(N
         return {"message": f"Product {product_id} selected."}
     return {"error": "Product not found."}
 
-@app.post("/upload")
+@app.post("/api/upload")
 async def upload_file(file: UploadFile = File(...), x_user_id: str = Header(None)):
     if not x_user_id:
         return {"error": "Authentication required."}
@@ -175,7 +177,7 @@ async def upload_file(file: UploadFile = File(...), x_user_id: str = Header(None
     result = await process_content(content, x_user_id)
     return result
 
-@app.post("/upload_sample")
+@app.post("/api/upload_sample")
 async def upload_sample(sample_name: str = Query(...), x_user_id: str = Header(None)):
     if not x_user_id:
         return {"error": "Authentication required."}
@@ -190,7 +192,7 @@ async def upload_sample(sample_name: str = Query(...), x_user_id: str = Header(N
     result = await process_content(content, x_user_id)
     return result
 
-@app.get("/analyze")
+@app.get("/api/analyze")
 async def analyze_dashboard(x_user_id: str = Header(None)):
     if not x_user_id:
         return {"error": "Authentication required."}
@@ -237,7 +239,7 @@ async def analyze_dashboard(x_user_id: str = Header(None)):
     
     return result
 
-@app.get("/export_pdf")
+@app.get("/api/export_pdf")
 async def export_pdf_endpoint(product_id: str = Query(...), x_user_id: str = Header(None)):
     if not x_user_id:
         raise HTTPException(status_code=401, detail="Authentication required.")
@@ -261,6 +263,17 @@ async def export_pdf_endpoint(product_id: str = Query(...), x_user_id: str = Hea
     except Exception as e:
         print(f"Error generating PDF: {e}")
         raise HTTPException(status_code=500, detail=f"Failed to generate PDF report: {str(e)}")
+
+# Serve React App in Production
+if os.path.isdir("static"):
+    app.mount("/assets", StaticFiles(directory="static/assets"), name="assets")
+
+@app.get("/{catchall:path}")
+def serve_react_app(catchall: str):
+    file_path = os.path.join("static", catchall)
+    if os.path.isfile(file_path):
+        return FileResponse(file_path)
+    return FileResponse("static/index.html")
 
 if __name__ == "__main__":
     uvicorn.run("backend.main:app", host="0.0.0.0", port=8000, reload=True)

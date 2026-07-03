@@ -54,70 +54,62 @@
     ],
     "total_reviews": 50,
     "product_name": "ZenithBook Pro 14",
-    "short_summary": "The laptop has received praise for its premium build quality, OLED screen, and performance. However, some users have experienced issues with the hinge design, fan noise, and sleep mode. The laptop's value for the price is a major selling point.\nThe laptop's build quality and performance have been well-received by users. However, some have experienced issues with the hinge design, fan noise, and sleep mode. The OLED screen has been a major highlight for many users.",
-    "detailed_summary": "- The laptop's build quality has been praised by many users, with some noting that it feels premium and is surprisingly light for a 14-inch laptop.\n- The OLED screen has been a major highlight for many users, with some noting that it is absolutely gorgeous and perfect for photo editing.\n- The laptop's performance has been praised by many users, with some noting that it is extremely fast and powerful enough for engineering software.\n- However, some users have experienced issues with the hinge design, with some noting that it is prone to breaking and that the company has provided free repairs.\n- Some users have also experienced issues with fan noise, with some noting that it can be loud under heavy load.\n- Additionally, some users have experienced issues with sleep mode, with some noting that it can be broken after BIOS updates.\n- The laptop's value for the price has been a major selling point for many users, with some noting that it is an incredible value for the price.\n- However, some users have noted that the charger that comes with the laptop is a massive brick and that they have had to buy a small GaN charger instead.\n- Some users have also noted that the webcam is only 720p and that a laptop this expensive should have a 1080p camera minimum.\n- Additionally, some users have noted that the battery life is decent but drops to 3 hours if you are gaming.\n- Some users have also noted that the rubber feet on the bottom peeled off, causing the laptop to slide around their desk.\n- Finally, some users have noted that the laptop's software is a mess right now and that they have experienced issues with battery drain and overheating.",
-    "sentiment_analysis": "OVERALL SCORE: 5.1/10\n\nDISTRIBUTION (Based on 50 analyzed reviews):\n- Positive: 22\n- Neutral: 7\n- Negative: 21",
-    "pros": "- Premium build quality\n- OLED screen\n- Performance\n- Value for the price\n- Fingerprint reader on the power button\n- Keyboard travel",
-    "cons": "- Hinge design issues\n- Fan noise\n- Sleep mode issues\n- Charger is a massive brick\n- Webcam is only 720p\n- Battery life drops to 3 hours if gaming\n- Rubber feet peeled off",
-    "aspect_analysis": "**Build Quality**: 8/10\n**Display Quality**: 9/10\n**Battery**: 6/10\n**Price**: 9/10\n**Performance**: 9/10\n**Portability**: 9/10\n**Design**: 7/10\n**Customer Service**: 4/10\n**Value for Money**: 8/10\n**Keyboard**: 9/10\n**Trackpad**: 8/10\n**Speakers**: 4/10\n**Hinge**: 3/10\n**OLED Burn-in**: 2/10\n**Thermal Management**: 6/10\n**Charger**: 4/10",
-    "keyword_analysis": "OLED screen, fingerprint reader, keyboard travel, hinge design, fan noise",
+    "short_summary": "This 14-inch laptop features a premium aluminum chassis that's surprisingly lightweight and offers excellent value, especially on sale. The OLED screen stands out for its vibrant colors and deep blacks, ideal for photo editing, paired with strong performance from a powerful processor. However, issues like hinge failures, loud fans, and problematic BIOS updates lead to reliability concerns.",
+    "detailed_summary": "- **Build and Design**: Full aluminum chassis feels premium and light, suitable for students; massive responsive trackpad like MacBook; perfect keyboard travel for typing/programming; fingerprint reader on power button; but hinge design flaws cause breaking/cracking/clicking, requiring repairs; rubber feet peel off; massive charger brick.\n- **Display**: OLED screen is gorgeous with vibrant colors, deep blacks, perfect for photo editing; risk of burn-in, so hide taskbar.\n- **Performance**: Extremely fast compile times, boots in 4 seconds, powerful for engineering software; fans loud/aggressive under load, like a jet engine.\n- **Audio/Webcam**: Downward-firing speakers muffled on lap; only 720p webcam, subpar for price.\n- **Battery/Sleep**: 8 hours light use, 3 hours gaming; BIOS updates (e.g., 1.4) break sleep mode, causing overnight drain, overheating in bags (fire hazard risk); rollback advised but poor support.\n- **Other**: Great for college; refurbished units improved; key failures after months; overall high ratings (mostly 4-5) if avoiding BIOS updates.",
+    "sentiment_analysis": "OVERALL SCORE: 5.1/10\n\nDISTRIBUTION (Based on 50 analyzed reviews):\n- Positive: 23\n- Neutral: 5\n- Negative: 22",
+    "pros": "- Stunning OLED screen\n- Premium lightweight aluminum build\n- Powerful processor for fast performance\n- Responsive MacBook-like trackpad\n- Comfortable keyboard and quick boot\n- Excellent value on sale",
+    "cons": "- Hinge failures and cracking\n- Loud aggressive fans\n- BIOS updates break sleep/battery\n- Poor 720p webcam\n- Muffled downward-firing speakers\n- OLED burn-in risk",
+    "aspect_analysis": "**Build Quality**: 4/10  \n**Performance**: 9/10  \n**Display Quality**: 8/10  \n**Battery Life**: 5/10  \n**Price/Value**: 9/10  \n**Fan Noise/Thermals**: 3/10  \n**Speakers**: 3/10  \n**Trackpad**: 8/10  \n**Keyboard**: 7/10  \n**Webcam**: 2/10  \n**Ports**: 4/10  \n**Software/BIOS**: 5/10  \n**Customer Support**: 4/10",
+    "keyword_analysis": "OLED screen, aluminum chassis, responsive trackpad, powerful processor, fingerprint reader",
     "predicted_rating": "\u2b50 PREDICTED RATING: 4/5 Stars",
-    "timeline_analysis": "2024-02-05: 6\n2024-02-10: 8\n2024-02-12: 9\n2024-02-15: 8\n2024-02-18: 4\n2024-02-22: 7\n2024-02-25: 2\n2024-02-28: 9\n2024-03-02: 9\n2024-03-05: 7\n2024-03-10: 1\n2024-03-12: 1\n2024-03-15: 1\n2024-03-20: 7\n2024-03-22: 1\n2024-03-28: 7\n2024-04-05: 1\n2024-04-12: 1\n2024-04-20: 7\n2024-04-28: 7\n2024-05-05: 9\n2024-05-10: 5\n2024-05-15: 3\n2024-05-22: 4\n2024-06-02: 2\n2024-06-10: 1\n2024-06-18: 1\n2024-06-25: 1\n2024-07-05: 1\n2024-07-12: 3\n2024-07-20: 9\n2024-07-28: 2\n2024-08-05: 7\n2024-08-15: 7\n2024-08-22: 7\n2024-09-05: 9\n2024-09-12: 3\n2024-09-20: 9\n2024-09-28: 3\n2024-10-02: 5\n2024-10-10: 7\n2024-10-18: 2\n2024-10-25: 9\n2024-11-05: 7\n2024-11-15: 9\n2024-11-22: 3\n2024-11-28: 2\n2024-12-05: 2\n2024-12-12: 9\n2024-12-18: 3\n2024-12-22: 7\n2024-12-28: 7\n2024-12-31: 7",
-    "fake_review_analysis": "\ud83d\udee1\ufe0f AUTHENTICITY ANALYSIS:\n\nTrust Score: 85%\n- 3 suspicious reviews detected\n\nSUSPICIOUS REVIEWS:\n- \"WORK FROM HOME EARN $500 A DAY CLICK HERE TO LEARN MORE\": This review contains a clear spam link and is likely a fake review.\n- \"DO NOT INSTALL BIOS UPDATE 1.4! It completely broke the sleep mode.\": This review is written in an all-caps format and contains a strong warning, which may be an attempt to manipulate the reader.\n- \"Sent it in for warranty repair because of the broken hinge. They claimed 'physical damage' and charged me $300. Outrageous.\": This review contains a negative experience with the company's warranty process, but the tone is overly dramatic and may be an attempt to sway public opinion.\n\nRELIABILITY INDICATORS:\n- The majority of reviews are written in a neutral or positive tone, indicating a genuine interest in the product.\n- Many reviewers mention specific features and experiences, such as the OLED screen and the hinge design, which suggests that they have actually used the product.\n\nRED FLAGS:\n- The presence of spam links and all-caps warnings in two reviews.\n- The dramatic tone and language used in the review about the warranty process.",
+    "timeline_analysis": "- [2024-02-12]: 10\n- [2024-11-15]: 10\n- [2024-03-28]: 8\n- [2024-09-05]: 9\n- [2024-01-22]: 8\n- [2024-08-05]: 8\n- [2024-12-28]: 7\n- [2024-01-10]: 10\n- [2024-01-28]: 10\n- [2024-05-15]: 3\n- [2024-12-22]: 7\n- [2024-12-31]: 9\n- [2024-07-20]: 10\n- [2024-11-28]: 3\n- [2024-10-02]: 5\n- [2024-06-25]: 1\n- [2024-10-10]: 8\n- [2024-08-15]: 8\n- [2024-04-28]: 9\n- [2024-05-05]: 10\n- [2024-07-28]: 2\n- [2024-10-25]: 9\n- [2024-11-05]: 4\n- [2024-08-22]: 9\n- [2024-04-12]: 1\n- [2024-03-10]: 1\n- [2024-12-05]: 3\n- [2024-02-25]: 2\n- [2024-02-05]: 6\n- [2024-12-18]: 3\n- [2024-09-28]: 3\n- [2024-12-12]: 10\n- [2024-11-22]: 6\n- [2024-04-20]: 9\n- [2024-09-12]: 3\n- [2024-05-10]: 5\n- [2024-07-12]: 5\n- [2024-06-02]: 2\n- [2024-02-18]: 3\n- [2024-09-20]: 10\n- [2024-07-05]: 1\n- [2024-03-02]: 10\n- [2024-01-15]: 10\n- [2024-03-22]: 1\n- [2024-03-15]: 1\n- [2024-06-10]: 1\n- [2024-05-22]: 3\n- [2024-04-05]: 1\n- [2024-10-18]: 2\n- [2024-06-18]: 3",
+    "fake_review_analysis": "\ud83d\udee1\ufe0f AUTHENTICITY ANALYSIS:\n\nTrust Score: 97%\n- 1 suspicious reviews detected\n\nSUSPICIOUS REVIEWS:\n- \"WORK FROM HOME EARN $500 A DAY CLICK HERE TO LEARN MORE\": Unrelated promotional spam, not about the product\n\nRELIABILITY INDICATORS:\n- Consistent mentions of specific product issues (e.g., hinge defects, BIOS updates, OLED burn-in, fan noise) across multiple reviews\n- Variety of ratings (1-5 stars) with balanced positive/negative feedback\n- Chronological progression of issues and resolutions (e.g., early BIOS problems, later fixes and repairs)\n- Product-specific details (e.g., OLED screen, compile times, sleep mode drain) indicating genuine user experiences\n\nRED FLAGS:\n- Single instance of off-topic spam review attempting to promote unrelated scheme",
     "is_valid": true,
     "validation_error": "",
     "sentiment_distribution": {
-        "positive": 22,
-        "neutral": 7,
-        "negative": 21
+        "positive": 23,
+        "neutral": 5,
+        "negative": 22
     },
     "sentiment_trend": [
+        {
+            "date": "2024-01-10",
+            "score": 10.0
+        },
+        {
+            "date": "2024-01-15",
+            "score": 10.0
+        },
+        {
+            "date": "2024-01-22",
+            "score": 8.0
+        },
+        {
+            "date": "2024-01-28",
+            "score": 10.0
+        },
         {
             "date": "2024-02-05",
             "score": 6.0
         },
         {
-            "date": "2024-02-10",
-            "score": 8.0
-        },
-        {
             "date": "2024-02-12",
-            "score": 9.0
-        },
-        {
-            "date": "2024-02-15",
-            "score": 8.0
+            "score": 10.0
         },
         {
             "date": "2024-02-18",
-            "score": 4.0
-        },
-        {
-            "date": "2024-02-22",
-            "score": 7.0
+            "score": 3.0
         },
         {
             "date": "2024-02-25",
             "score": 2.0
         },
         {
-            "date": "2024-02-28",
-            "score": 9.0
-        },
-        {
             "date": "2024-03-02",
-            "score": 9.0
-        },
-        {
-            "date": "2024-03-05",
-            "score": 7.0
+            "score": 10.0
         },
         {
             "date": "2024-03-10",
-            "score": 1.0
-        },
-        {
-            "date": "2024-03-12",
             "score": 1.0
         },
         {
@@ -125,16 +117,12 @@
             "score": 1.0
         },
         {
-            "date": "2024-03-20",
-            "score": 7.0
-        },
-        {
             "date": "2024-03-22",
             "score": 1.0
         },
         {
             "date": "2024-03-28",
-            "score": 7.0
+            "score": 8.0
         },
         {
             "date": "2024-04-05",
@@ -146,15 +134,15 @@
         },
         {
             "date": "2024-04-20",
-            "score": 7.0
+            "score": 9.0
         },
         {
             "date": "2024-04-28",
-            "score": 7.0
+            "score": 9.0
         },
         {
             "date": "2024-05-05",
-            "score": 9.0
+            "score": 10.0
         },
         {
             "date": "2024-05-10",
@@ -166,7 +154,7 @@
         },
         {
             "date": "2024-05-22",
-            "score": 4.0
+            "score": 3.0
         },
         {
             "date": "2024-06-02",
@@ -178,7 +166,7 @@
         },
         {
             "date": "2024-06-18",
-            "score": 1.0
+            "score": 3.0
         },
         {
             "date": "2024-06-25",
@@ -190,11 +178,11 @@
         },
         {
             "date": "2024-07-12",
-            "score": 3.0
+            "score": 5.0
         },
         {
             "date": "2024-07-20",
-            "score": 9.0
+            "score": 10.0
         },
         {
             "date": "2024-07-28",
@@ -202,15 +190,15 @@
         },
         {
             "date": "2024-08-05",
-            "score": 7.0
+            "score": 8.0
         },
         {
             "date": "2024-08-15",
-            "score": 7.0
+            "score": 8.0
         },
         {
             "date": "2024-08-22",
-            "score": 7.0
+            "score": 9.0
         },
         {
             "date": "2024-09-05",
@@ -222,7 +210,7 @@
         },
         {
             "date": "2024-09-20",
-            "score": 9.0
+            "score": 10.0
         },
         {
             "date": "2024-09-28",
@@ -234,7 +222,7 @@
         },
         {
             "date": "2024-10-10",
-            "score": 7.0
+            "score": 8.0
         },
         {
             "date": "2024-10-18",
@@ -246,27 +234,27 @@
         },
         {
             "date": "2024-11-05",
-            "score": 7.0
+            "score": 4.0
         },
         {
             "date": "2024-11-15",
-            "score": 9.0
+            "score": 10.0
         },
         {
             "date": "2024-11-22",
-            "score": 3.0
+            "score": 6.0
         },
         {
             "date": "2024-11-28",
-            "score": 2.0
+            "score": 3.0
         },
         {
             "date": "2024-12-05",
-            "score": 2.0
+            "score": 3.0
         },
         {
             "date": "2024-12-12",
-            "score": 9.0
+            "score": 10.0
         },
         {
             "date": "2024-12-18",
@@ -282,12 +270,12 @@
         },
         {
             "date": "2024-12-31",
-            "score": 7.0
+            "score": 9.0
         }
     ],
     "key_metrics": {
-        "key_strength": "Incredible value for the price",
-        "top_complaint": "Sleep mode issues",
-        "emerging_request": "Fix the sleep mode issue"
+        "key_strength": "Stunning OLED display",
+        "top_complaint": "Hinge failures",
+        "emerging_request": "Stronger hinges"
     }
 }

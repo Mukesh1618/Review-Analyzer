@@ -395,7 +395,7 @@ Return ONLY the list of points.""" + SYSTEM_RESTRICTION),
             out = clean_llm_output((prompt | llm_0).invoke({"reviews": reviews_text}).content)
             all_output.append(out)
             
-            matches = re.findall(r"(?:-\s*)?([\d-]{10}):\s*([\d.]+)", out)
+            matches = re.findall(r"\[?([\d-]{10})\]?:\s*\[?([\d.]+)\]?", out)
             for date_str, score in matches:
                 try:
                     trend.append({"date": date_str.strip(), "score": float(score)})

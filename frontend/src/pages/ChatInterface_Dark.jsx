@@ -53,7 +53,7 @@ const ChatInterface_Dark = () => {
     const fetchProducts = async () => {
         if (!user) return;
         try {
-            const response = await fetch('http://127.0.0.1:8000/products', {
+            const response = await fetch('/api/products', {
                 headers: { 'X-User-ID': user.uid }
             });
             const data = await response.json();
@@ -66,7 +66,7 @@ const ChatInterface_Dark = () => {
     const handleSelectProduct = async (product) => {
         if (!user) return;
         try {
-            await fetch(`http://127.0.0.1:8000/select_product?product_id=${product.id}`, { 
+            await fetch(`/api/select_product?product_id=${product.id}`, { 
                 method: 'POST',
                 headers: { 'X-User-ID': user.uid }
             });
@@ -91,7 +91,7 @@ const ChatInterface_Dark = () => {
         setLoading(true);
 
         try {
-            const response = await fetch('http://127.0.0.1:8000/chat', {
+            const response = await fetch('/api/chat', {
                 method: 'POST',
                 headers: { 
                     'Content-Type': 'application/json',

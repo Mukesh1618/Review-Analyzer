@@ -18,7 +18,7 @@ const AnalysisResults_Dark = () => {
     const fetchAllProducts = async () => {
         if (!user) return;
         try {
-            const response = await fetch('http://127.0.0.1:8000/products', {
+            const response = await fetch('/api/products', {
                 headers: { 'X-User-ID': user.uid }
             });
             const products = await response.json();
@@ -34,7 +34,7 @@ const AnalysisResults_Dark = () => {
             setLoading(true);
             setShowResults(false);
             setSearchQuery("");
-            const response = await fetch(`http://127.0.0.1:8000/select_product?product_id=${productId}`, {
+            const response = await fetch(`/api/select_product?product_id=${productId}`, {
                 method: 'POST',
                 headers: { 'X-User-ID': user.uid }
             });
@@ -66,7 +66,7 @@ const AnalysisResults_Dark = () => {
         
         try {
             setExporting(true);
-            const response = await fetch(`http://127.0.0.1:8000/export_pdf?product_id=${productId}`, {
+            const response = await fetch(`/api/export_pdf?product_id=${productId}`, {
                 method: 'GET',
                 headers: { 
                     'X-User-ID': user.uid 
@@ -114,7 +114,7 @@ const AnalysisResults_Dark = () => {
                         return;
                     }
                 }
-                const response = await fetch('http://127.0.0.1:8000/analyze', {
+                const response = await fetch('/api/analyze', {
                     headers: { 'X-User-ID': user.uid }
                 });
                 const json = await response.json();

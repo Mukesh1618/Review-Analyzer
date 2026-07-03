@@ -40,7 +40,7 @@ const FileUpload_Dark = () => {
         formData.append('file', file);
 
         try {
-            const response = await fetch('http://127.0.0.1:8000/upload', {
+            const response = await fetch('/api/upload', {
                 method: 'POST',
                 headers: { 'X-User-ID': user.uid },
                 body: formData,
@@ -67,7 +67,7 @@ const FileUpload_Dark = () => {
         setMessage(`Loading sample: ${sampleName}...`);
 
         try {
-            const response = await fetch(`http://127.0.0.1:8000/upload_sample?sample_name=${sampleName}`, {
+            const response = await fetch(`/api/upload_sample?sample_name=${sampleName}`, {
                 method: 'POST',
                 headers: { 'X-User-ID': user.uid }
             });
