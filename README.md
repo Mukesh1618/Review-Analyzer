@@ -53,6 +53,11 @@ Query your entire review corpus in plain English using a semantic RAG (Retrieval
 - Profile picture from Google account displayed in the nav bar
 - One-click logout from any page
 
+### 📱 Mobile Responsive Design
+- Full responsiveness across all screens and devices
+- Slide-out mobile sidebar with hamburger navigation menu
+- Touch-optimized scrolling and custom data table scroll wrappers
+
 ---
 
 ## 🏗️ Tech Stack
@@ -171,6 +176,12 @@ npm run dev
 ```
 
 Then open **http://localhost:5173** in your browser.
+
+### 5. (Optional) Custom Loading Screen
+
+The application features a glowing neon progress bar when processing reviews. The original `Loading-screen.mp4` background asset is extremely large (>100MB) and has been ignored by Git to save repository space. 
+
+The app functions perfectly without it (it falls back to a clean dark theme and the neon progress bar still works seamlessly). However, if you want the full custom video loader experience, simply place your own `Loading-screen.mp4` video file into the `frontend/public/` directory. The loader will automatically detect and play it!
 
 ---
 
