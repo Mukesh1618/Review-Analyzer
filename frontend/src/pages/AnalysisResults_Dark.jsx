@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import { useAuth } from '../AuthContext';
 import ProfileDropdown from '../components/ProfileDropdown';
+import FunnelLoader from '../components/FunnelLoader';
 
 const AnalysisResults_Dark = () => {
     const { user, loading: authLoading } = useAuth();
@@ -14,17 +15,22 @@ const AnalysisResults_Dark = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [exporting, setExporting] = useState(false);
+    const [progress, setProgress] = useState(0);
+    const [progressStatus, setProgressStatus] = useState("Initializing AI Agents...");
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     const fetchAllProducts = async () => {
-        if (!user) return;
+        if (!user) return [];
         try {
             const response = await fetch('/api/products', {
                 headers: { 'X-User-ID': user.uid }
             });
             const products = await response.json();
             setAllProducts(products);
+            return products;
         } catch (err) {
             console.error("Failed to fetch products:", err);
+            return [];
         }
     };
 
@@ -42,6 +48,7 @@ const AnalysisResults_Dark = () => {
             if (result.message) {
                 // Clear cache and re-fetch analysis
                 localStorage.removeItem(`reviewMindData_${user.uid}`);
+                sessionStorage.setItem(`activeProduct_${user.uid}`, 'true');
                 window.location.reload();
             }
         } catch (err) {
@@ -96,6 +103,8 @@ const AnalysisResults_Dark = () => {
     };
 
     useEffect(() => {
+        let isMounted = true;
+        
         if (!authLoading && !user) {
             navigate('/login');
             return;
@@ -104,27 +113,106 @@ const AnalysisResults_Dark = () => {
         const fetchData = async () => {
             if (!user) return;
             try {
-                fetchAllProducts();
+                const products = await fetchAllProducts();
+                
+                // Force empty state if no active product is selected in this session
+                if (!sessionStorage.getItem(`activeProduct_${user.uid}`)) {
+                    setError("No active analysis.");
+                    setLoading(false);
+                    return;
+                }
+                let resultData = null;
                 const cachedData = localStorage.getItem(`reviewMindData_${user.uid}`);
                 if (cachedData) {
                     const parsed = JSON.parse(cachedData);
                     if (parsed && parsed.sentiment_distribution && parsed.detailed_summary !== "Analysis failed.") {
+                        resultData = parsed;
                         setData(parsed);
                         setLoading(false);
                         return;
                     }
                 }
-                const response = await fetch('/api/analyze', {
-                    headers: { 'X-User-ID': user.uid }
-                });
-                const json = await response.json();
-                if (json.error) {
-                    setError(json.error);
-                } else {
-                    setData(json);
-                    localStorage.setItem(`reviewMindData_${user.uid}`, JSON.stringify(json));
+            if (!resultData) {
+                setProgress(0); // Reset progress at start
+                
+                // DYNAMIC CALIBRATION PROGRESS
+                let currentProgress = 0;
+                let lastMilestone = 0;
+                let nextMilestone = 10;
+                let expectedTime = 15; // default guess seconds
+                
+                let smoothInterval = setInterval(() => {
+                    let increment = (nextMilestone - lastMilestone) / expectedTime;
+                    if (currentProgress < nextMilestone - 1) { // Stop just shy of milestone
+                        currentProgress += increment;
+                        setProgress(Math.floor(currentProgress));
+                    }
+                }, 1000);
+
+                // POLL BACKEND FOR STATUS AND CALIBRATION METADATA
+                let progressInterval = setInterval(async () => {
+                    try {
+                        const res = await fetch('/api/analyze/progress', { headers: { 'X-User-ID': user.uid } });
+                        if (res.ok) {
+                            const pData = await res.json();
+                            
+                            if (pData.status && pData.status !== "Initializing...") {
+                                setProgressStatus(pData.status);
+                            }
+                            
+                            let backendProg = pData.progress || 0;
+                            if (backendProg >= lastMilestone) {
+                                lastMilestone = backendProg;
+                                currentProgress = Math.max(currentProgress, backendProg);
+                                setProgress(Math.floor(currentProgress));
+                                
+                                if (pData.metadata && pData.metadata.total_batches) {
+                                    expectedTime = pData.metadata.avg_time || 15;
+                                    let currentBatch = pData.metadata.current_batch || 0;
+                                    let total = pData.metadata.total_batches;
+                                    
+                                    if (currentBatch < total) {
+                                        nextMilestone = 10 + Math.floor(((currentBatch + 1) / total) * 80);
+                                    } else {
+                                        nextMilestone = 99;
+                                    }
+                                } else {
+                                    nextMilestone = Math.min(backendProg + 10, 99);
+                                }
+                            }
+                        }
+                    } catch (e) {}
+                }, 2000);
+
+                    const response = await fetch(`/api/analyze?t=${Date.now()}`, {
+                        headers: { 'X-User-ID': user.uid }
+                    });
+                    
+                    if (!isMounted) return;
+                    
+                    clearInterval(smoothInterval);
+                clearInterval(progressInterval);
+                
+                const resultJson = await response.json();
+                
+                if (!response.ok || resultJson.error) {
+                    localStorage.removeItem(`reviewMindData_${user.uid}`);
+                    setError(resultJson.detail || resultJson.error || "No active analysis.");
+                    setLoading(false);
+                    return;
                 }
-            } catch (err) {
+
+                // Complete the bar smoothly
+                setProgress(100);
+                setProgressStatus("Analysis Complete!");
+                await new Promise(resolve => setTimeout(resolve, 800)); // Let the bar animate to 100%
+
+                resultData = resultJson;
+                localStorage.setItem(`reviewMindData_${user.uid}`, JSON.stringify(resultData));
+            }
+            
+            setData(resultData);
+        } catch (err) {
                 setError('Failed to connect to backend. Is the server running?');
             } finally {
                 setLoading(false);
@@ -134,6 +222,10 @@ const AnalysisResults_Dark = () => {
         if (user) {
             fetchData();
         }
+        
+        return () => {
+            isMounted = false;
+        };
     }, [user, authLoading, navigate]);
 
     const parseReview = (raw) => {
@@ -166,9 +258,15 @@ const AnalysisResults_Dark = () => {
     };
 
     return (
-        <div className="bg-background text-on-surface min-h-screen">
+        <div className="bg-background text-on-surface min-h-screen relative font-manrope">
+            {/* Mobile Sidebar Overlay */}
+            <div 
+                className={`fixed inset-0 bg-[#050A15]/80 z-[90] md:hidden backdrop-blur-sm transition-opacity duration-300 ${isMobileMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} 
+                onClick={() => setIsMobileMenuOpen(false)}
+            />
+
             {/* SideNavBar Shell */}
-            <aside className="fixed left-0 top-0 h-full z-40 bg-surface-container-lowest w-64 border-r border-outline-variant/10 flex flex-col hidden md:flex text-left font-manrope">
+            <aside className={`fixed left-0 top-0 h-full z-[100] bg-surface-container-lowest w-64 border-r border-outline-variant/10 flex flex-col text-left transition-transform duration-300 ease-in-out md:translate-x-0 ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
                 <div className="p-8 text-left">
                     <div className="flex items-center gap-3 mb-10 text-left">
                         <div className="w-8 h-8 primary-gradient rounded-lg flex items-center justify-center text-on-primary-container shadow-sm">
@@ -203,10 +301,16 @@ const AnalysisResults_Dark = () => {
             {/* Main Content Area */}
             <main className="md:ml-64 min-h-screen flex flex-col">
                 {/* TopNavBar */}
-                <header className="w-full h-16 sticky top-0 flex justify-between items-center px-8 z-30 bg-surface/80 backdrop-blur-md border-b border-outline-variant/10 font-label-md text-left">
-                    <div className="flex-1 max-w-xl mx-auto px-8">
-                        <div className="relative group">
-                            <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-lg">search</span>
+                <header className="w-full h-16 sticky top-0 flex justify-between items-center px-4 md:px-8 z-30 bg-surface/80 backdrop-blur-md border-b border-outline-variant/10 font-label-md text-left">
+                    <button 
+                        onClick={() => setIsMobileMenuOpen(true)}
+                        className="p-2 mr-2 md:hidden text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors flex shrink-0"
+                    >
+                        <span className="material-symbols-outlined">menu</span>
+                    </button>
+                    
+                    <div className="flex-1 max-w-xl mx-auto md:px-8 relative group w-full mr-4 md:mr-0">
+                        <span className="material-symbols-outlined absolute left-3 md:left-11 top-1/2 -translate-y-1/2 text-on-surface-variant text-lg z-10 pointer-events-none">search</span>
                             <input 
                                 className="w-full bg-surface-container-low border-none rounded-lg pl-10 pr-4 py-2 focus:ring-2 focus:ring-primary/20 text-sm placeholder:text-on-surface-variant/40 text-on-surface" 
                                 placeholder="Search previously analyzed products..." 
@@ -242,14 +346,13 @@ const AnalysisResults_Dark = () => {
                             )}
                             {/* Click outside to close */}
                             {showResults && <div className="fixed inset-0 z-[90]" onClick={() => setShowResults(false)}></div>}
-                        </div>
                     </div>
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-4 shrink-0">
                         <ProfileDropdown />
                     </div>
                 </header>
 
-                <div className="p-8 md:p-12 max-w-7xl mx-auto w-full space-y-10 text-left font-manrope">
+                <div className="p-4 md:p-12 max-w-7xl mx-auto w-full space-y-10 text-left font-manrope">
                     {/* Welcome Header */}
                     <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 text-left">
                         <div>
@@ -280,30 +383,35 @@ const AnalysisResults_Dark = () => {
                     </div>
 
                     {loading ? (
-                        <div className="flex flex-col justify-center items-center py-32 bg-surface-container-lowest rounded-2xl border border-outline-variant/10 shadow-sm text-center">
-                            <span className="material-symbols-outlined animate-spin text-5xl text-primary mb-4">refresh</span>
-                            <h3 className="text-xl font-bold text-on-surface">Generating Insights</h3>
-                            <p className="text-on-surface-variant">Synthesizing comprehensive review data...</p>
+                        <div className="flex flex-col justify-center items-center py-10 bg-surface-container-lowest rounded-2xl border border-outline-variant/10 shadow-sm text-center overflow-hidden relative">
+                            <div className="absolute inset-0 bg-[#050A15]/80 z-0"></div>
+                            <div className="relative z-10 w-full flex justify-center">
+                                <FunnelLoader progress={progress} status={progressStatus} />
+                            </div>
                         </div>
                     ) : error || !data ? (
-                        <div className="bg-surface-container-lowest p-16 rounded-[2.5rem] editorial-shadow border border-outline-variant/10 flex flex-col items-center text-center gap-6 max-w-2xl mx-auto">
-                            <div className="w-20 h-20 bg-error-container/10 rounded-full flex items-center justify-center text-error border border-error/20">
-                                <span className="material-symbols-outlined text-4xl">analytics</span>
+                        <div className="bg-surface-container-lowest p-8 md:p-16 rounded-[2.5rem] editorial-shadow border border-outline-variant/10 flex flex-col items-center text-center gap-6 max-w-2xl mx-auto mt-10 mx-4 md:mx-auto">
+                            <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center text-primary border border-primary/20 shrink-0">
+                                <span className="material-symbols-outlined text-4xl">{allProducts.length > 0 ? "search" : "cloud_upload"}</span>
                             </div>
                             <div>
-                                <h3 className="text-2xl font-bold text-on-surface mb-2">No Active Analysis</h3>
-                                <p className="text-on-surface-variant mb-8 max-w-sm">{error || "No data available."}</p>
+                                <h3 className="text-2xl font-bold text-on-surface mb-2">{allProducts.length > 0 ? "Select an Analysis" : "No Analyses Found"}</h3>
+                                <p className="text-on-surface-variant mb-8 max-w-sm">
+                                    {allProducts.length > 0 
+                                        ? "Select a product from the search bar above to view its insights, or start a new analysis." 
+                                        : "You haven't uploaded any datasets yet. Please upload a dataset to begin."}
+                                </p>
                                 <Link to="/upload" className="inline-flex items-center gap-3 px-8 py-4 bg-primary text-on-primary rounded-xl font-bold shadow-lg shadow-primary/20 hover:bg-primary-fixed-dim transition-all">
                                     <span className="material-symbols-outlined text-sm">cloud_upload</span>
-                                    Start New Analysis
+                                    {allProducts.length > 0 ? "Start New Analysis" : "Upload Dataset"}
                                 </Link>
                             </div>
                         </div>
                     ) : (
                         <div className="space-y-12">
                             {/* Executive Summary Section */}
-                            <section className="bg-surface-container-lowest rounded-[2.5rem] p-10 editorial-shadow border border-outline-variant/10 relative overflow-hidden text-left">
-                                <div className="absolute top-0 right-0 p-8 opacity-5">
+                            <section className="bg-surface-container-lowest rounded-[2.5rem] p-6 md:p-10 editorial-shadow border border-outline-variant/10 relative overflow-hidden text-left">
+                                <div className="absolute top-0 right-0 p-4 md:p-8 opacity-5">
                                     <span className="material-symbols-outlined text-[120px] text-primary">auto_awesome</span>
                                 </div>
                                 <div className="relative z-10 max-w-3xl text-left">

@@ -1,9 +1,11 @@
 import re
 import json
+import time
 from backend.models.state import DashboardState
 from backend.utils.helpers import SYSTEM_RESTRICTION, clean_llm_output
 from backend.utils.llm import get_llm
 from backend.db.vectorstore import get_db, set_product_name
+from backend.utils.progress import set_progress
 from langchain_core.prompts import ChatPromptTemplate
 
 llm_0 = get_llm(0.0)
@@ -129,6 +131,7 @@ REASONING: [Reason]""" + SYSTEM_RESTRICTION),
 
 def run_descriptive_agent(state: DashboardState):
     """Group B: Summaries, Pros, Cons, Keywords, and Key Metrics using a wider sample"""
+    time.sleep(0.5) # Stagger to avoid rate limit spikes
     reviews_list = state.get("retrieved_reviews", [])
     if not reviews_list: 
         return {"short_summary": "No data", "detailed_summary": "No data", "pros": "No data", "cons": "No data", "keyword_analysis": "", "key_metrics": {"key_strength": "N/A", "top_complaint": "N/A", "emerging_request": "N/A"}}
@@ -270,16 +273,22 @@ Format EXACTLY using these markers:
 
 def run_scoring_agent(state: DashboardState):
     """Group C: Sentiment Distribution and Aspects with 100% Review Batching"""
+    time.sleep(1.0) # Stagger to avoid rate limit spikes
     reviews_list = state.get("retrieved_reviews", [])
     if not reviews_list: 
         return {"sentiment_analysis": "No data", "sentiment_distribution": {"positive": 0, "neutral": 0, "negative": 0}, "aspect_analysis": "No data"}
 
     unique_reviews = list(dict.fromkeys(reviews_list))
+    user_id = state.get("user_id")
     
     # Batch processing logic
     batch_size = 50
+    total_batches = (len(unique_reviews) + batch_size - 1) // batch_size
     pos, neu, neg = 0, 0, 0
     all_aspect_summaries = []
+
+    if user_id:
+        set_progress(user_id, 10, f"Analyzed 0 of {total_batches} batches...", metadata={"total_batches": total_batches, "current_batch": 0, "avg_time": 15.0})
 
     prompt = ChatPromptTemplate.from_messages([
         ("system", """You are a strictly logical NLP data analyst specializing in e-commerce product reviews. 
@@ -315,12 +324,16 @@ STRICT OUTPUT FORMAT:
     ])
 
     # Process in batches
+    batch_times = []
     for i in range(0, len(unique_reviews), batch_size):
+        current_batch_index = (i // batch_size) + 1
+        
         batch = unique_reviews[i : i + batch_size]
         batch_text = ""
         for j, r in enumerate(batch):
             batch_text += f"Review_{j}: {r}\n"
 
+        start_t = time.time()
         try:
             out = clean_llm_output((prompt | llm_0).invoke({"reviews": batch_text}).content)
             
@@ -332,8 +345,21 @@ STRICT OUTPUT FORMAT:
                 elif "Review" in line and ":" in line: 
                     # If it has a review ID but isn't Pos/Neg, it's Neutral (handles SPAM, etc.)
                     neu += 1
+            
+            end_t = time.time()
+            batch_times.append(end_t - start_t)
+            avg_time = sum(batch_times) / len(batch_times)
+
+            if user_id:
+                # Progress ranges from 10% to 90% during scoring
+                percent = 10 + int((current_batch_index / total_batches) * 80)
+                set_progress(user_id, percent, f"Analyzed {current_batch_index} of {total_batches} batches...", metadata={"total_batches": total_batches, "current_batch": current_batch_index, "avg_time": avg_time})
+                
         except Exception as e:
             print(f"Error processing batch {i//batch_size}: {e}")
+
+    if user_id:
+        set_progress(user_id, 90, "Extracting final aspects...")
 
     total_counted = pos + neu + neg
     total_for_score = total_counted or 1
@@ -356,6 +382,9 @@ STRICT OUTPUT FORMAT:
     
     final_text = f"OVERALL SCORE: {score:.1f}/10\n\nDISTRIBUTION (Based on {total_counted} analyzed reviews):\n- Positive: {pos}\n- Neutral: {neu}\n- Negative: {neg}"
 
+    if user_id:
+        set_progress(user_id, 100, "Analysis complete!")
+
     return {
         "sentiment_analysis": final_text,
         "sentiment_distribution": {"positive": pos, "neutral": neu, "negative": neg},
@@ -365,6 +394,7 @@ STRICT OUTPUT FORMAT:
 
 def run_timeline_agent(state: DashboardState):
     """Group D: Timeline Trend with 100% Review Batching"""
+    time.sleep(1.5) # Stagger to avoid rate limit spikes
     reviews_list = state.get("retrieved_reviews", [])
     if not reviews_list: 
         return {"timeline_analysis": "No data", "sentiment_trend": []}
@@ -414,6 +444,7 @@ Return ONLY the list of points.""" + SYSTEM_RESTRICTION),
 
 
 def run_security_agent(state: DashboardState):
+    time.sleep(2.0) # Stagger to avoid rate limit spikes
     reviews_list = state.get("retrieved_reviews", [])
     if not reviews_list: 
         return {"fake_review_analysis": "No data"}

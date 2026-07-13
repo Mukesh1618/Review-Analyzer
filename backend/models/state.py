@@ -6,6 +6,7 @@ class ChatState(TypedDict):
     context: str
 
 class DashboardState(TypedDict):
+    user_id: str
     query: str
     retrieved_reviews: List[Any]
     total_reviews: int

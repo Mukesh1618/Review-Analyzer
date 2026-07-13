@@ -6,7 +6,7 @@ import json
 from fastapi import FastAPI, UploadFile, File, Query, Header, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, StreamingResponse
 from pydantic import BaseModel
 import uvicorn
 from langchain_core.messages import HumanMessage
@@ -21,6 +21,7 @@ from backend.db.vectorstore import load_vector_db, get_db, save_vector_db, get_p
 from backend.services.orchestrator import dashboard_orchestrator, chat_orchestrator
 from backend.utils.helpers import clean_llm_output
 from backend.agents.dashboard import run_identity_agent, validate_node
+from backend.utils.progress import get_progress, set_progress
 
 app = FastAPI(title="ReviewMind API")
 
@@ -96,18 +97,11 @@ async def process_content(content: bytes, user_id: str):
         # If we filtered everything out, it might really be a code file
         return {"error": "No valid review text found. The file may be empty or contain non-review content (like code)."}
 
-    # --- LLM VALIDATION GATE (PRE-UPLOAD) ---
-    # Validate parsed reviews BEFORE saving to the DB
-    val_result = validate_node({"retrieved_reviews": reviews})
-    if not val_result.get("is_valid"):
-        return {"error": f"Validation Failed: {val_result.get('validation_error', 'The content does not appear to be product reviews.')}"}
-    # ----------------------------------------
-
-    # Identify the product name (fallback to agent if not in metadata)
+    # --- LLM VALIDATION GATE MOVED TO /api/analyze ---
+    # We no longer validate or run the identity agent during upload to ensure instant uploads.
+    
     if not detected_name:
-        temp_docs = [Document(page_content=r) for r in reviews[:10]]
-        product_result = run_identity_agent({"retrieved_reviews": [d.page_content for d in temp_docs], "product_name": "Unknown Product"})
-        product_name = product_result.get("product_name", "Unknown_Product")
+        product_name = f"Dataset_{content_hash[:8]}"
     else:
         product_name = detected_name
 
@@ -136,6 +130,8 @@ async def process_content(content: bytes, user_id: str):
     analysis_path = os.path.join(user_path, "analysis.json")
     if os.path.exists(analysis_path):
         os.remove(analysis_path)
+        
+    set_progress(user_id, 0, "Initializing AI Agents...")
 
     return {"message": f"Successfully loaded {len(docs)} reviews for '{product_name}'. Generating fresh analysis.", "product_id": product_id}
 
@@ -149,9 +145,17 @@ async def chat_endpoint(req: ChatRequest, x_user_id: str = Header(None)):
     
     config = {"configurable": {"thread_id": req.thread_id}}
     input_state = {"messages": [HumanMessage(content=req.message)]}
-    result = chat_orchestrator.invoke(input_state, config=config)
-    reply = result["messages"][-1].content
-    return {"reply": clean_llm_output(reply)}
+    
+    async def generate():
+        async for event in chat_orchestrator.astream_events(input_state, config=config, version="v1"):
+            if event["event"] == "on_chat_model_stream":
+                chunk = event["data"]["chunk"].content
+                if chunk:
+                    # Clean the chunk slightly if it contains <thought> tags (optional, might need a more robust cleaner for streams)
+                    if "<thought>" not in chunk and "</thought>" not in chunk:
+                        yield chunk
+
+    return StreamingResponse(generate(), media_type="text/plain")
 
 @app.get("/api/products")
 async def get_products(x_user_id: str = Header(None)):
@@ -205,7 +209,11 @@ async def analyze_dashboard(x_user_id: str = Header(None)):
     if saved_data:
         return saved_data
         
+    # Reset progress to 0 for a fresh analysis
+    set_progress(x_user_id, 0, "Initializing AI Agents...")
+        
     initial_state = {
+        "user_id": x_user_id,
         "query": "general product feedback",
         "retrieved_reviews": [],
         "total_reviews": 0,
@@ -227,7 +235,7 @@ async def analyze_dashboard(x_user_id: str = Header(None)):
         "key_metrics": {"key_strength": "N/A", "top_complaint": "N/A", "emerging_request": "N/A"}
     }
     
-    result = dashboard_orchestrator.invoke(initial_state)
+    result = await dashboard_orchestrator.ainvoke(initial_state)
 
     # Check for validation failure
     if result.get("is_valid") is False:
@@ -238,6 +246,12 @@ async def analyze_dashboard(x_user_id: str = Header(None)):
     save_analysis_data(result, user_id=x_user_id)
     
     return result
+
+@app.get("/api/analyze/progress")
+async def analyze_progress_endpoint(x_user_id: str = Header(None)):
+    if not x_user_id:
+        return {"progress": 0, "status": "Idle"}
+    return get_progress(x_user_id)
 
 @app.get("/api/export_pdf")
 async def export_pdf_endpoint(product_id: str = Query(...), x_user_id: str = Header(None)):

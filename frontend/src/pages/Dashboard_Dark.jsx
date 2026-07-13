@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
 import ProfileDropdown from '../components/ProfileDropdown';
+import FunnelLoader from '../components/FunnelLoader';
 
 const Dashboard_Dark = () => {
     const { user, loading: authLoading } = useAuth();
@@ -15,17 +16,22 @@ const Dashboard_Dark = () => {
     const [showAllModal, setShowAllModal] = useState(false);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [progress, setProgress] = useState(0);
+    const [progressStatus, setProgressStatus] = useState("Initializing AI Agents...");
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     const fetchAllProducts = async () => {
-        if (!user) return;
+        if (!user) return [];
         try {
             const response = await fetch('/api/products', {
                 headers: { 'X-User-ID': user.uid }
             });
             const products = await response.json();
             setAllProducts(products);
+            return products;
         } catch (err) {
             console.error("Failed to fetch products:", err);
+            return [];
         }
     };
 
@@ -43,6 +49,7 @@ const Dashboard_Dark = () => {
             if (result.message) {
                 // Clear cache and re-fetch analysis
                 localStorage.removeItem(`reviewMindData_${user.uid}`);
+                sessionStorage.setItem(`activeProduct_${user.uid}`, 'true');
                 window.location.reload();
             }
         } catch (err) {
@@ -52,6 +59,8 @@ const Dashboard_Dark = () => {
     };
 
     useEffect(() => {
+        let isMounted = true;
+        
         if (!authLoading && !user) {
             navigate('/login');
             return;
@@ -60,7 +69,15 @@ const Dashboard_Dark = () => {
         const fetchData = async () => {
             if (!user) return;
             try {
-                fetchAllProducts();
+                const products = await fetchAllProducts();
+                
+                // Force empty state if no active product is selected in this session
+                if (!sessionStorage.getItem(`activeProduct_${user.uid}`)) {
+                    setError("No active analysis.");
+                    setLoading(false);
+                    return;
+                }
+                
                 const cachedData = localStorage.getItem(`reviewMindData_${user.uid}`);
                 let resultData = null;
                 
@@ -74,20 +91,82 @@ const Dashboard_Dark = () => {
                 }
 
                 if (!resultData) {
-                    const response = await fetch('/api/analyze', {
+                    setProgress(0); // Reset progress at start
+                    
+                    // DYNAMIC CALIBRATION PROGRESS
+                    let currentProgress = 0;
+                    let lastMilestone = 0;
+                    let nextMilestone = 10;
+                    let expectedTime = 15; // default guess seconds
+                    
+                    let smoothInterval = setInterval(() => {
+                        let increment = (nextMilestone - lastMilestone) / expectedTime;
+                        if (currentProgress < nextMilestone - 1) { // Stop just shy of milestone
+                            currentProgress += increment;
+                            setProgress(Math.floor(currentProgress));
+                        }
+                    }, 1000);
+
+                    // POLL BACKEND FOR STATUS AND CALIBRATION METADATA
+                    let progressInterval = setInterval(async () => {
+                        try {
+                            const res = await fetch('/api/analyze/progress', { headers: { 'X-User-ID': user.uid } });
+                            if (res.ok) {
+                                const pData = await res.json();
+                                
+                                if (pData.status && pData.status !== "Initializing...") {
+                                    setProgressStatus(pData.status);
+                                }
+                                
+                                let backendProg = pData.progress || 0;
+                                if (backendProg >= lastMilestone) {
+                                    lastMilestone = backendProg;
+                                    currentProgress = Math.max(currentProgress, backendProg);
+                                    setProgress(Math.floor(currentProgress));
+                                    
+                                    if (pData.metadata && pData.metadata.total_batches) {
+                                        expectedTime = pData.metadata.avg_time || 15;
+                                        let currentBatch = pData.metadata.current_batch || 0;
+                                        let total = pData.metadata.total_batches;
+                                        
+                                        if (currentBatch < total) {
+                                            nextMilestone = 10 + Math.floor(((currentBatch + 1) / total) * 80);
+                                        } else {
+                                            nextMilestone = 99;
+                                        }
+                                    } else {
+                                        nextMilestone = Math.min(backendProg + 10, 99);
+                                    }
+                                }
+                            }
+                        } catch (e) {}
+                    }, 2000);
+
+                    // Add timestamp to prevent browser caching of GET request
+                    const response = await fetch(`/api/analyze?t=${Date.now()}`, {
                         headers: { 'X-User-ID': user.uid }
                     });
                     
-                    if (!response.ok) {
-                        const errorData = await response.json();
-                        // If it's a validation error (400), we MUST clear the cache to stop showing old product data
+                    if (!isMounted) return;
+                    
+                    clearInterval(smoothInterval);
+                    clearInterval(progressInterval);
+                    
+                    const resultJson = await response.json();
+                    
+                    if (!response.ok || resultJson.error) {
                         localStorage.removeItem(`reviewMindData_${user.uid}`);
-                        setError(errorData.detail || errorData.error || "Analysis failed.");
+                        setError(resultJson.detail || resultJson.error || "No active analysis.");
                         setLoading(false);
                         return;
                     }
 
-                    resultData = await response.json();
+                    // Complete the bar smoothly
+                    setProgress(100);
+                    setProgressStatus("Analysis Complete!");
+                    await new Promise(resolve => setTimeout(resolve, 800)); // Let the bar animate to 100%
+
+                    resultData = resultJson;
                     localStorage.setItem(`reviewMindData_${user.uid}`, JSON.stringify(resultData));
                 }
 
@@ -108,6 +187,10 @@ const Dashboard_Dark = () => {
         if (user) {
             fetchData();
         }
+        
+        return () => {
+            isMounted = false;
+        };
     }, [user, authLoading, navigate]);
 
     const handleDownloadPDF = async () => {
@@ -193,9 +276,15 @@ const Dashboard_Dark = () => {
     };
 
     return (
-        <div className="bg-background text-on-surface min-h-screen">
+        <div className="bg-background text-on-surface min-h-screen relative">
+            {/* Mobile Sidebar Overlay */}
+            <div 
+                className={`fixed inset-0 bg-[#050A15]/80 z-[90] md:hidden backdrop-blur-sm transition-opacity duration-300 ${isMobileMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} 
+                onClick={() => setIsMobileMenuOpen(false)}
+            />
+
             {/* SideNavBar Shell */}
-            <aside className="fixed left-0 top-0 h-full z-40 bg-surface-container-lowest h-screen w-64 border-r border-outline-variant/10 flex flex-col hidden md:flex text-left">
+            <aside className={`fixed left-0 top-0 h-full z-[100] bg-surface-container-lowest w-64 border-r border-outline-variant/10 flex flex-col text-left transition-transform duration-300 ease-in-out md:translate-x-0 ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
                 <div className="p-8 text-left">
                     <div className="flex items-center gap-3 mb-10 text-left">
                         <div className="w-8 h-8 primary-gradient rounded-lg flex items-center justify-center text-on-primary-container">
@@ -230,9 +319,15 @@ const Dashboard_Dark = () => {
             {/* Main Content Area */}
             <main className="md:ml-64 min-h-screen flex flex-col">
                 {/* TopNavBar */}
-                <header className="w-full h-16 sticky top-0 flex justify-between items-center px-8 z-30 bg-surface/80 backdrop-blur-md border-b border-outline-variant/10 font-label-md text-left">
-                    <div className="flex-1 max-w-xl mx-auto px-8">
-                        <div className="relative group">
+                <header className="w-full h-16 sticky top-0 flex justify-between items-center px-4 md:px-8 z-30 bg-surface/80 backdrop-blur-md border-b border-outline-variant/10 font-label-md text-left">
+                    <button 
+                        onClick={() => setIsMobileMenuOpen(true)}
+                        className="p-2 mr-2 md:hidden text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors flex shrink-0"
+                    >
+                        <span className="material-symbols-outlined">menu</span>
+                    </button>
+                    
+                    <div className="flex-1 max-w-xl mx-auto md:px-8 relative group w-full mr-4 md:mr-0">
                             <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-lg">search</span>
                             <input 
                                 className="w-full bg-surface-container-low border-none rounded-lg pl-10 pr-4 py-2 focus:ring-2 focus:ring-primary/20 text-sm placeholder:text-on-surface-variant/40 text-on-surface" 
@@ -269,15 +364,14 @@ const Dashboard_Dark = () => {
                             )}
                             {/* Click outside to close */}
                             {showResults && <div className="fixed inset-0 z-[90]" onClick={() => setShowResults(false)}></div>}
-                        </div>
                     </div>
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-4 shrink-0">
                         <ProfileDropdown />
                     </div>
                 </header>
 
                 {/* Dashboard Canvas */}
-                <div className="p-8 md:p-12 max-w-7xl mx-auto w-full space-y-10 text-left">
+                <div className="p-4 md:p-12 max-w-7xl mx-auto w-full space-y-10 text-left">
                     {/* Welcome Header */}
                     <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 text-left">
                         <div>
@@ -296,18 +390,28 @@ const Dashboard_Dark = () => {
                     </div>
 
                     {loading ? (
-                        <div className="flex flex-col justify-center items-center py-32 bg-surface-container-lowest rounded-2xl border border-outline-variant/10 shadow-sm text-center">
-                            <span className="material-symbols-outlined animate-spin text-5xl text-primary mb-4">refresh</span>
-                            <h3 className="text-xl font-bold text-on-surface">Processing AI Insights</h3>
-                            <p className="text-on-surface-variant">Analyzing product attributes and sentiment...</p>
+                        <div className="flex flex-col justify-center items-center py-10 bg-surface-container-lowest rounded-2xl border border-outline-variant/10 shadow-sm text-center overflow-hidden relative">
+                            <div className="absolute inset-0 bg-[#050A15]/80 z-0"></div>
+                            <div className="relative z-10 w-full flex justify-center">
+                                <FunnelLoader progress={progress} status={progressStatus} />
+                            </div>
                         </div>
-                    ) : error ? (
-                        <div className="bg-error-container/10 p-10 rounded-2xl border border-error/20 flex flex-col items-center text-center gap-4">
-                            <span className="material-symbols-outlined text-5xl text-error">cloud_off</span>
+                    ) : error || !data ? (
+                        <div className="bg-surface-container-lowest p-8 md:p-16 rounded-[2rem] md:rounded-[2.5rem] editorial-shadow border border-outline-variant/10 flex flex-col items-center text-center gap-6 max-w-2xl mx-auto mt-10 mx-4 md:mx-auto">
+                            <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center text-primary border border-primary/20 shrink-0">
+                                <span className="material-symbols-outlined text-4xl">{allProducts.length > 0 ? "search" : "cloud_upload"}</span>
+                            </div>
                             <div>
-                                <h3 className="text-xl font-bold text-on-surface">No Active Analysis</h3>
-                                <p className="text-on-surface-variant mb-6">{error}</p>
-                                <Link to="/upload" className="px-8 py-3 bg-primary text-on-primary rounded-xl font-bold editorial-shadow">Start New Analysis</Link>
+                                <h3 className="text-2xl font-bold text-on-surface mb-2">{allProducts.length > 0 ? "Select an Analysis" : "No Analyses Found"}</h3>
+                                <p className="text-on-surface-variant mb-8 max-w-sm">
+                                    {allProducts.length > 0 
+                                        ? "Select a product from the search bar above to view its insights, or start a new analysis." 
+                                        : "You haven't uploaded any datasets yet. Please upload a dataset to begin."}
+                                </p>
+                                <Link to="/upload" className="inline-flex items-center gap-3 px-8 py-4 bg-primary text-on-primary rounded-xl font-bold shadow-lg shadow-primary/20 hover:bg-primary-fixed-dim transition-all">
+                                    <span className="material-symbols-outlined text-sm">cloud_upload</span>
+                                    {allProducts.length > 0 ? "Start New Analysis" : "Upload Dataset"}
+                                </Link>
                             </div>
                         </div>
                     ) : (
@@ -346,13 +450,13 @@ const Dashboard_Dark = () => {
                                     </div>
                                 </div>
                                 {/* Active Insights */}
-                                <div className="md:col-span-2 bg-surface-container-lowest p-6 rounded-xl editorial-shadow border border-outline-variant/10 relative overflow-hidden h-32 text-left">
-                                    <div className="absolute right-0 top-0 h-full w-1/3 opacity-10">
+                                <div className="md:col-span-2 bg-surface-container-lowest p-6 rounded-xl editorial-shadow border border-outline-variant/10 relative overflow-hidden min-h-[8rem] text-left">
+                                    <div className="absolute right-0 top-0 h-full w-1/3 opacity-10 pointer-events-none">
                                         <svg className="h-full w-full" viewBox="0 0 100 100">
                                             <path className="text-primary" d="M0,100 C20,80 40,90 60,40 C80,10 100,20 100,0 L100,100 Z" fill="currentColor"></path>
                                         </svg>
                                     </div>
-                                    <div className="relative z-10 flex flex-col h-full justify-between">
+                                    <div className="relative z-10 flex flex-col h-full justify-between gap-4">
                                         <p className="text-on-surface-variant text-xs font-bold uppercase tracking-widest">Top Keywords Mentioned</p>
                                         <div className="flex flex-wrap gap-2">
                                             {data?.keyword_analysis ? data.keyword_analysis.split(',').slice(0, 5).map((kw, i) => (
@@ -401,14 +505,14 @@ const Dashboard_Dark = () => {
                                     </div>
                                 </div>
                                 {/* Sentiment Trend Card */}
-                                <div className="bg-surface-container-lowest p-8 rounded-xl editorial-shadow border border-outline-variant/10 lg:col-span-2">
-                                    <div className="flex items-center justify-between mb-8 text-left">
+                                <div className="bg-surface-container-lowest p-6 md:p-8 rounded-xl editorial-shadow border border-outline-variant/10 lg:col-span-2 overflow-hidden">
+                                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 text-left gap-4">
                                         <div>
                                             <h3 className="text-lg font-bold font-headline-md text-on-surface">Sentiment Trend</h3>
                                             <p className="text-on-surface-variant text-xs">AI chronological analysis of user feedback</p>
                                         </div>
                                     </div>
-                                    <div className="w-full overflow-x-auto overflow-y-hidden pt-4">
+                                    <div className="w-full overflow-x-auto overflow-y-hidden pt-4 custom-scrollbar">
                                         {data?.sentiment_trend && data.sentiment_trend.length > 0 ? (
                                             (() => {
                                                 // AGGREGATE DATA BY DATE

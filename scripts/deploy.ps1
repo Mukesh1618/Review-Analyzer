@@ -4,10 +4,14 @@ param (
     [string]$AppName = "review-analyzer"
 )
 
+# Force UTF-8 encoding to prevent Azure CLI UnicodeEncodeError crashes (e.g. checkmarks from Vite)
+[console]::InputEncoding = [console]::OutputEncoding = New-Object System.Text.UTF8Encoding
+$env:PYTHONIOENCODING="utf-8"
+
 Write-Host "Starting deployment for $AppName to $Environment environment..." -ForegroundColor Cyan
 
 # 1. Check for required tools
-$requiredTools = @("docker", "terraform", "az")
+$requiredTools = @("terraform", "az")
 foreach ($tool in $requiredTools) {
     if (-not (Get-Command $tool -ErrorAction SilentlyContinue)) {
         Write-Error "$tool is not installed or not in PATH."
@@ -50,7 +54,39 @@ Set-Location -Path "..\terraform"
 Write-Host "Initializing Terraform..." -ForegroundColor Cyan
 terraform init
 
-Write-Host "Applying Terraform..." -ForegroundColor Cyan
+Write-Host "Applying Terraform (Phase 1: ACR only)..." -ForegroundColor Cyan
+terraform apply -target "azurerm_resource_group.rg" -target "azurerm_container_registry.acr" -auto-approve `
+    -var="environment=$Environment" `
+    -var="app_name=$AppName" `
+    -var="grok_api_key=$grokApiKey" `
+    -var="grok_api_base=$grokApiBase" `
+    -var="grok_model_name=$grokModelName"
+
+if ($LASTEXITCODE -ne 0) {
+    Write-Error "Terraform Phase 1 failed."
+    exit 1
+}
+
+# Get the ACR login server and Container App FQDN from Terraform state
+$acrLoginServer = terraform state show azurerm_container_registry.acr | Select-String "login_server\s+=" | ForEach-Object { $_.ToString().Split('=')[1].Trim().Trim('"') }
+$acrName = terraform state show azurerm_container_registry.acr | Select-String -Pattern "^    name\s+=" | ForEach-Object { $_.ToString().Split('=')[1].Trim().Trim('"') }
+
+# 5. Build and Push Docker Image via Azure Container Registry (Remote Build)
+Set-Location -Path "..\"
+
+Write-Host "Triggering remote Docker build in Azure Container Registry ($acrName)..." -ForegroundColor Cyan
+$imageTag = "$acrLoginServer/$AppName`:$Environment"
+
+az acr build --registry $acrName --image $imageTag .
+
+if ($LASTEXITCODE -ne 0) {
+    Write-Error "Azure ACR build failed."
+    exit 1
+}
+
+# 6. Apply remaining Terraform infrastructure (Container App)
+Set-Location -Path ".\terraform"
+Write-Host "Applying Terraform (Phase 2: Container App)..." -ForegroundColor Cyan
 terraform apply -auto-approve `
     -var="environment=$Environment" `
     -var="app_name=$AppName" `
@@ -59,35 +95,7 @@ terraform apply -auto-approve `
     -var="grok_model_name=$grokModelName"
 
 if ($LASTEXITCODE -ne 0) {
-    Write-Error "Terraform apply failed."
-    exit 1
-}
-
-# Get the ACR login server and Container App FQDN from Terraform state
-$acrLoginServer = terraform state show azurerm_container_registry.acr | Select-String "login_server\s+=" | ForEach-Object { $_.ToString().Split('=')[1].Trim(' "', '') }
-$acrName = terraform state show azurerm_container_registry.acr | Select-String -Pattern "^    name\s+=" | ForEach-Object { $_.ToString().Split('=')[1].Trim(' "', '') }
-
-# 5. Build and Push Docker Image
-Set-Location -Path "..\"
-
-Write-Host "Logging into Azure Container Registry ($acrName)..." -ForegroundColor Cyan
-az acr login --name $acrName
-
-$imageTag = "$acrLoginServer/$AppName`:$Environment"
-
-Write-Host "Building Docker image: $imageTag" -ForegroundColor Cyan
-docker build -t $imageTag .
-
-if ($LASTEXITCODE -ne 0) {
-    Write-Error "Docker build failed."
-    exit 1
-}
-
-Write-Host "Pushing Docker image: $imageTag" -ForegroundColor Cyan
-docker push $imageTag
-
-if ($LASTEXITCODE -ne 0) {
-    Write-Error "Docker push failed."
+    Write-Error "Terraform Phase 2 failed."
     exit 1
 }
 

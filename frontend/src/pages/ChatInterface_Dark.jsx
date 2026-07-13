@@ -20,6 +20,7 @@ const ChatInterface_Dark = () => {
     const [threadId] = useState(`thread_${Math.random().toString(36).substring(7)}`);
     const [searchQuery, setSearchQuery] = useState('');
     const [showProductList, setShowProductList] = useState(false);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     
     const messagesEndRef = useRef(null);
     const inputRef = useRef(null);
@@ -99,8 +100,30 @@ const ChatInterface_Dark = () => {
                 },
                 body: JSON.stringify({ message: userMsg, thread_id: threadId })
             });
-            const data = await response.json();
-            setMessages(prev => [...prev, { role: 'assistant', content: data.reply || data.error }]);
+
+            if (!response.ok) throw new Error("Connection failed");
+
+            // Add an empty assistant message to start appending to
+            setMessages(prev => [...prev, { role: 'assistant', content: '' }]);
+
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+                
+                const chunk = decoder.decode(value, { stream: true });
+                setMessages(prev => {
+                    const newMessages = [...prev];
+                    const lastIndex = newMessages.length - 1;
+                    newMessages[lastIndex] = {
+                        ...newMessages[lastIndex],
+                        content: newMessages[lastIndex].content + chunk
+                    };
+                    return newMessages;
+                });
+            }
         } catch (error) {
             setMessages(prev => [...prev, { role: 'assistant', content: "Sorry, I'm having trouble connecting to the brain. Is the server running?" }]);
         } finally {
@@ -113,9 +136,15 @@ const ChatInterface_Dark = () => {
     );
 
     return (
-        <div className="bg-background text-on-surface min-h-screen flex">
+        <div className="bg-background text-on-surface min-h-screen flex relative">
+            {/* Mobile Sidebar Overlay */}
+            <div 
+                className={`fixed inset-0 bg-[#050A15]/80 z-[90] md:hidden backdrop-blur-sm transition-opacity duration-300 ${isMobileMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} 
+                onClick={() => setIsMobileMenuOpen(false)}
+            />
+
             {/* SideNavBar Shell */}
-            <aside className="fixed left-0 top-0 h-full z-40 bg-surface-container-lowest w-64 border-r border-outline-variant/10 flex flex-col hidden md:flex text-left">
+            <aside className={`fixed left-0 top-0 h-full z-[100] bg-surface-container-lowest w-64 border-r border-outline-variant/10 flex flex-col text-left transition-transform duration-300 ease-in-out md:translate-x-0 ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
                 <div className="p-8 text-left">
                     <div className="flex items-center gap-3 mb-10 text-left">
                         <div className="w-8 h-8 primary-gradient rounded-lg flex items-center justify-center text-on-primary-container">
@@ -148,11 +177,17 @@ const ChatInterface_Dark = () => {
             </aside>
 
             {/* Main Chat Area */}
-            <main className="md:ml-64 flex-1 flex flex-col h-screen overflow-hidden">
+            <main className="md:ml-64 flex-1 flex flex-col h-[100dvh] overflow-hidden relative">
                 {/* Chat Header */}
-                <header className="h-16 flex justify-between items-center px-8 bg-surface/80 backdrop-blur-md border-b border-outline-variant/10 text-left">
-                    <div className="flex items-center gap-4 text-left">
-                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                <header className="h-16 flex justify-between items-center px-4 md:px-8 bg-surface/80 backdrop-blur-md border-b border-outline-variant/10 text-left shrink-0 z-30">
+                    <div className="flex items-center gap-2 md:gap-4 text-left">
+                        <button 
+                            onClick={() => setIsMobileMenuOpen(true)}
+                            className="p-2 mr-1 md:hidden text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors flex shrink-0"
+                        >
+                            <span className="material-symbols-outlined">menu</span>
+                        </button>
+                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0 hidden sm:flex">
                             <span className="material-symbols-outlined text-sm">robot_2</span>
                         </div>
                         <div>

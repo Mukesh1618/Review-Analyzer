@@ -65,3 +65,62 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: #424754;
 }
+
+/* --- FunnelLoader Animations --- */
+
+/* Falling Bubbles */
+@keyframes dropAndFade {
+  0% { transform: translateY(-20px) scale(1); opacity: 0; }
+  20% { opacity: 1; }
+  80% { transform: translateY(100px) scale(0.6); opacity: 1; }
+  100% { transform: translateY(130px) scale(0.2); opacity: 0; filter: blur(2px); }
+}
+
+.bubble-1 { animation: dropAndFade 2s infinite linear; left: 10%; animation-delay: 0s; }
+.bubble-2 { animation: dropAndFade 2.5s infinite linear; right: 20%; animation-delay: 0.5s; }
+.bubble-3 { animation: dropAndFade 2.2s infinite linear; left: 30%; animation-delay: 1.2s; }
+.bubble-4 { animation: dropAndFade 1.8s infinite linear; right: 10%; animation-delay: 1.8s; }
+
+/* Funnel Glow Pulse */
+@keyframes pulseGlow {
+  0%, 100% { filter: drop-shadow(0 0 5px rgba(59, 130, 246, 0.4)); }
+  50% { filter: drop-shadow(0 0 15px rgba(59, 130, 246, 0.8)); }
+}
+.funnel-glow {
+  animation: pulseGlow 2s infinite ease-in-out;
+}
+
+/* Particle Stream (Data falling from funnel) */
+@keyframes streamFall {
+  0% { transform: translateY(-50%); }
+  100% { transform: translateY(0%); }
+}
+.stream-particles {
+  background-image: radial-gradient(circle at center, #00A3FF 1px, transparent 1px),
+                    radial-gradient(circle at center, #00A3FF 2px, transparent 2px);
+  background-size: 8px 12px, 15px 25px;
+  background-position: 0 0, 5px 10px;
+  animation: streamFall 0.4s infinite linear;
+}
+
+/* Neon Progress Bar Inner Particles */
+@keyframes noiseScroll {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+.progress-particles {
+  background-image: radial-gradient(circle at center, #fff 1px, transparent 1px),
+                    radial-gradient(circle at center, #a3d8ff 2px, transparent 2px);
+  background-size: 10px 10px, 20px 20px;
+  background-position: 0 0, 10px 10px;
+  animation: noiseScroll 1s infinite linear;
+}
+
+/* Starry Particles for Funnel and Bar */
+.starry-particles {
+  background-image: radial-gradient(circle at center, #fff 1px, transparent 1px),
+                    radial-gradient(circle at center, #22d3ee 1.5px, transparent 1.5px),
+                    radial-gradient(circle at center, #a855f7 1px, transparent 1px);
+  background-size: 15px 15px, 25px 25px, 35px 35px;
+  background-position: 0 0, 12px 12px, 18px 18px;
+}

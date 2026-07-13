@@ -173,3 +173,15 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# User Data
+data/
+
+# Large Media Files
+frontend/public/Loading-screen.mp4
+
+# Terraform state and cache (Configuration files .tf are safe to commit)
+terraform/.terraform/
+terraform/*.tfstate
+terraform/*.tfstate.backup
+terraform/.terraform.lock.hcl

@@ -18,6 +18,8 @@ resource "random_pet" "suffix" {
 
 locals {
   safe_name = "${var.app_name}-${var.environment}-${random_pet.suffix.id}"
+  st_name_raw = replace(lower("st${var.app_name}${var.environment}${random_pet.suffix.id}"), "-", "")
+  storage_account_name = substr(local.st_name_raw, 0, 24)
 }
 
 # Resource Group
@@ -52,9 +54,35 @@ resource "azurerm_container_app_environment" "env" {
   log_analytics_workspace_id = azurerm_log_analytics_workspace.log_analytics.id
 }
 
+# Storage Account for persistent data
+resource "azurerm_storage_account" "storage" {
+  name                     = local.storage_account_name
+  resource_group_name      = azurerm_resource_group.rg.name
+  location                 = azurerm_resource_group.rg.location
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+}
+
+# File Share for ReviewMind Data
+resource "azurerm_storage_share" "fileshare" {
+  name                 = "reviewmind-data"
+  storage_account_name = azurerm_storage_account.storage.name
+  quota                = 50
+}
+
+# Link File Share to Container App Environment
+resource "azurerm_container_app_environment_storage" "env_storage" {
+  name                         = "reviewmindstorage"
+  container_app_environment_id = azurerm_container_app_environment.env.id
+  account_name                 = azurerm_storage_account.storage.name
+  share_name                   = azurerm_storage_share.fileshare.name
+  access_key                   = azurerm_storage_account.storage.primary_access_key
+  access_mode                  = "ReadWrite"
+}
+
 # Container App
 resource "azurerm_container_app" "app" {
-  name                         = "ca-${local.safe_name}"
+  name                         = "ca-${var.environment}-${random_pet.suffix.id}"
   container_app_environment_id = azurerm_container_app_environment.env.id
   resource_group_name          = azurerm_resource_group.rg.name
   revision_mode                = "Single"
@@ -111,6 +139,17 @@ resource "azurerm_container_app" "app" {
         name  = "FORWARDED_ALLOW_IPS"
         value = "*"
       }
+
+      volume_mounts {
+        name = "data-volume"
+        path = "/app/data"
+      }
+    }
+
+    volume {
+      name         = "data-volume"
+      storage_name = azurerm_container_app_environment_storage.env_storage.name
+      storage_type = "AzureFile"
     }
   }
 }

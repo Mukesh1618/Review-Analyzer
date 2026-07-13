@@ -8,7 +8,9 @@ RUN npm ci
 
 # Copy the rest of the frontend source and build
 COPY frontend/ ./
-RUN npm run build
+ENV CI=true
+ENV NO_COLOR=1
+RUN npm run build > build.log 2>&1 ; exit_code=$? ; cat build.log | tr -cd '\11\12\15\40-\176' ; exit $exit_code
 
 # Stage 2: Build the FastAPI backend and serve everything
 FROM python:3.11-slim as backend
@@ -17,6 +19,8 @@ FROM python:3.11-slim as backend
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 ENV PORT=80
+ENV PIP_PROGRESS_BAR=off
+ENV PIP_NO_COLOR=1
 
 WORKDIR /app
 
@@ -32,6 +36,9 @@ RUN pip install --no-cache-dir --upgrade pip && \
 
 # Copy backend code
 COPY backend/ /app/backend/
+
+# Copy sample files for the dashboard
+COPY docs/sample_files/ /app/docs/sample_files/
 
 # Copy built frontend assets into the container's static folder
 # We will mount this folder using FastAPI StaticFiles in main.py

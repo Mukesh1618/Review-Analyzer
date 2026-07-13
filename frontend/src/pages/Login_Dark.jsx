@@ -13,7 +13,7 @@ const Login_Dark = () => {
             console.log("Authenticated User:", user);
             navigate('/dashboard');
         } catch (err) {
-            setError("Failed to sign in with Google. Please try again.");
+            setError(`Failed to sign in: ${err.message || err.code || "Unknown error"}`);
             console.error(err);
         }
     };

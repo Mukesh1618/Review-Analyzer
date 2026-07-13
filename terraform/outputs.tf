@@ -6,4 +6,5 @@ output "app_fqdn" {
 output "custom_domain_verification_id" {
   description = "The Custom Domain Verification ID. Add this as a TXT record with name 'asuid' to GoDaddy."
   value       = azurerm_container_app.app.custom_domain_verification_id
+  sensitive   = true
 }
