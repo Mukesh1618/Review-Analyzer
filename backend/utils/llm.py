@@ -19,15 +19,28 @@ except ImportError:
 load_dotenv()
 
 def get_llm(temperature=0.1):
-    api_key = os.getenv("GROK_API_KEY")
-    base_url = os.getenv("GROK_API_BASE") or os.getenv("GROK_BASE_URL")
-    model_name = os.getenv("GROK_MODEL_NAME", "grok-4-1-fast-reasoning")
+    api_key = os.getenv("GROK_API_KEY") or os.getenv("GROQ_API_KEY")
+    base_url = os.getenv("GROK_API_BASE") or os.getenv("GROK_BASE_URL") or os.getenv("GROQ_API_BASE")
+    model_name = os.getenv("GROK_MODEL_NAME") or os.getenv("GROQ_MODEL_NAME") or "grok-4-1-fast-reasoning"
     
-    # Fallback to OpenAI env vars if GROK is not specified
+    # Fallback to OpenAI env vars if GROK/GROQ is not specified
     if not api_key:
         api_key = os.getenv("OPENAI_API_KEY")
         base_url = os.getenv("OPENAI_API_BASE") or os.getenv("OPENAI_BASE_URL")
         model_name = os.getenv("OPENAI_MODEL_NAME", "gpt-4o-mini")
+
+    # If key starts with gsk_ (Groq Cloud), set default Groq base URL and model if not provided
+    if api_key and api_key.startswith("gsk_"):
+        if not base_url:
+            base_url = "https://api.groq.com/openai/v1"
+        if model_name == "grok-4-1-fast-reasoning":
+            model_name = "llama-3.1-8b-instant"
+
+    # Auto-format Azure AI / OpenAI-compatible base_url to ensure /v1 endpoint is present
+    if base_url:
+        base_url = base_url.rstrip("/")
+        if not base_url.endswith("/v1") and "/openai/deployments" not in base_url and "api.groq.com" not in base_url:
+            base_url = f"{base_url}/v1"
         
     return ChatOpenAI(
         model=model_name,
